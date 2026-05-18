@@ -2,7 +2,8 @@ import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
-import type { UserRole } from '@prisma/client'
+// UserRole is stored as a plain string in Postgres (no Prisma enum).
+type UserRole = 'VENDOR' | 'ADMIN' | 'MANAGER' | 'PRODUCTION'
 
 /**
  * NextAuth configuration for Forestry B2B Portal.
@@ -28,9 +29,18 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
+        // Fetch only the fields needed to authenticate — lighter than `include: vendorProfile`.
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase().trim() },
-          include: { vendorProfile: true },
+          where:  { email: credentials.email.toLowerCase().trim() },
+          select: {
+            id:           true,
+            email:        true,
+            name:         true,
+            role:         true,
+            isActive:     true,
+            passwordHash: true,
+            vendorProfile: { select: { id: true } },
+          },
         })
 
         if (!user || !user.isActive) return null
@@ -38,17 +48,17 @@ export const authOptions: NextAuthOptions = {
         const passwordMatch = await bcrypt.compare(credentials.password, user.passwordHash)
         if (!passwordMatch) return null
 
-        // Update last login
-        await prisma.user.update({
+        // Fire-and-forget — don't make the user wait for the lastLoginAt DB roundtrip.
+        prisma.user.update({
           where: { id: user.id },
           data:  { lastLoginAt: new Date() },
-        })
+        }).catch(err => console.error('[auth] lastLoginAt update failed:', err))
 
         return {
           id:              user.id,
           email:           user.email,
           name:            user.name,
-          role:            user.role,
+          role:            user.role as UserRole,
           vendorProfileId: user.vendorProfile?.id ?? null,
         }
       },

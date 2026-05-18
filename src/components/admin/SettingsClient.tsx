@@ -23,6 +23,7 @@ export interface AdminUser {
 
 export interface SystemInfo {
   version:        string
+  deployedAt?:    string
   environment:    string
   dbProvider:     string
   emailFrom:      string
@@ -38,10 +39,11 @@ interface Props {
 }
 
 /* ── Navigation ─────────────────────────────────────────────────── */
-type Section = 'brand' | 'general' | 'account' | 'email' | 'security' | 'system'
+type Section = 'brand' | 'company' | 'general' | 'account' | 'email' | 'security' | 'system'
 
 const NAV: { id: Section; label: string; icon: React.ElementType; desc: string }[] = [
   { id: 'brand',    label: 'Brand & Logo',  icon: Paintbrush, desc: 'Logo & identity'       },
+  { id: 'company',  label: 'Company Info',  icon: Building2,  desc: 'TRN, contact, address' },
   { id: 'general',  label: 'General',       icon: Settings,  desc: 'Platform & region'     },
   { id: 'account',  label: 'My Account',    icon: User,      desc: 'Profile & password'    },
   { id: 'email',    label: 'Email',         icon: Mail,      desc: 'Notifications & sender'},
@@ -926,15 +928,24 @@ function SecuritySection({ systemInfo }: { systemInfo: SystemInfo }) {
 }
 
 function SystemSection({ systemInfo }: { systemInfo: SystemInfo }) {
+  const deployedAtLabel = systemInfo.deployedAt
+    ? new Date(systemInfo.deployedAt).toLocaleString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+      })
+    : '—'
+
   const infoPairs = [
-    { label: 'Application Version', value: systemInfo.version,     mono: true  },
-    { label: 'Environment',         value: systemInfo.environment, mono: false },
-    { label: 'Database',            value: `${systemInfo.dbProvider.charAt(0).toUpperCase()}${systemInfo.dbProvider.slice(1)}`, mono: false },
-    { label: 'Auth Framework',      value: 'NextAuth.js v4',       mono: false },
-    { label: 'Email Service',       value: 'Resend',               mono: false },
-    { label: 'Frontend Framework',  value: 'Next.js 14 (App Router)', mono: false },
-    { label: 'ORM',                 value: 'Prisma',               mono: false },
-    { label: 'Runtime',             value: 'Node.js',              mono: false },
+    { label: 'Application Version', value: systemInfo.version,             mono: true  },
+    { label: 'Last Deployed',       value: deployedAtLabel,                mono: false },
+    { label: 'Environment',         value: systemInfo.environment,         mono: false },
+    { label: 'Hosting',             value: 'Vercel (fra1 — Frankfurt)',    mono: false },
+    { label: 'Database',            value: 'Neon Postgres 17 (eu-central-1)', mono: false },
+    { label: 'File Storage',        value: 'Cloudinary',                   mono: false },
+    { label: 'Email Service',       value: 'Resend',                       mono: false },
+    { label: 'Auth Framework',      value: 'NextAuth.js v4',               mono: false },
+    { label: 'ORM',                 value: 'Prisma 5',                     mono: false },
+    { label: 'Frontend Framework',  value: 'Next.js 15.5 (App Router)',    mono: false },
+    { label: 'Runtime',             value: 'Node.js (serverless)',         mono: false },
   ]
 
   return (
@@ -943,7 +954,9 @@ function SystemSection({ systemInfo }: { systemInfo: SystemInfo }) {
       <SectionCard title="Service Health" subtitle="Real-time status of connected services" icon={Server}>
         <div className="grid grid-cols-2 gap-4">
           {[
-            { service: 'Database',      ok: true,                          note: systemInfo.dbProvider },
+            { service: 'Database',      ok: true,                          note: 'Neon Postgres (eu-central-1)' },
+            { service: 'File Storage',  ok: true,                          note: 'Cloudinary CDN' },
+            { service: 'Hosting',       ok: true,                          note: 'Vercel fra1' },
             { service: 'Email Service', ok: systemInfo.hasResendKey,       note: systemInfo.hasResendKey ? 'Resend connected' : 'API key missing' },
             { service: 'Auth',          ok: true,                          note: 'NextAuth.js active' },
             { service: 'App URL',       ok: !!systemInfo.appUrl,           note: systemInfo.appUrl },
@@ -968,40 +981,6 @@ function SystemSection({ systemInfo }: { systemInfo: SystemInfo }) {
         </div>
       </SectionCard>
 
-      {/* Env vars checklist */}
-      <SectionCard title="Environment Variables" subtitle="Required configuration keys" icon={CreditCard}>
-        <div className="space-y-2">
-          {[
-            { key: 'DATABASE_URL',           desc: 'Prisma database connection string',   required: true,  set: true  },
-            { key: 'NEXTAUTH_SECRET',         desc: 'JWT signing secret',                  required: true,  set: true  },
-            { key: 'NEXTAUTH_URL',            desc: 'Base URL for auth callbacks',          required: true,  set: true  },
-            { key: 'RESEND_API_KEY',          desc: 'Resend API key for email delivery',   required: false, set: systemInfo.hasResendKey },
-            { key: 'EMAIL_FROM',             desc: 'Sender address for outbound email',    required: false, set: !!systemInfo.emailFrom },
-            { key: 'ADMIN_EMAIL',            desc: 'Admin inbox for RFP notifications',    required: false, set: !!systemInfo.adminEmail },
-            { key: 'NEXT_PUBLIC_APP_URL',    desc: 'Public app URL (used in email links)', required: false, set: !!systemInfo.appUrl },
-          ].map(v => (
-            <div key={v.key} className="flex items-center gap-3 py-2.5 border-b border-[#E8E0D5] last:border-0">
-              <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                v.set ? 'bg-emerald-100' : v.required ? 'bg-rose-100' : 'bg-amber-100'
-              }`}>
-                {v.set
-                  ? <Check className="w-3 h-3 text-emerald-700" />
-                  : v.required
-                    ? <X className="w-3 h-3 text-rose-600" />
-                    : <AlertTriangle className="w-3 h-3 text-amber-600" />
-                }
-              </div>
-              <code className="text-xs font-mono text-charcoal-800 w-48 flex-shrink-0">{v.key}</code>
-              <span className="text-xs text-charcoal-500 flex-1">{v.desc}</span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded flex-shrink-0 ${
-                v.required ? 'bg-rose-50 text-rose-600' : 'bg-charcoal-100 text-charcoal-400'
-              }`}>
-                {v.required ? 'Required' : 'Optional'}
-              </span>
-            </div>
-          ))}
-        </div>
-      </SectionCard>
     </div>
   )
 }
@@ -1047,11 +1026,134 @@ export function SettingsClient({ user, systemInfo }: Props) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         {active === 'brand'    && <BrandSection />}
+        {active === 'company'  && <CompanySection />}
         {active === 'general'  && <GeneralSection  systemInfo={systemInfo} />}
         {active === 'account'  && <AccountSection  user={user} />}
         {active === 'email'    && <EmailSection    systemInfo={systemInfo} />}
         {active === 'security' && <SecuritySection systemInfo={systemInfo} />}
         {active === 'system'   && <SystemSection   systemInfo={systemInfo} />}
+      </div>
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * CompanySection — TRN, email, phone, address. Shown in PDF footer.
+ * ──────────────────────────────────────────────────────────────────── */
+function CompanySection() {
+  const [name,    setName]    = useState('')
+  const [trn,     setTrn]     = useState('')
+  const [email,   setEmail]   = useState('')
+  const [phone,   setPhone]   = useState('')
+  const [address, setAddress] = useState('')
+  const [loaded,  setLoaded]  = useState(false)
+  const [saving,  setSaving]  = useState(false)
+  const [msg,     setMsg]     = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/settings/company')
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('Failed to load')))
+      .then(d => {
+        setName(d.name ?? '')
+        setTrn(d.trn ?? '')
+        setEmail(d.email ?? '')
+        setPhone(d.phone ?? '')
+        setAddress(d.address ?? '')
+      })
+      .catch(() => {})
+      .finally(() => setLoaded(true))
+  }, [])
+
+  async function save() {
+    setSaving(true)
+    setMsg(null)
+    try {
+      const res = await fetch('/api/admin/settings/company', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ name, trn, email, phone, address }),
+      })
+      if (!res.ok) throw new Error('Save failed')
+      setMsg({ type: 'ok', text: 'Saved. These details now appear on every quotation PDF.' })
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e?.message ?? 'Save failed' })
+    } finally {
+      setSaving(false)
+      setTimeout(() => setMsg(null), 3500)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-2xl border border-[#E8E0D5] shadow-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#F0EBE3] bg-cream/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">Company Info</p>
+          <h2 className="font-heading text-lg font-bold text-charcoal-900 mt-0.5">Details shown on quotations</h2>
+          <p className="text-xs text-charcoal-500 mt-1">
+            TRN, email, contact number and business address. Appear in the footer of every quotation PDF.
+          </p>
+        </div>
+
+        <div className="px-6 py-5 space-y-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+            <div className="col-span-2">
+              <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">Company Name</label>
+              <input
+                type="text" value={name} onChange={e => setName(e.target.value)}
+                placeholder="Forestry FZE"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">TRN</label>
+              <input
+                type="text" value={trn} onChange={e => setTrn(e.target.value)}
+                placeholder="100123456700003"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">Contact Number</label>
+              <input
+                type="text" value={phone} onChange={e => setPhone(e.target.value)}
+                placeholder="+971 4 123 4567"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">Email</label>
+              <input
+                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="vendors@forestry.ae"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">Address</label>
+              <textarea
+                rows={2} value={address} onChange={e => setAddress(e.target.value)}
+                placeholder="Office 12, Business Bay, Dubai, UAE"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors resize-none"
+              />
+            </div>
+          </div>
+
+          {msg && (
+            <div className={`text-xs font-semibold px-3 py-2 rounded-lg ${
+              msg.type === 'ok' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+            }`}>{msg.text}</div>
+          )}
+
+          <div className="flex justify-end pt-2 border-t border-[#F0EBE3]">
+            <button
+              onClick={save}
+              disabled={!loaded || saving}
+              className="inline-flex items-center gap-2 bg-terracotta hover:bg-terracotta-dark disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors shadow-warm-sm"
+            >
+              {saving ? 'Saving…' : 'Save changes'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

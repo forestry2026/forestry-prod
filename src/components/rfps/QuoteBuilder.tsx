@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, Send, Save, X, CheckCircle2, RefreshCw, Download } from 'lucide-react'
+import { AlertCircle, Send, Save, X, CheckCircle2, RefreshCw, Download, Loader2 } from 'lucide-react'
 import { generateQuotePdf } from '@/lib/generateQuotePdf'
+import { cloudinaryRowThumb } from '@/lib/cloudinaryUrl'
 
 interface QuoteBuilderProps {
   rfpId: string
@@ -13,6 +14,13 @@ interface QuoteBuilderProps {
   contactEmail:      string
   brandLogoDataUrl?: string | null
   vendorLogoDataUrl?: string | null
+  companyInfo?: {
+    name:    string | null
+    trn:     string | null
+    email:   string | null
+    phone:   string | null
+    address: string | null
+  } | null
   items: Array<{
     id: string
     productName?: string | null
@@ -51,7 +59,7 @@ function toDateInputValue(val: Date | string | undefined | null): string {
   return d.toISOString().split('T')[0]
 }
 
-export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, contactEmail, brandLogoDataUrl, vendorLogoDataUrl, items, existingQuote, currentStatus }: QuoteBuilderProps) {
+export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, contactEmail, brandLogoDataUrl, vendorLogoDataUrl, companyInfo, items, existingQuote, currentStatus }: QuoteBuilderProps) {
   const router     = useRouter()
   const isEditable = EDITABLE_STATUSES.includes(currentStatus)
   const isReadOnly = !isEditable
@@ -79,6 +87,7 @@ export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, conta
 
   const [sending,     setSending]     = useState(false)
   const [saving,      setSaving]      = useState(false)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [error,       setError]       = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [sent,        setSent]        = useState(false)   // local success flag
@@ -163,15 +172,25 @@ export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, conta
 
   async function handleDownloadPdf() {
     setError(null)
+    setDownloadingPdf(true)
+    const startedAt = Date.now()
+    // Force browser to commit + paint the spinner before heavy work begins.
+    await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
     const deliveryChargesAmt = parseFloat(deliveryCharges) || 0
     try {
 
-    // Fetch product images as base64 data URLs (best-effort, all in parallel)
+    // Fetch product images as base64 data URLs (best-effort, all in parallel).
+    // Each image has a 5-second timeout so a slow/CORS-blocked URL can't hang the PDF forever.
     const imageDataUrls = await Promise.all(
       lineItems.map(async (item) => {
         if (!item.productImageUrl) return null
+        const thumbUrl = cloudinaryRowThumb(item.productImageUrl) ?? item.productImageUrl
         try {
-          const res  = await fetch(item.productImageUrl)
+          const ctrl = new AbortController()
+          const timer = setTimeout(() => ctrl.abort(), 5000)
+          const res  = await fetch(thumbUrl, { signal: ctrl.signal })
+          clearTimeout(timer)
+          if (!res.ok) return null
           const blob = await res.blob()
           return await new Promise<string>((resolve, reject) => {
             const reader = new FileReader()
@@ -214,10 +233,21 @@ export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, conta
       terms:             terms || null,
       logoDataUrl:       brandLogoDataUrl ?? null,
       vendorLogoDataUrl: vendorLogoDataUrl ?? null,
+      senderCompanyName: companyInfo?.name    ?? null,
+      companyTrn:        companyInfo?.trn     ?? null,
+      companyEmail:   companyInfo?.email   ?? null,
+      companyPhone:   companyInfo?.phone   ?? null,
+      companyAddress: companyInfo?.address ?? null,
     })
     } catch (e: any) {
       console.error('PDF generation failed:', e)
       setError(`PDF error: ${e?.message ?? String(e)}`)
+    } finally {
+      // Keep the spinner visible for at least 600ms so it doesn't just flicker.
+      const elapsed = Date.now() - startedAt
+      const remaining = Math.max(0, 600 - elapsed)
+      if (remaining) await new Promise<void>(r => setTimeout(r, remaining))
+      setDownloadingPdf(false)
     }
   }
 
@@ -534,10 +564,12 @@ export function QuoteBuilder({ rfpId, rfpNumber, companyName, contactName, conta
 
         {/* Action bar */}
         <div className="sticky bottom-0 bg-white border-t border-[#2D2926]/10 px-6 py-4 flex flex-col sm:flex-row gap-3 justify-end rounded-b-xl">
-          <button onClick={handleDownloadPdf}
-            className="flex items-center justify-center gap-2 border-2 border-[#2D2926]/30 text-[#2D2926]/70 font-semibold px-5 py-2.5 rounded-lg hover:bg-[#2D2926]/5 hover:border-[#2D2926]/60 transition-colors">
-            <Download className="w-4 h-4" />
-            Download PDF
+          <button onClick={handleDownloadPdf} disabled={downloadingPdf}
+            className="flex items-center justify-center gap-2 border-2 border-[#2D2926] text-[#2D2926] font-semibold px-5 py-2.5 rounded-lg hover:bg-[#2D2926]/5 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            {downloadingPdf
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
+              : <><Download className="w-4 h-4" /> Download PDF</>
+            }
           </button>
           <button onClick={handleSaveDraft} disabled={saving}
             className="flex items-center justify-center gap-2 border-2 border-[#2D2926] text-[#2D2926] font-semibold px-6 py-2.5 rounded-lg hover:bg-[#2D2926]/5 transition-colors disabled:opacity-50">

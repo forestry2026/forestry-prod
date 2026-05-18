@@ -39,8 +39,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${zillaSlab.variable} ${dmSans.variable}`}>
-      <body className="font-body antialiased">
+    <html lang="en" className={`${zillaSlab.variable} ${dmSans.variable}`} suppressHydrationWarning>
+      <body className="font-body antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

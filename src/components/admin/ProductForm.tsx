@@ -10,7 +10,35 @@ import {
   Star, Zap, Package, Layers, Palette, Sparkles, Plus,
 } from 'lucide-react'
 import { DimensionSpecifications } from './DimensionSpecifications'
-import { ColorPickerPanel } from './ColorPickerPanel'
+import { RalColorPicker } from '@/components/shared/RalColorPicker'
+import { RAL_CATEGORIES, type RalColor, type RalCategory } from '@/lib/ralColors'
+
+/* Color family chips — only meaningful for RAL Classic. */
+const CLASSIC_GROUPS = ['Yellow', 'Orange', 'Red', 'Violet', 'Blue', 'Green', 'Grey', 'Brown', 'White/Black']
+
+function classicFamily(code: string | null | undefined): string {
+  const m = (code ?? '').match(/^RAL (\d)/)
+  if (!m) return 'Other'
+  switch (m[1]) {
+    case '1': return 'Yellow'
+    case '2': return 'Orange'
+    case '3': return 'Red'
+    case '4': return 'Violet'
+    case '5': return 'Blue'
+    case '6': return 'Green'
+    case '7': return 'Grey'
+    case '8': return 'Brown'
+    case '9': return 'White/Black'
+    default:  return 'Other'
+  }
+}
+
+function colorCategory(ralCode: string | null | undefined): RalCategory {
+  if (!ralCode) return 'Classic'
+  if (/-M$/.test(ralCode)) return 'Metallic'
+  if (/-\d$/.test(ralCode)) return 'Effect'
+  return 'Classic'
+}
 
 /* ─── Utility ─────────────────────────────────────────────────────────── */
 
@@ -63,7 +91,7 @@ interface ProductFormProps {
   }
   attributes?: {
     dimensions: Array<{ id: string; name: string }>
-    colors: Array<{ id: string; name: string; hexCode?: string }>
+    colors: Array<{ id: string; name: string; hexCode?: string; ralCode?: string | null }>
     textures: Array<{ id: string; name: string; imageUrl?: string }>
     finishes: Array<{ id: string; name: string }>
     categories: Array<{ id: string; name: string }>
@@ -175,6 +203,8 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
   }, [savedProductName])
 
   // Custom color inline add
+  const [colorCategory_, setColorCategory_] = useState<RalCategory>('Classic')
+  const [colorFamily,    setColorFamily]    = useState<string>(CLASSIC_GROUPS[0])
   const [showAddColor, setShowAddColor] = useState(false)
   const colorPanelRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -536,17 +566,17 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
               )
             })}
 
-            {/* Add custom color — same dot size, dashed */}
-            <button
-              type="button"
-              onClick={() => { setShowAddColor(v => !v); setAddColorError(null) }}
-              title="Add custom colour"
-              aria-label="Add custom colour"
-              className="flex-shrink-0 w-9 h-9 rounded-xl border-2 border-dashed border-[#d4c5a9] hover:border-terracotta bg-cream/60 hover:bg-terracotta/8 flex items-center justify-center transition-all duration-150 focus:outline-none"
-            >
-              <Plus className="w-3 h-3 text-charcoal/30 group-hover:text-terracotta transition-colors" />
-            </button>
           </div>
+
+          {/* Color selection — open RAL picker to add a new color to the catalogue */}
+          <button
+            type="button"
+            onClick={() => { setShowAddColor(v => !v); setAddColorError(null) }}
+            className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed border-[#d4c5a9] hover:border-terracotta hover:bg-terracotta/5 text-xs font-semibold text-charcoal/70 hover:text-terracotta transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            {showAddColor ? 'Close color picker' : 'Add color from RAL'}
+          </button>
 
           {/* Selected summary strip */}
           {selectedColors.length > 0 && (
@@ -573,21 +603,42 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
             </div>
           )}
 
-          {/* Inline custom colour panel */}
+          {/* RAL-only color picker — admin selects from Classic / Effect / Metallic */}
           {showAddColor && (
-            <div ref={colorPanelRef}>
-              <ColorPickerPanel
-                hex={newColorHex}
-                setHex={setNewColorHex}
-                name={newColorName}
-                setName={setNewColorName}
-                ralCode={newColorRal}
-                setRalCode={setNewColorRal}
-                onAdd={handleAddColor}
-                onCancel={() => { setShowAddColor(false); setAddColorError(null); setNewColorName(''); setNewColorHex('#C96B4A'); setNewColorRal('') }}
-                isLoading={addingColor}
-                error={addColorError}
+            <div ref={colorPanelRef} className="bg-white border border-[#E8E0D5] rounded-2xl p-4 space-y-3">
+              <RalColorPicker
+                value={newColorRal || null}
+                onChange={(c: RalColor | null) => {
+                  if (c) {
+                    setNewColorRal(c.code)
+                    setNewColorName(c.name)
+                    setNewColorHex(c.hex)
+                  } else {
+                    setNewColorRal(''); setNewColorName(''); setNewColorHex('#C96B4A')
+                  }
+                  setAddColorError(null)
+                }}
               />
+              {addColorError && (
+                <p className="text-xs text-rose-600 font-semibold">{addColorError}</p>
+              )}
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#F0EBE3]">
+                <button
+                  type="button"
+                  onClick={() => { setShowAddColor(false); setAddColorError(null); setNewColorName(''); setNewColorHex('#C96B4A'); setNewColorRal('') }}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-charcoal-600 hover:bg-cream transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddColor}
+                  disabled={addingColor || !newColorRal}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold bg-terracotta hover:bg-terracotta-dark text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addingColor ? 'Adding…' : 'Add RAL Color'}
+                </button>
+              </div>
             </div>
           )}
         </SectionCard>

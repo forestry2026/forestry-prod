@@ -27,13 +27,19 @@ export default async function SettingsPage() {
   })
   const emailDb = Object.fromEntries(emailRows.map(r => [r.key, r.value]))
 
+  // Vercel injects these at build time on each deploy. Falls back to "dev" locally.
+  const commitSha = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev'
+  const branch    = process.env.VERCEL_GIT_COMMIT_REF || 'local'
+  const deployedAt = new Date().toISOString() // captured at build / server-render time
+
   const systemInfo = {
-    version:       '1.0.0',
+    version:       `${commitSha} (${branch})`,
+    deployedAt,
     environment:   process.env.NODE_ENV === 'production' ? 'Production' : 'Development',
-    dbProvider:    'sqlite',
+    dbProvider:    'postgresql',
     emailFrom:     emailDb['email_from']    || process.env.EMAIL_FROM  || '',
     adminEmail:    emailDb['admin_email']   || process.env.ADMIN_EMAIL || '',
-    appUrl:        process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    appUrl:        process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
     hasResendKey:  !!(emailDb['email_resend_api_key'] || process.env.RESEND_API_KEY),
     jwtMaxAgeDays: 30,
   }

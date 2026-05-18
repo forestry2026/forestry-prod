@@ -62,6 +62,9 @@ export function VendorQuotePdfButton({
   async function handleDownload() {
     setLoading(true)
     setError(null)
+    const startedAt = Date.now()
+    // Force browser to commit + paint the spinner before heavy work begins.
+    await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
     try {
       // Fetch product images as data URLs in parallel
       const imageDataUrls = await Promise.all(
@@ -111,6 +114,10 @@ export function VendorQuotePdfButton({
     } catch (e: any) {
       setError(`PDF error: ${e?.message ?? String(e)}`)
     } finally {
+      // Keep the spinner visible for at least 600ms so it doesn't just flicker.
+      const elapsed = Date.now() - startedAt
+      const remaining = Math.max(0, 600 - elapsed)
+      if (remaining) await new Promise<void>(r => setTimeout(r, remaining))
       setLoading(false)
     }
   }

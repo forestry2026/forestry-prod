@@ -20,6 +20,13 @@ interface Props {
   rfp:                any
   brandLogoDataUrl?:  string | null
   vendorLogoDataUrl?: string | null
+  companyInfo?: {
+    name:    string | null
+    trn:     string | null
+    email:   string | null
+    phone:   string | null
+    address: string | null
+  } | null
   currentUser:        { id: string; role: string; name: string }
 }
 
@@ -74,7 +81,7 @@ function finishLabel(item: any): string | null {
   return null
 }
 
-export default function RFPDetailClient({ rfp, brandLogoDataUrl, vendorLogoDataUrl, currentUser }: Props) {
+export default function RFPDetailClient({ rfp, brandLogoDataUrl, vendorLogoDataUrl, companyInfo, currentUser }: Props) {
   const router = useRouter()
   const [showQuotationForm,  setShowQuotationForm]  = useState(false)
   const [startingProduction, setStartingProduction] = useState(false)
@@ -540,6 +547,7 @@ export default function RFPDetailClient({ rfp, brandLogoDataUrl, vendorLogoDataU
             contactEmail={rfp.vendorProfile.user.email}
             brandLogoDataUrl={brandLogoDataUrl ?? null}
             vendorLogoDataUrl={vendorLogoDataUrl ?? null}
+            companyInfo={companyInfo ?? null}
             items={quoteItems}
             existingQuote={existingQuote}
             currentStatus={rfp.status}
