@@ -127,13 +127,15 @@ export default async function AdminDashboard({
   const twelveMonths  = new Date(now.getFullYear(), now.getMonth() - 11, 1)
 
   const greeting = (() => {
-    const h = now.getHours()
+    // Always use UAE local time — server runs UTC on Vercel.
+    const h = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dubai', hour: '2-digit', hour12: false }).format(now))
     if (h < 12) return 'Good morning'
     if (h < 17) return 'Good afternoon'
     return 'Good evening'
   })()
 
   const dateLabel = now.toLocaleDateString('en-GB', {
+    timeZone: 'Asia/Dubai',
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 

@@ -19,7 +19,8 @@ function initials(name: string | null | undefined) {
 }
 
 function greeting(name: string | null | undefined) {
-  const h = new Date().getHours()
+  // Always use UAE local time — server runs UTC on Vercel.
+  const h = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dubai', hour: '2-digit', hour12: false }).format(new Date()))
   const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
   const first = name?.split(' ')[0] ?? 'there'
   return `${g}, ${first}`
