@@ -5,8 +5,9 @@ import Link from 'next/link'
 import {
   Search, X, ArrowRight, FileText,
   Filter, CalendarDays, Package, Sparkles,
-  ChevronLeft, ChevronRight, Plus,
+  ChevronLeft, ChevronRight, Plus, Trash2, Loader2,
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 /* ── Status config ───────────────────────────────────────────── */
 const STATUS_CFG: Record<string, { label: string; badge: string }> = {
@@ -232,10 +233,31 @@ function countAdvActive(f: AdvFilters): number {
 
 /* ── RfpListClient ───────────────────────────────────────────── */
 export function RfpListClient({ rfps, statusCounts, readonly = false }: Props) {
+  const router = useRouter()
   const [query,        setQuery]        = useState('')
   const [activeStatus, setActiveStatus] = useState('ALL')
   const [sidebarOpen,  setSidebarOpen]  = useState(false)
   const [adv,          setAdv]          = useState<AdvFilters>(EMPTY_ADV)
+  const [deletingId,   setDeletingId]   = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; rfpNumber: string } | null>(null)
+
+  async function performDelete() {
+    if (!confirmDelete) return
+    setDeletingId(confirmDelete.id)
+    try {
+      const res = await fetch(`/api/rfp/${confirmDelete.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error ?? 'Delete failed')
+      }
+      setConfirmDelete(null)
+      router.refresh()
+    } catch (err: any) {
+      alert(err?.message ?? 'Delete failed')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   const advCount     = countAdvActive(adv)
   const hasAnyFilter = query.trim() || activeStatus !== 'ALL' || advCount > 0
@@ -502,6 +524,17 @@ export function RfpListClient({ rfps, statusCounts, readonly = false }: Props) {
                         {new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </p>
                     </div>
+                    {!readonly && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDelete({ id: rfp.id, rfpNumber: rfp.rfpNumber }) }}
+                        title="Delete RFP"
+                        aria-label={`Delete ${rfp.rfpNumber}`}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-cream text-charcoal-400 hover:bg-rose-50 hover:text-rose-600 transition-colors flex-shrink-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-cream group-hover:bg-terracotta/10 transition-colors duration-200 flex-shrink-0">
                       <ArrowRight className="w-4 h-4 text-charcoal-400 group-hover:text-terracotta transition-colors duration-200" />
                     </div>
@@ -623,6 +656,50 @@ export function RfpListClient({ rfps, statusCounts, readonly = false }: Props) {
           </button>
         </div>
       </div>
+
+      {/* ── Delete confirmation ─────────────────────────────────── */}
+      {confirmDelete && (
+        <div
+          className="fixed inset-0 z-50 bg-charcoal-900/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => !deletingId && setConfirmDelete(null)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="bg-white rounded-2xl shadow-warm-sm border border-[#E8E0D5] w-full max-w-md overflow-hidden"
+          >
+            <div className="px-6 py-5 border-b border-[#F0EBE3]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-rose-600">Delete RFP</p>
+              <h3 className="font-heading text-lg font-bold text-charcoal-900 mt-1">
+                Delete <span className="font-mono">{confirmDelete.rfpNumber}</span>?
+              </h3>
+              <p className="text-sm text-charcoal-500 mt-1.5">
+                This permanently removes the RFP and all its items, quote drafts, and notes. Cannot be undone.
+              </p>
+            </div>
+            <div className="px-6 py-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(null)}
+                disabled={!!deletingId}
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-charcoal-700 hover:bg-cream transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={performDelete}
+                disabled={!!deletingId}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-colors disabled:opacity-60"
+              >
+                {deletingId
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Deleting…</>
+                  : <><Trash2 className="w-4 h-4" /> Delete</>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

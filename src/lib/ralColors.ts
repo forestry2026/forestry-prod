@@ -525,3 +525,46 @@ export const RAL_EFFECT_METALLIC = [
   { code: 'RAL 904-M', name: 'Premium gold metallic', hex: '#D8B838' },
   { code: 'RAL 905-M', name: 'Premium bronze metallic', hex: '#A07848' },
 ]
+
+/* ────────────────────────────────────────────────────────────────────
+ * Unified API — categorised dataset + lookups for the picker UI
+ * ──────────────────────────────────────────────────────────────────── */
+
+export type RalCategory = 'Classic' | 'Effect' | 'Metallic'
+
+export interface RalColor {
+  code:     string
+  name:     string
+  hex:      string
+  category: RalCategory
+}
+
+/** Combined, category-tagged dataset. The single source of truth for the picker. */
+export const RAL_COLORS: RalColor[] = [
+  ...RAL_CLASSIC.map(c => ({ ...c, category: 'Classic' as const })),
+  ...RAL_EFFECT_SOLID.map(c => ({ ...c, category: 'Effect' as const })),
+  ...RAL_EFFECT_METALLIC.map(c => ({ ...c, category: 'Metallic' as const })),
+]
+
+export const RAL_CATEGORIES: RalCategory[] = ['Classic', 'Effect', 'Metallic']
+
+/** Lookup by exact RAL code, e.g. "RAL 9005". */
+export function findRalByCode(code: string | null | undefined): RalColor | undefined {
+  if (!code) return undefined
+  return RAL_COLORS.find(c => c.code === code)
+}
+
+/** Hex fallback helper — returns a neutral grey when code is unknown. */
+export function ralHex(code: string | null | undefined): string {
+  if (!code) return '#cccccc'
+  return findRalByCode(code)?.hex ?? '#cccccc'
+}
+
+/** Free-text search across code + name. Returns matches in their original order. */
+export function searchRal(query: string, category?: RalCategory): RalColor[] {
+  const q = query.trim().toLowerCase()
+  let pool = category ? RAL_COLORS.filter(c => c.category === category) : RAL_COLORS
+  if (!q) return pool
+  return pool.filter(c => c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+}
+

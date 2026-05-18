@@ -117,12 +117,14 @@ export async function sendQuoteSent(
   rfpId:      string,
   total:      number,
   validUntil: Date | string,
+  pdfAttachment?: { filename: string; content: Buffer } | null,
 ) {
   const { resend, from } = await getEmailConfig()
   const validStr = new Date(validUntil).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
   return resend.emails.send({
     from, to,
     subject: `Your quotation for ${rfpNumber} is ready — AED ${total.toLocaleString('en-AE', { minimumFractionDigits: 2 })}`,
+    attachments: pdfAttachment ? [{ filename: pdfAttachment.filename, content: pdfAttachment.content }] : undefined,
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#2D3436;">
         <h2 style="margin-bottom:4px;">Hi ${name},</h2>

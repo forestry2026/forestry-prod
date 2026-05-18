@@ -8,7 +8,28 @@ import {
   ImageIcon, Palette, Layers, Ruler, Droplets, FileText, Send,
   AlertCircle, ChevronDown, Wand2,
 } from 'lucide-react'
-import { RAL_COLORS, RAL_GROUPS } from '@/lib/ral-colors'
+import { RAL_COLORS, RAL_CATEGORIES, type RalCategory } from '@/lib/ralColors'
+
+/* Color families (Classic only has these meaningful groupings). */
+const CLASSIC_GROUPS = ['Yellow', 'Orange', 'Red', 'Violet', 'Blue', 'Green', 'Grey', 'Brown', 'White/Black']
+
+/* Map RAL classic code first digit → group name. */
+function classicGroup(code: string): string {
+  const m = code.match(/^RAL (\d)/)
+  if (!m) return 'Other'
+  switch (m[1]) {
+    case '1': return 'Yellow'
+    case '2': return 'Orange'
+    case '3': return 'Red'
+    case '4': return 'Violet'
+    case '5': return 'Blue'
+    case '6': return 'Green'
+    case '7': return 'Grey'
+    case '8': return 'Brown'
+    case '9': return 'White/Black'
+    default:  return 'Other'
+  }
+}
 
 interface Color   { id: string; name: string; hexCode?: string | null }
 interface Texture { id: string; name: string; imageUrl?: string | null }
@@ -156,60 +177,78 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
   hex: string; name: string; ral: string
   onHex: (v: string) => void; onName: (v: string) => void; onRal: (v: string) => void
 }) {
-  const [activeGroup, setActiveGroup] = useState<string>(RAL_GROUPS[0])
-  const [hoveredRal,  setHoveredRal]  = useState<string | null>(null)
-  const groupColors = RAL_COLORS.filter(c => c.group === activeGroup)
+  const [activeCategory, setActiveCategory] = useState<RalCategory>('Classic')
+  const [activeGroup,    setActiveGroup]    = useState<string>(CLASSIC_GROUPS[0])
+  const [hoveredRal,     setHoveredRal]     = useState<string | null>(null)
+
+  const groupColors = activeCategory === 'Classic'
+    ? RAL_COLORS.filter(c => c.category === 'Classic' && classicGroup(c.code) === activeGroup)
+    : RAL_COLORS.filter(c => c.category === activeCategory)
 
   function selectRal(c: typeof RAL_COLORS[0]) { onHex(c.hex); onRal(c.code); onName(c.name) }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-3">
+    <div className="space-y-3">
+      <div className="flex items-start gap-2.5">
         <div className="flex-shrink-0">
-          <div className="w-14 h-14 rounded-xl border-2 border-[#EDE7DE] shadow-sm cursor-pointer overflow-hidden relative" style={{ background: hex }}>
+          <div className="w-10 h-10 rounded-lg border-2 border-[#EDE7DE] shadow-sm cursor-pointer overflow-hidden relative" style={{ background: hex }}>
             <input type="color" value={hex} onChange={e => { onHex(e.target.value); onRal(''); onName('') }}
               className="absolute inset-0 opacity-0 w-full h-full cursor-pointer" title="Pick a colour" />
           </div>
-          <p className="text-[10px] text-charcoal-400 text-center mt-1 font-mono">{hex.toUpperCase()}</p>
+          <p className="text-[9px] text-charcoal-400 text-center mt-0.5 font-mono">{hex.toUpperCase()}</p>
         </div>
-        <div className="flex-1 space-y-2">
-          <input value={name} onChange={e => onName(e.target.value)} placeholder="Colour name (e.g. Midnight Stone)" className="form-input text-sm" />
-          <input value={ral}  onChange={e => onRal(e.target.value)}  placeholder="RAL code (auto-filled below)"     className="form-input text-sm font-mono" />
+        <div className="flex-1 space-y-1.5">
+          <input value={name} onChange={e => onName(e.target.value)} placeholder="Colour name" className="form-input text-xs py-1.5" />
+          <input value={ral}  onChange={e => onRal(e.target.value)}  placeholder="RAL code"     className="form-input text-xs py-1.5 font-mono" />
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="flex-1 h-px bg-[#EDE7DE]" />
-        <span className="text-[11px] font-semibold text-charcoal-400 uppercase tracking-widest">RAL Classic Range</span>
+        <span className="text-[10px] font-semibold text-charcoal-400 uppercase tracking-widest">RAL Range</span>
         <div className="flex-1 h-px bg-[#EDE7DE]" />
       </div>
 
+      {/* Category tabs: Classic / Effect / Metallic */}
       <div className="flex gap-1 flex-wrap">
-        {RAL_GROUPS.map(g => (
-          <button key={g} type="button" onClick={() => setActiveGroup(g)}
-            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-              activeGroup === g ? 'bg-terracotta text-white' : 'bg-[#F5F0EB] text-charcoal-600 hover:bg-[#EDE7DE]'
+        {RAL_CATEGORIES.map(cat => (
+          <button key={cat} type="button" onClick={() => setActiveCategory(cat)}
+            className={`px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
+              activeCategory === cat ? 'bg-charcoal-900 text-white' : 'bg-[#F5F0EB] text-charcoal-600 hover:bg-[#EDE7DE]'
             }`}
-          >{g}</button>
+          >{cat}</button>
         ))}
       </div>
 
+      {/* Color family chips — only meaningful for Classic */}
+      {activeCategory === 'Classic' && (
+        <div className="flex gap-1 flex-wrap">
+          {CLASSIC_GROUPS.map(g => (
+            <button key={g} type="button" onClick={() => setActiveGroup(g)}
+              className={`px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all ${
+                activeGroup === g ? 'bg-terracotta text-white' : 'bg-[#F5F0EB] text-charcoal-600 hover:bg-[#EDE7DE]'
+              }`}
+            >{g}</button>
+          ))}
+        </div>
+      )}
+
       <div className="relative">
-        <div className="grid grid-cols-8 sm:grid-cols-12 gap-1.5">
+        <div className="flex flex-wrap gap-1">
           {groupColors.map(c => {
             const isSelected = ral === c.code
             return (
               <button key={c.code} type="button" onClick={() => selectRal(c)}
                 onMouseEnter={() => setHoveredRal(c.code)} onMouseLeave={() => setHoveredRal(null)}
                 title={`${c.code} – ${c.name}`}
-                className={`aspect-square rounded-lg transition-all relative ${
-                  isSelected ? 'ring-2 ring-terracotta ring-offset-1 scale-110' : 'hover:scale-110 hover:ring-2 hover:ring-charcoal-300 hover:ring-offset-1'
+                className={`w-[55px] h-[55px] rounded-lg transition-all relative ${
+                  isSelected ? 'ring-2 ring-terracotta ring-offset-1 scale-105' : 'hover:scale-105 hover:ring-1 hover:ring-charcoal-300'
                 }`}
                 style={{ background: c.hex }}
               >
                 {isSelected && (
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <CheckCircle2 className="w-3 h-3 text-white drop-shadow" />
+                    <CheckCircle2 className="w-2.5 h-2.5 text-white drop-shadow" />
                   </span>
                 )}
               </button>
@@ -233,14 +272,14 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
       </div>
 
       {ral && (
-        <div className="flex items-center gap-2.5 px-3 py-2.5 bg-terracotta/5 border border-terracotta/20 rounded-xl">
-          <div className="w-6 h-6 rounded-lg flex-shrink-0 border border-black/10" style={{ background: hex }} />
+        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-terracotta/5 border border-terracotta/20 rounded-lg">
+          <div className="w-5 h-5 rounded flex-shrink-0 border border-black/10" style={{ background: hex }} />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-charcoal-800">{name}</p>
-            <p className="text-[11px] font-mono text-charcoal-500">{ral} · {hex.toUpperCase()}</p>
+            <p className="text-[11px] font-semibold text-charcoal-800 leading-tight">{name}</p>
+            <p className="text-[10px] font-mono text-charcoal-500 leading-tight">{ral} · {hex.toUpperCase()}</p>
           </div>
           <button type="button" onClick={() => { onHex('#C96B4A'); onRal(''); onName('') }} className="text-charcoal-300 hover:text-charcoal-600 transition-colors">
-            <X size={14} />
+            <X size={12} />
           </button>
         </div>
       )}

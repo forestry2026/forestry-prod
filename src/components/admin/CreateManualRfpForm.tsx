@@ -9,6 +9,8 @@ import {
   Ruler, Palette, Layers, Sparkles, Settings2, Paintbrush, Upload,
 } from 'lucide-react'
 import { VendorColorPicker } from '@/app/(public)/product/[sku]/VendorColorPicker'
+import { RalColorPicker }    from '@/components/shared/RalColorPicker'
+import type { RalColor }     from '@/lib/ralColors'
 import PhoneInput   from '@/components/ui/PhoneInput'
 import CountrySelect from '@/components/ui/CountrySelect'
 import { COUNTRIES } from '@/lib/countries'
@@ -1260,30 +1262,40 @@ function ItemRow({ item, product, summary, onUpdate, onRemove, onToggle }: RowPr
               </button>
             </div>
 
-            {/* Inline colour picker */}
+            {/* Inline RAL picker — custom color must come from RAL */}
             {item.colorMode === 'custom' && colorPickerOpen && (
-              <div ref={colorPickerRef}>
-                <VendorColorPicker
-                  onConfirm={color => {
-                    onUpdate({
-                      colorMode:       'custom',
-                      customColorHex:  color.hex,
-                      customColorName: color.name || null,
-                      customColorRal:  color.ralCode || null,
-                    })
-                    setColorPickerOpen(false)
-                  }}
-                  onCancel={() => {
-                    if (!item.customColorHex) {
-                      // Nothing confirmed yet — revert to preset
+              <div ref={colorPickerRef} className="bg-white border border-[#E8E0D5] rounded-2xl p-4 space-y-3">
+                <RalColorPicker
+                  value={item.customColorRal ?? null}
+                  onChange={(c: RalColor | null) => {
+                    if (c) {
                       onUpdate({
-                        colorMode: 'preset',
-                        colorId:   hasColors ? (product.colors[0]?.id ?? null) : null,
+                        colorMode:       'custom',
+                        customColorHex:  c.hex,
+                        customColorName: c.name,
+                        customColorRal:  c.code,
                       })
                     }
-                    setColorPickerOpen(false)
                   }}
                 />
+                <div className="flex justify-end gap-2 pt-2 border-t border-[#F0EBE3]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!item.customColorHex) {
+                        // Nothing confirmed yet — revert to preset
+                        onUpdate({
+                          colorMode: 'preset',
+                          colorId:   hasColors ? (product.colors[0]?.id ?? null) : null,
+                        })
+                      }
+                      setColorPickerOpen(false)
+                    }}
+                    className="px-4 py-2 rounded-xl text-sm font-semibold text-charcoal-600 hover:bg-cream transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             )}
 
