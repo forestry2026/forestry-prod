@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import QuotationCard from '@/components/quotations/QuotationCard';
 import { Filter, Plus, Loader } from 'lucide-react';
@@ -141,6 +141,14 @@ const DUMMY_QUOTATIONS = [
 ];
 
 export default function QuotationsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-charcoal-400 text-sm">Loading…</div>}>
+      <QuotationsPageInner />
+    </Suspense>
+  )
+}
+
+function QuotationsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [quotations, setQuotations] = useState(DUMMY_QUOTATIONS);
