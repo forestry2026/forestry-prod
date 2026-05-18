@@ -1,0 +1,711 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============ USERS & AUTH ============
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         String    @default("VENDOR") // VENDOR, ADMIN, MANAGER, PRODUCTION
+  permissions  String?   @default("{}")    // JSON: { sectionId: 'none'|'readonly'|'editable' }
+  avatarUrl    String?
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  onboardingState String? @default("{}") // JSON: { adminTour?, vendorTour?, lastStep?, completedAt? }
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  vendorProfile VendorProfile?
+  rfpQuotes     RfpQuote[]
+  quotations    Quotation[]          // Quotations created by this user
+  approvals     ProductionOrder[]    // Production orders approved by manager
+  statusLogs    ProductionStatusLog[] // Status updates made by this user
+  rfpNotes      RfpNote[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model VendorProfile {
+  id      String @id @default(cuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName   String
+  tradeLicense  String?
+  address       String?
+  city          String?
+  country       String       @default("UAE")
+  website       String?
+  notes         String?
+  documents     String?      @default("[]")  // JSON array of uploaded file paths
+  logoUrl       String?      // vendor company logo
+
+  status        String       @default("PENDING")
+  approvedAt    DateTime?
+  approvedBy    String?
+  rejectedAt    DateTime?
+  rejectionNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rfps                 Rfp[]
+  enquiryBasket        EnquiryBasket?
+  customDesignRequests CustomDesignRequest[]
+
+  @@index([status])
+}
+
+model AccessRequest {
+  id          String @id @default(cuid())
+  email       String
+  name        String
+  companyName String
+  phone       String
+  country     String?
+  tradeLicense String?
+  documents   String?   // JSON array of saved file paths
+  message     String?
+
+  status      String       @default("PENDING")
+  processedAt DateTime?
+  processedBy String?
+
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([email])
+}
+
+// ============ PRODUCTS & ATTRIBUTES ============
+
+model Product {
+  id          String   @id @default(cuid())
+  sku         String   @unique
+  name        String
+  description String?
+  category    String?
+  basePrice   Float? 
+  isActive    Boolean  @default(true)
+  specifications String? @default("[]")
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images    ProductImage[]
+  files     ProductFile[]
+  dimensions ProductDimension[]
+  colors    ProductColor[]
+  textures  ProductTexture[]
+  finishes  ProductFinish[]
+  categories ProductCategory[]
+  rfpItems  RfpItem[]
+
+  @@index([isActive])
+  @@index([category])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  url       String
+  alt       String?
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model ProductFile {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      String   // 'specification' | 'dwg' | 'png'
+  name      String
+  url       String
+  size      Int?
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model CustomSizeEnquiry {
+  id          String   @id @default(cuid())
+  productId   String
+  productSku  String
+  productName String
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  dimensions  String   // JSON: { specName: value, ... }
+  quantity    Int      @default(1)
+  notes       String?
+  status      String   @default("new") // new | read | replied
+  createdAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([status])
+}
+
+model EnquiryBasket {
+  id              String        @id @default(cuid())
+  vendorProfileId String        @unique
+  vendorProfile   VendorProfile @relation(fields: [vendorProfileId], references: [id], onDelete: Cascade)
+  items           EnquiryBasketItem[]
+  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime      @default(now())
+}
+
+model EnquiryBasketItem {
+  id           String        @id @default(cuid())
+  basketId     String
+  basket       EnquiryBasket @relation(fields: [basketId], references: [id], onDelete: Cascade)
+  productId    String?
+  productSku   String?
+  productName  String
+  variantName  String?
+  colorName    String?
+  textureName  String?
+  finishName   String?
+  dimensionId  String?
+  colorId      String?
+  textureId    String?
+  finishId     String?
+  customWidth  Float?
+  customHeight Float?
+  customDepth  Float?
+  isCustom     Boolean  @default(false)
+  quantity     Int      @default(1)
+  unitPrice    Float?
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  @@index([basketId])
+}
+
+// ============ ATTRIBUTES ============
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products ProductCategory[]
+
+  @@index([sortOrder])
+}
+
+model Dimension {
+  id            String   @id @default(cuid())
+  name          String
+  width         Float? 
+  height        Float? 
+  depth         Float? 
+  label         String
+  priceModifier Float? 
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  products ProductDimension[]
+  rfpItems RfpItem[]
+}
+
+model Color {
+  id            String   @id @default(cuid())
+  name          String
+  hexCode       String?
+  ralCode       String?
+  priceModifier Float?
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  products ProductColor[]
+  rfpItems RfpItem[]
+}
+
+model Texture {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  imageUrl      String?
+  priceModifier Float? 
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  products ProductTexture[]
+  rfpItems RfpItem[]
+}
+
+model Finish {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  imageUrl      String?
+  priceModifier Float? 
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  products ProductFinish[]
+  rfpItems RfpItem[]
+}
+
+model ProductDimension {
+  productId   String
+  dimensionId String
+  product     Product   @relation(fields: [productId],   references: [id], onDelete: Cascade)
+  dimension   Dimension @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
+
+  @@id([productId, dimensionId])
+}
+
+model ProductColor {
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     Color   @relation(fields: [colorId],   references: [id], onDelete: Cascade)
+
+  @@id([productId, colorId])
+}
+
+model ProductTexture {
+  productId String
+  textureId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  texture   Texture @relation(fields: [textureId], references: [id], onDelete: Cascade)
+
+  @@id([productId, textureId])
+}
+
+model ProductFinish {
+  productId String
+  finishId  String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  finish    Finish  @relation(fields: [finishId],  references: [id], onDelete: Cascade)
+
+  @@id([productId, finishId])
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId],  references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
+}
+
+// ============ RFP SYSTEM ============
+
+model Rfp {
+  id              String        @id @default(cuid())
+  rfpNumber       String        @unique
+  vendorProfileId String
+  vendorProfile   VendorProfile @relation(fields: [vendorProfileId], references: [id])
+
+  projectName     String?
+  projectLocation String?
+  deliveryAddress String?
+  notes           String?
+
+  status      String    @default("DRAFT") // DRAFT, SUBMITTED, PENDING, QUOTED, APPROVED, REVISION_REQUESTED, DECLINED, IN_PRODUCTION, COMPLETED
+  source      String    @default("VENDOR") // VENDOR (vendor self-submitted), MANUAL (admin created on behalf of vendor)
+  createdByUserId String?
+  submittedAt DateTime?
+  expiresAt   DateTime?
+
+  quotationSentAt    DateTime?
+  quotationViewedAt  DateTime?
+  respondedAt        DateTime?
+  revisionRequest    String?
+  productionStartedAt DateTime?
+  completedAt        DateTime?
+
+  isArchived     Boolean   @default(false)
+  archivedAt     DateTime?
+
+  vendorDeleted    Boolean   @default(false)
+  vendorDeletedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items      RfpItem[]
+  quotes     RfpQuote[]
+  quotation    Quotation?  // New quotation system
+  internalNotes RfpNote[]
+
+  @@index([vendorProfileId])
+  @@index([status])
+  @@index([rfpNumber])
+  @@index([isArchived])
+}
+
+model RfpItem {
+  id    String @id @default(cuid())
+  rfpId String
+  rfp   Rfp    @relation(fields: [rfpId], references: [id], onDelete: Cascade)
+
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  productName String?
+  productSku  String?
+  isCustom    Boolean  @default(false)
+
+  dimensionId String?
+  dimension   Dimension? @relation(fields: [dimensionId], references: [id])
+
+  colorId String?
+  color   Color?  @relation(fields: [colorId], references: [id])
+
+  textureId String?
+  texture   Texture? @relation(fields: [textureId], references: [id])
+
+  finishId String?
+  finish   Finish?  @relation(fields: [finishId], references: [id])
+
+  customWidth  Float?
+  customHeight Float?
+  customDepth  Float?
+
+  // Rich custom fields (mirrors EnquiryItem)
+  variantName      String?
+  variantPrice     Float?
+  isCustomSize     Boolean @default(false)
+  customDimensions String?
+  customColorHex   String?
+  customColorRal   String?
+  customColorName  String?
+  customTextureUrl String?
+  customFinishDesc String?
+  holesOption      String?
+
+  quantity   Int
+  notes      String?
+  unitPrice  Float?
+  totalPrice Float?
+
+  createdAt DateTime @default(now())
+
+  @@index([rfpId])
+  @@index([productId])
+}
+
+model RfpQuote {
+  id        String @id @default(cuid())
+  rfpId     String
+  rfp       Rfp    @relation(fields: [rfpId], references: [id], onDelete: Cascade)
+
+  quotedById String
+  quotedBy   User   @relation(fields: [quotedById], references: [id])
+
+  subtotal Float  
+  discount Float? 
+  tax      Float? 
+  shipping Float? 
+  total    Float  
+
+  validUntil      DateTime
+  terms           String?
+  notes           String?
+  productionDays  Int?
+  deliveryDays    Int?
+  deliveryCharges Float?
+
+  sentAt    DateTime?
+  viewedAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([rfpId])
+}
+
+// ============ ENQUIRY (cart-like, session-linked to user) ============
+
+model EnquiryItem {
+  id     String @id @default(cuid())
+  userId String
+
+  productId String
+
+  // Standard selections
+  dimensionId String?
+  colorId     String?
+  textureId   String?
+  finishId    String?
+
+  // Custom size (legacy 3-field)
+  customWidth  Float?
+  customHeight Float?
+  customDepth  Float?
+
+  // Variant selected from specifications JSON
+  variantName  String?
+  variantPrice Float?
+
+  // Custom size (rich: [{label,value,unit}] JSON)
+  isCustomSize     Boolean @default(false)
+  customDimensions String? // JSON array
+
+  // Custom colour
+  customColorHex  String?
+  customColorRal  String?
+  customColorName String?
+
+  // Custom texture
+  customTextureUrl String?
+
+  // Custom finish
+  customFinishDesc String?
+
+  // Holes option
+  holesOption String? // "with_holes" | "without_holes"
+
+  quantity  Int
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ============ RFP INTERNAL NOTES ============
+
+model RfpNote {
+  id        String   @id @default(cuid())
+  rfpId     String
+  rfp       Rfp      @relation(fields: [rfpId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([rfpId, createdAt])
+  @@index([userId])
+}
+
+// ============ AUDIT LOG ============
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============ QUOTATION SYSTEM ============
+
+model Quotation {
+  id              String            @id @default(cuid())
+  rfpId           String            @unique
+  rfp             Rfp               @relation(fields: [rfpId], references: [id], onDelete: Cascade)
+
+  items           QuotationItem[]
+  subtotal        Float
+  tax             Float?
+  total           Float
+
+  validUntil      DateTime
+  terms           String?
+  notes           String?
+  status          String            @default("DRAFT") // DRAFT, SENT, VIEWED, APPROVED, REVISION_REQUESTED, DECLINED
+  sentAt          DateTime?
+  respondedAt     DateTime?
+  vendorResponse  String?           // APPROVE, DECLINE, REQUEST_REVISION
+  vendorNotes     String?         
+  createdBy       String
+  createdByUser   User              @relation(fields: [createdBy], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  productionOrder ProductionOrder?
+
+  @@index([rfpId])
+  @@index([status])
+  @@index([createdBy])
+}
+
+model QuotationItem {
+  id              String      @id @default(cuid())
+  quotationId     String
+  quotation       Quotation   @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  rfpItemId       String
+  description     String
+  specifications  String      // JSON: dimensions, color, texture, finish
+  quantity        Int
+  unitPrice       Float
+  totalPrice      Float
+
+  @@index([quotationId])
+  @@index([rfpItemId])
+}
+
+// ============ PRODUCTION SYSTEM ============
+
+model ProductionOrder {
+  id                  String              @id @default(cuid())
+  quotationId         String              @unique
+  quotation           Quotation           @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  orderNumber         String              @unique // e.g., "PO-2026-0001"
+  status              String              @default("QUEUED") // QUEUED, APPROVED, IN_PROGRESS, ON_HOLD, COMPLETED, CANCELLED
+  priority            String              @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+
+  // Timeline
+  estimatedDays       Int?
+  startDate           DateTime?
+  estimatedCompletion DateTime?
+  actualCompletion    DateTime?
+
+  // Manager Approval
+  managerApprovedBy   String?
+  managerApprovedUser User?              @relation(fields: [managerApprovedBy], references: [id])
+  managerApprovedAt   DateTime?
+  managerNotes        String?           
+  // Production Tracking
+  currentStage        String              @default("PENDING") // PENDING, MOLDING, DRYING, FINISHING, GLAZING, QUALITY_CHECK, PACKAGING, READY
+  productionNotes     String?
+  statusHistory       ProductionStatusLog[]
+
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@index([quotationId])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([priority])
+}
+
+model ProductionStatusLog {
+  id                String          @id @default(cuid())
+  productionOrderId String
+  productionOrder   ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+
+  fromStage         String
+  toStage           String
+  notes             String?       
+  updatedBy         String
+  updatedByUser     User            @relation(fields: [updatedBy], references: [id])
+  updatedByRole     String          // ADMIN, MANAGER, PRODUCTION
+
+  createdAt         DateTime        @default(now())
+
+  @@index([productionOrderId])
+  @@index([updatedBy])
+  @@index([createdAt])
+}
+
+// ============ CUSTOM DESIGN REQUESTS ============
+
+model CustomDesignRequest {
+  id              String        @id @default(cuid())
+  vendorProfileId String
+  vendorProfile   VendorProfile @relation(fields: [vendorProfileId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?
+  quantity        Int           @default(1)
+
+  // Catalog selections
+  colorId         String?
+  textureId       String?
+  finishId        String?
+
+  // Custom overrides
+  customColorHex  String?
+  customColorName String?
+  customColorRal  String?
+  customTexture   String?
+  customTextureUrl String?
+
+  // Dimensions JSON: [{id, label, value, unit}]
+  dimensions      String?       @default("[]")
+
+  // Hole/drainage option
+  holesOption     String?
+
+  // Additional notes
+  notes           String?
+
+  // Uploaded reference images JSON: [{url, name}]
+  referenceImages String?       @default("[]")
+
+  // Workflow status
+  status          String        @default("pending")
+  adminNotes      String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([vendorProfileId])
+  @@index([status])
+}
+
+// ============ SITE SETTINGS ============
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ============ HERO BANNERS ============
+
+model HeroBanner {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// ============ LOGIN SLIDES ============
+
+model LoginSlide {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  headline  String
+  subtext   String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+}

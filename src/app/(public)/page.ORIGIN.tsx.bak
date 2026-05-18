@@ -1,0 +1,272 @@
+import Link from 'next/link'
+import { ArrowRight, CheckCircle2, Package, Ruler, Palette } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
+import { ProductCarousel } from './ProductCarousel'
+
+const STEPS = [
+  { n: 1, title: 'Request Access',    desc: 'Submit your company details. Our team approves qualified vendors within 24–48 hours.'                         },
+  { n: 2, title: 'Browse & Customize',desc: 'Explore our collection. Select dimensions, colors, textures, and finishes for each piece.'                  },
+  { n: 3, title: 'Submit RFP',        desc: 'Add customized items to your enquiry and submit a formal Request for Proposal with project details.'        },
+  { n: 4, title: 'Receive Quote',     desc: 'Our team prepares a detailed quotation with unit pricing, totals, and delivery terms within 1–2 days.'     },
+]
+
+const CAPABILITIES = [
+  {
+    Icon:  Package,
+    title: 'Any Quantity',
+    desc:  'From a single prototype to 10,000-unit orders. Our capacity scales with your project without compromising quality or lead times.',
+  },
+  {
+    Icon:  Ruler,
+    title: 'Custom Dimensions',
+    desc:  'Need a specific size? Submit custom measurements with your RFP. We manufacture to millimetre precision across all product lines.',
+  },
+  {
+    Icon:  Palette,
+    title: 'Full Customization',
+    desc:  'Choose from 8 colors, 6 textures, and 5 finishes — or request a bespoke combination to match your project\'s exact aesthetic.',
+  },
+]
+
+export default async function LandingPage() {
+  // Fetch featured active products (up to 8), fall back to any active products
+  let products = await prisma.product.findMany({
+    where:   { isActive: true, isFeatured: true },
+    orderBy: { createdAt: 'desc' },
+    take:    8,
+    include: {
+      images:     { orderBy: { sortOrder: 'asc' }, take: 1 },
+      categories: { include: { category: true }, take: 1 },
+    },
+  })
+
+  // If no featured, fall back to any active products
+  if (products.length === 0) {
+    products = await prisma.product.findMany({
+      where:   { isActive: true },
+      orderBy: { createdAt: 'desc' },
+      take:    8,
+      include: {
+        images:     { orderBy: { sortOrder: 'asc' }, take: 1 },
+        categories: { include: { category: true }, take: 1 },
+      },
+    })
+  }
+
+  return (
+    <>
+      {/* ── HERO ────────────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-cream pt-24 pb-16">
+        {/* Dot grid texture */}
+        <div className="absolute inset-0 bg-dot-grid opacity-100 pointer-events-none" aria-hidden="true" />
+        {/* Warm radial glow */}
+        <div className="absolute -top-32 right-0 w-[600px] h-[600px] rounded-full bg-gradient-radial from-terracotta/6 to-transparent pointer-events-none" aria-hidden="true" />
+
+        <div className="section-container grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center w-full">
+          {/* Content */}
+          <div>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-sage/15 border border-sage/40 text-[#4A7A3D] px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-sage animate-pulse-dot" aria-hidden="true" />
+              UAE's Premier Manufacturer
+            </div>
+
+            <h1 className="font-heading text-5xl lg:text-6xl font-bold text-[#1C1C1C] leading-[1.08] tracking-tight mb-6">
+              Crafted to Order.<br />
+              <em className="text-terracotta not-italic">Built to Last.</em>
+            </h1>
+
+            <p className="text-[#6B6B6B] text-lg leading-relaxed mb-8 max-w-lg">
+              UAE's premium custom pot manufacturer for interior designers, landscapers &amp; commercial projects.
+              Any size. Any quantity.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link href="/request-access" className="btn-primary btn-lg">
+                Request Vendor Access
+                <ArrowRight size={18} aria-hidden="true" />
+              </Link>
+              <Link href="#products" className="btn-secondary btn-lg">
+                View Collection
+              </Link>
+            </div>
+
+            {/* Trust signals */}
+            <div className="mt-10 flex flex-wrap gap-5 text-sm text-[#6B6B6B]">
+              {['500+ Active Vendors', 'UAE-Based Production', 'Custom Sizes Available'].map((t) => (
+                <div key={t} className="flex items-center gap-1.5">
+                  <CheckCircle2 size={15} className="text-sage shrink-0" aria-hidden="true" />
+                  {t}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CSS Pot Illustration */}
+          <div className="hidden lg:flex items-center justify-center" aria-label="Decorative illustration of custom pots" role="img">
+            <div className="relative w-[380px] h-[420px] animate-float">
+              {/* Large terracotta cylinder */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+                <div className="relative w-44 h-56">
+                  {/* Rim */}
+                  <div className="absolute -top-3 -left-2.5 -right-2.5 h-6 bg-gradient-to-r from-[#C4683A] to-[#B35C2A] rounded-md shadow-md" />
+                  {/* Body */}
+                  <div className="h-full bg-gradient-to-br from-[#C4683A] via-[#B35C2A] to-[#8B4520] rounded-t-sm rounded-b-2xl shadow-[−8px_16px_40px_rgba(28,28,28,0.2),inset_-14px_0_30px_rgba(0,0,0,0.15)]" />
+                  {/* Plant */}
+                  <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-16 h-24 bg-gradient-to-b from-[#4A7A3D] to-[#3D6533] rounded-t-[50%] rounded-b-sm" />
+                </div>
+              </div>
+
+              {/* Small dark square pot */}
+              <div className="absolute top-10 left-4">
+                <div className="relative w-28 h-28">
+                  <div className="absolute -top-2 -left-1.5 -right-1.5 h-4 bg-[#4A5657] rounded-sm" />
+                  <div className="h-full bg-gradient-to-br from-[#5E6B6C] via-[#3D4446] to-[#2D3436] rounded-t-sm rounded-b-xl shadow-[−4px_10px_24px_rgba(28,28,28,0.25)]" />
+                  {/* Plant */}
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex gap-2">
+                    <div className="w-8 h-10 bg-[#87A878] rounded-t-full rounded-b-sm" />
+                    <div className="w-8 h-12 bg-[#6B9264] rounded-t-full rounded-b-sm -mt-2" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Conical beige pot */}
+              <div className="absolute top-20 right-8" style={{ clipPath: 'polygon(14% 0%, 86% 0%, 100% 100%, 0% 100%)' }}>
+                <div className="w-24 h-28 bg-gradient-to-br from-[#D4A574] via-[#B8895A] to-[#9A6E40] shadow-[−4px_12px_24px_rgba(28,28,28,0.2)]" />
+              </div>
+
+              {/* Shadow */}
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-72 h-5 rounded-full bg-gradient-radial from-black/20 to-transparent" aria-hidden="true" />
+
+              {/* Deco rings */}
+              <div className="absolute top-4 right-6 w-14 h-14 rounded-full border-2 border-terracotta/20" aria-hidden="true" />
+              <div className="absolute bottom-16 left-8 w-8 h-8 rounded-full bg-sage/15" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BAR ───────────────────────────────────────────── */}
+      <div className="bg-charcoal py-10" aria-label="Company statistics">
+        <div className="section-container grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+          {[
+            { n: '500+', label: 'Active Vendors'           },
+            { n: '∞',    label: 'Custom Sizes Available'   },
+            { n: 'UAE',  label: 'Based Production'         },
+          ].map((s) => (
+            <div key={s.label} className="text-center py-6 px-8">
+              <span className="block font-heading text-3xl font-bold text-cream mb-1.5">{s.n}</span>
+              <span className="text-xs uppercase tracking-widest text-cream/50 font-medium">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── HOW IT WORKS ────────────────────────────────────────── */}
+      <section id="how-it-works" className="py-24 bg-cream">
+        <div className="section-container">
+          <p className="section-label">Process</p>
+          <h2 className="section-title mb-4">How It Works</h2>
+          <p className="section-sub mb-16">Our vendor portal streamlines the entire process from product discovery to final quotation.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+            {/* Dashed connector (desktop only) */}
+            <div className="hidden lg:block absolute top-7 left-14 right-14 h-px border-t-2 border-dashed border-terracotta/20" aria-hidden="true" />
+
+            {STEPS.map((s) => (
+              <div key={s.n} className="text-center relative">
+                <div className="w-14 h-14 rounded-full bg-terracotta text-white flex items-center justify-center font-heading text-xl font-bold mx-auto mb-5 relative z-10 shadow-warm">
+                  {s.n}
+                </div>
+                <h3 className="font-heading font-semibold text-base text-[#1C1C1C] mb-2">{s.title}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCTS ─────────────────────────────────────────────── */}
+      <section id="products" className="py-24 bg-cream-dark">
+        <div className="section-container">
+          <p className="section-label">Our Collection</p>
+          <h2 className="section-title mb-4">Signature Designs</h2>
+          <p className="section-sub mb-12">Click any pot to explore available dimensions, colors, textures, and finishes.</p>
+
+          {products.length > 0 ? (
+            <ProductCarousel
+              products={products.map(p => ({
+                id:         p.id,
+                sku:        p.sku,
+                name:       p.name,
+                isFeatured: p.isFeatured,
+                imageUrl:   p.images[0]?.url ?? null,
+                category:   p.categories[0]?.category.name ?? p.category ?? null,
+              }))}
+            />
+          ) : (
+            <div className="text-center py-16 text-[#6B6B6B]">
+              <Package size={40} className="mx-auto mb-4 opacity-30" />
+              <p className="text-sm">Collection coming soon.</p>
+            </div>
+          )}
+
+          <div className="text-center mt-10">
+            <Link href="/request-access" className="btn-outline-terra btn-lg">
+              Request Access to View Full Catalog
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CAPABILITIES ────────────────────────────────────────── */}
+      <section className="py-24 bg-charcoal" aria-labelledby="cap-title">
+        <div className="section-container">
+          <p className="section-label text-sage">Why Forestry</p>
+          <h2 className="section-title text-cream mb-4" id="cap-title">
+            Built for Volume.<br />Designed for Detail.
+          </h2>
+          <p className="section-sub text-cream/55 mb-14">We don't do off-the-shelf. Every piece is manufactured to your exact specifications, at any scale.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {CAPABILITIES.map(({ Icon, title, desc }) => (
+              <div
+                key={title}
+                className="bg-white/4 border border-white/8 rounded-2xl p-8 hover:bg-terracotta/8 hover:border-terracotta/30 hover:-translate-y-1 transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-xl bg-terracotta/15 flex items-center justify-center mb-5 text-terracotta-light">
+                  <Icon size={22} aria-hidden="true" />
+                </div>
+                <h3 className="font-heading font-semibold text-lg text-cream mb-2">{title}</h3>
+                <p className="text-sm text-cream/50 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA SECTION ─────────────────────────────────────────── */}
+      <section className="py-28 bg-cream text-center relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+          <div className="w-[600px] h-[600px] rounded-full bg-terracotta/5" />
+        </div>
+        <div className="section-container">
+          <p className="section-label justify-center flex">Get Started</p>
+          <h2 className="section-title mx-auto mb-5 max-w-2xl text-center">Ready to Explore the Collection?</h2>
+          <p className="section-sub mx-auto text-center mb-9">
+            Join 500+ approved vendors who trust Forestry for their commercial and residential projects across the UAE.
+          </p>
+          <Link href="/request-access" className="btn-primary btn-lg text-base">
+            Request Vendor Access
+            <ArrowRight size={18} aria-hidden="true" />
+          </Link>
+          <p className="mt-5 text-sm text-[#6B6B6B] flex items-center justify-center gap-2">
+            <CheckCircle2 size={14} className="text-sage" aria-hidden="true" />
+            Approved vendors get exclusive access to pricing, customizer &amp; RFP system
+          </p>
+        </div>
+      </section>
+    </>
+  )
+}
+

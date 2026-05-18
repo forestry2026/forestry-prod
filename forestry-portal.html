@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forestry — Custom Pot Manufacturing UAE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    /* =====================
+       CSS CUSTOM PROPERTIES
+       ===================== */
+    :root {
+      --terracotta: #B35C2A;
+      --terracotta-dark: #8B4520;
+      --terracotta-light: #D4784A;
+      --charcoal: #2D3436;
+      --charcoal-light: #3D4446;
+      --sage: #87A878;
+      --sage-light: #A3C094;
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --white: #FFFFFF;
+      --text: #1C1C1C;
+      --muted: #6B6B6B;
+      --border: #E8E0D5;
+      --shadow-warm: 0 4px 24px rgba(179, 92, 42, 0.12);
+      --shadow-card: 0 8px 32px rgba(28, 28, 28, 0.08);
+      --shadow-lg: 0 20px 60px rgba(28, 28, 28, 0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+      --radius-lg: 24px;
+      --font-heading: 'Zilla Slab', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* =====================
+       RESET & BASE
+       ===================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: var(--font-heading);
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: var(--font-body);
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--terracotta);
+      outline-offset: 2px;
+    }
+
+    input, textarea, select {
+      font-family: var(--font-body);
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* =====================
+       PAGE SYSTEM
+       ===================== */
+    .page {
+      display: none;
+      min-height: 100vh;
+    }
+    .page.active {
+      display: block;
+    }
+
+    /* =====================
+       NAVBAR
+       ===================== */
+    .navbar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 1000;
+      border-radius: var(--radius);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), box-shadow var(--transition), backdrop-filter var(--transition);
+      background: transparent;
+    }
+
+    .navbar.scrolled {
+      background: rgba(250, 247, 242, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .navbar-logo-text {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+
+    .navbar-logo-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--terracotta);
+    }
+
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .navbar-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--charcoal);
+      transition: color var(--transition);
+      letter-spacing: 0.02em;
+    }
+
+    .navbar-links a:hover {
+      color: var(--terracotta);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all var(--transition);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: white;
+      box-shadow: 0 2px 8px rgba(179, 92, 42, 0.35);
+    }
+    .btn-primary:hover {
+      background: var(--terracotta-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(179, 92, 42, 0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--charcoal);
+      border: 1.5px solid var(--charcoal);
+    }
+    .btn-secondary:hover {
+      background: var(--charcoal);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-terra {
+      background: transparent;
+      color: var(--terracotta);
+      border: 1.5px solid var(--terracotta);
+    }
+    .btn-outline-terra:hover {
+      background: var(--terracotta);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-lg {
+      padding: 14px 32px;
+      font-size: 1rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .navbar-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--charcoal);
+    }
+
+    /* =====================
+       HERO SECTION
+       ===================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--cream);
+      padding: 100px 0 60px;
+    }
+
+    /* Dot grid texture */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(179,92,42,0.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    /* Warm gradient blob */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(179,92,42,0.07) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(135, 168, 120, 0.15);
+      color: #4A7A3D;
+      border: 1px solid rgba(135, 168, 120, 0.4);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--sage);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    .hero-headline {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--terracotta);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      max-width: 480px;
+      font-weight: 400;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* CSS Pot Illustration */
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      height: 480px;
+    }
+
+    .pot-scene {
+      position: relative;
+      width: 360px;
+      height: 400px;
+    }
+
+    /* Large cylinder pot */
+    .pot-main {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 220px;
+      background: linear-gradient(135deg, #C4683A 0%, #B35C2A 40%, #8B4520 100%);
+      border-radius: 8px 8px 20px 20px;
+      box-shadow: -8px 16px 40px rgba(28,28,28,0.2), inset -12px 0 30px rgba(0,0,0,0.15);
+    }
+
+    .pot-main::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -10px;
+      right: -10px;
+      height: 24px;
+      background: linear-gradient(135deg, #D4784A, #B35C2A);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Plant in main pot */
+    .pot-main::after {
+      content: '';
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 90px;
+      background: linear-gradient(180deg, #4A7A3D 0%, #3D6533 100%);
+      clip-path: ellipse(30px 45px at 50% 100%);
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* Small square planter */
+    .pot-small-1 {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 110px;
+      height: 100px;
+      background: linear-gradient(135deg, #5E6B6C, #2D3436, #1A2324);
+      border-radius: 6px 6px 12px 12px;
+      box-shadow: -4px 8px 24px rgba(28,28,28,0.25), inset -6px 0 16px rgba(0,0,0,0.2);
+    }
+
+    .pot-small-1::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -5px;
+      right: -5px;
+      height: 16px;
+      background: #4A5657;
+      border-radius: 4px;
+    }
+
+    .pot-small-1::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+      background: #87A878;
+      border-radius: 50% 50% 30% 30%;
+      box-shadow: 10px -10px 0 #6B9264, -10px -8px 0 #79966B;
+    }
+
+    /* Conical pot */
+    .pot-small-2 {
+      position: absolute;
+      top: 80px;
+      right: 10px;
+      width: 90px;
+      height: 110px;
+      background: linear-gradient(135deg, #D4A574, #B8895A, #9A6E40);
+      clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+      border-radius: 0 0 8px 8px;
+      box-shadow: -4px 12px 24px rgba(28,28,28,0.2);
+    }
+
+    .pot-small-2::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 5%;
+      right: 5%;
+      height: 18px;
+      background: linear-gradient(135deg, #E0B886, #C89A68);
+      border-radius: 4px 4px 0 0;
+    }
+
+    /* Decorative floating shapes */
+    .deco-circle-1 {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(179,92,42,0.2);
+      border-radius: 50%;
+    }
+
+    .deco-circle-2 {
+      position: absolute;
+      bottom: 60px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(135,168,120,0.15);
+      border-radius: 50%;
+    }
+
+    .deco-line {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--terracotta), transparent);
+      opacity: 0.3;
+    }
+
+    /* Shadow under pots */
+    .pot-shadow {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 20px;
+      background: radial-gradient(ellipse, rgba(28,28,28,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* Floating grain texture over pots */
+    .hero-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.5;
+      border-radius: var(--radius);
+    }
+
+    /* =====================
+       STATS BAR
+       ===================== */
+    .stats-bar {
+      background: var(--charcoal);
+      padding: 40px 32px;
+    }
+
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 16px 32px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cream);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(250,247,242,0.6);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* =====================
+       HOW IT WORKS
+       ===================== */
+    .section {
+      padding: 100px 32px;
+    }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--terracotta);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 60px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 56px;
+      right: 56px;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, var(--terracotta) 0, var(--terracotta) 8px, transparent 8px, transparent 18px);
+      opacity: 0.3;
+    }
+
+    .step-item {
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      background: var(--terracotta);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 16px rgba(179,92,42,0.35);
+    }
+
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* =====================
+       PRODUCT CATALOG
+       ===================== */
+    .products-section {
+      background: var(--cream-dark);
+      padding: 100px 32px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-image {
+      height: 200px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      padding-bottom: 16px;
+    }
+
+    .product-image-bg-1 { background: linear-gradient(160deg, #F0E6DA 0%, #E8D5C4 50%, #DEC4AA 100%); }
+    .product-image-bg-2 { background: linear-gradient(160deg, #E8EAED 0%, #D4D8DC 50%, #C0C8CE 100%); }
+    .product-image-bg-3 { background: linear-gradient(160deg, #E6EDE4 0%, #D4E0D0 50%, #BFCFBA 100%); }
+    .product-image-bg-4 { background: linear-gradient(160deg, #F5EFE6 0%, #EDE0CC 50%, #E0CEB0 100%); }
+
+    /* CSS Pot shapes for product cards */
+    .mini-pot {
+      position: relative;
+      margin-top: auto;
+    }
+
+    .mini-pot-cylinder {
+      width: 70px;
+      height: 90px;
+      background: linear-gradient(135deg, #C4683A, #8B4520);
+      border-radius: 4px 4px 12px 12px;
+      position: relative;
+      box-shadow: -4px 8px 16px rgba(0,0,0,0.15);
+    }
+    .mini-pot-cylinder::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -6px;
+      right: -6px;
+      height: 14px;
+      background: #C4683A;
+      border-radius: 3px;
+    }
+
+    .mini-pot-square {
+      width: 78px;
+      height: 78px;
+      background: linear-gradient(135deg, #5E6B6C, #2D3436);
+      border-radius: 4px 4px 8px 8px;
+      box-shadow: -4px 8px 16px rgba(0,0,0,0.2);
+    }
+    .mini-pot-square::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: -5px;
+      right: -5px;
+      height: 12px;
+      background: #4A5657;
+      border-radius: 3px;
+    }
+
+    .mini-pot-rect {
+      width: 110px;
+      height: 60px;
+      background: linear-gradient(135deg, #87A878, #5A7A50);
+      border-radius: 4px 4px 8px 8px;
+      box-shadow: -4px 8px 16px rgba(0,0,0,0.15);
+    }
+    .mini-pot-rect::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: -4px;
+      right: -4px;
+      height: 12px;
+      background: #9DBC8D;
+      border-radius: 3px;
+    }
+
+    .mini-pot-cone {
+      width: 65px;
+      height: 85px;
+      background: linear-gradient(135deg, #D4A574, #9A6E40);
+      clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+      box-shadow: -4px 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .product-card-body {
+      padding: 20px;
+    }
+
+    .product-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: rgba(135,168,120,0.15);
+      color: #4A7A3D;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .product-name {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .product-cta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--terracotta);
+      transition: gap var(--transition), color var(--transition);
+    }
+    .product-card:hover .product-cta {
+      gap: 10px;
+    }
+
+    /* =====================
+       CAPABILITIES SECTION
+       ===================== */
+    .capabilities-section {
+      background: var(--charcoal);
+      padding: 100px 32px;
+    }
+
+    .capabilities-section .section-label { color: var(--sage); }
+    .capabilities-section .section-title { color: var(--cream); }
+    .capabilities-section .section-sub { color: rgba(250,247,242,0.6); }
+
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    .capability-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
+    }
+    .capability-card:hover {
+      background: rgba(179,92,42,0.08);
+      border-color: rgba(179,92,42,0.3);
+      transform: translateY(-4px);
+    }
+
+    .cap-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(179,92,42,0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--terracotta-light);
+    }
+
+    .cap-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    .cap-desc {
+      font-size: 0.9rem;
+      color: rgba(250,247,242,0.55);
+      line-height: 1.7;
+    }
+
+    /* =====================
+       CTA SECTION
+       ===================== */
+    .cta-section {
+      padding: 120px 32px;
+      background: var(--cream);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(179,92,42,0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.02em;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+
+    .cta-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .cta-note {
+      margin-top: 20px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* =====================
+       FOOTER
+       ===================== */
+    footer {
+      background: var(--charcoal);
+      padding: 60px 32px 32px;
+      color: rgba(250,247,242,0.7);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 28px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .footer-logo-text {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+    }
+
+    .footer-desc {
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: rgba(250,247,242,0.5);
+      max-width: 280px;
+    }
+
+    .footer-heading {
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--cream);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 0.875rem;
+      color: rgba(250,247,242,0.55);
+      transition: color var(--transition);
+    }
+    .footer-links a:hover {
+      color: var(--terracotta-light);
+    }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.875rem;
+      color: rgba(250,247,242,0.55);
+      margin-bottom: 12px;
+    }
+    .footer-contact-item svg {
+      color: var(--terracotta);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: rgba(250,247,242,0.35);
+    }
+
+    /* =====================
+       REQUEST ACCESS PAGE
+       ===================== */
+    #page-request {
+      background: var(--cream);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+
+    .request-page-inner {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 32px;
+    }
+
+    .request-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 52px;
+      width: 100%;
+      max-width: 560px;
+      border: 1px solid var(--border);
+    }
+
+    .request-card-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .request-card-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(179,92,42,0.1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: var(--terracotta);
+    }
+
+    .request-card-title {
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .request-card-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+
+    .form-label span.optional {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-left: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.925rem;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(179,92,42,0.12);
+      background: white;
+    }
+
+    .form-input::placeholder {
+      color: rgba(107,107,107,0.5);
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--terracotta);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(179,92,42,0.35);
+    }
+    .form-submit-btn:hover {
+      background: var(--terracotta-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(179,92,42,0.45);
+    }
+
+    .form-divider {
+      text-align: center;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      position: relative;
+    }
+    .form-divider::before, .form-divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: var(--border);
+    }
+    .form-divider::before { left: 0; }
+    .form-divider::after { right: 0; }
+
+    .form-link {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .form-link a {
+      color: var(--terracotta);
+      font-weight: 600;
+    }
+    .form-link a:hover { text-decoration: underline; }
+
+    /* Success state */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(135,168,120,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: #4A7A3D;
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .success-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 340px;
+      margin: 0 auto 28px;
+    }
+
+    /* =====================
+       LOGIN PAGE
+       ===================== */
+    #page-login {
+      background: var(--cream);
+      min-height: 100vh;
+    }
+
+    .login-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    .login-visual {
+      background: var(--charcoal);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(179,92,42,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .login-visual-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .login-visual-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 48px;
+    }
+
+    .login-visual-logo-text {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+    }
+
+    /* Login visual pot scene */
+    .login-pot-scene {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto 40px;
+    }
+
+    .login-pot-main {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 170px;
+      background: linear-gradient(135deg, #C4683A, #8B4520);
+      border-radius: 6px 6px 16px 16px;
+      box-shadow: -6px 12px 32px rgba(0,0,0,0.3), inset -8px 0 20px rgba(0,0,0,0.2);
+    }
+    .login-pot-main::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -8px;
+      right: -8px;
+      height: 18px;
+      background: #C4683A;
+      border-radius: 4px;
+    }
+    .login-pot-main::after {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 70px;
+      background: linear-gradient(180deg, #4A7A3D, #3D6533);
+      clip-path: ellipse(25px 35px at 50% 100%);
+    }
+
+    .login-pot-small {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      width: 80px;
+      height: 90px;
+      background: linear-gradient(135deg, #D4A574, #9A6E40);
+      clip-path: polygon(14% 0%, 86% 0%, 100% 100%, 0% 100%);
+      box-shadow: -3px 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .login-pot-square {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      width: 80px;
+      height: 75px;
+      background: linear-gradient(135deg, #5E6B6C, #2D3436);
+      border-radius: 4px 4px 8px 8px;
+      box-shadow: -3px 8px 16px rgba(0,0,0,0.25);
+    }
+
+    .login-visual-quote {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: rgba(250,247,242,0.7);
+      line-height: 1.6;
+      max-width: 300px;
+    }
+
+    .login-visual-quote::before {
+      content: '"';
+      font-size: 3rem;
+      color: var(--terracotta);
+      display: block;
+      line-height: 0.8;
+      margin-bottom: 12px;
+    }
+
+    .login-form-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+      background: var(--cream);
+    }
+
+    .login-form-inner {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-form-header {
+      margin-bottom: 36px;
+    }
+
+    .login-form-title {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .login-form-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .forgot-link {
+      font-size: 0.8rem;
+      color: var(--terracotta);
+      font-weight: 500;
+      float: right;
+      margin-top: -2px;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* =====================
+       ANIMATIONS
+       ===================== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .animate-fade-up {
+      animation: fadeInUp 0.7s ease forwards;
+      opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.25s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.55s; }
+    .delay-5 { animation-delay: 0.7s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =====================
+       MOBILE MENU
+       ===================== */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(250,247,242,0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      transition: color var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--terracotta); }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--charcoal);
+    }
+
+    /* =====================
+       RESPONSIVE
+       ===================== */
+    @media (max-width: 1024px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+      .steps-grid::before { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-links { display: none; }
+      .navbar-cta-desktop { display: none; }
+      .navbar-menu-toggle { display: block; }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+
+      .hero-visual { height: 280px; }
+      .hero-badge { margin-left: auto; margin-right: auto; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .pot-scene { transform: scale(0.8); }
+
+      .stats-inner { grid-template-columns: 1fr; gap: 0; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      .stat-item:last-child { border-bottom: none; }
+
+      .steps-grid { grid-template-columns: 1fr; }
+
+      .products-grid { grid-template-columns: 1fr 1fr; }
+
+      .capabilities-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+
+      .login-split { grid-template-columns: 1fr; }
+      .login-visual { min-height: 300px; padding: 48px 32px; }
+      .login-pot-scene { width: 200px; height: 180px; transform: scale(0.75); }
+
+      .request-card { padding: 36px 24px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+
+      .section { padding: 72px 20px; }
+      .products-section { padding: 72px 20px; }
+      .capabilities-section { padding: 72px 20px; }
+      .cta-section { padding: 80px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .btn-lg { width: 100%; justify-content: center; }
+      .login-form-side { padding: 40px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="navbar-logo" onclick="showPage('home')" role="link" aria-label="Forestry home" tabindex="0" onkeydown="if(event.key==='Enter')showPage('home')">
+    <svg class="navbar-logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M14 4C14 4 8 9 8 15C8 18.866 10.686 22 14 22C17.314 22 20 18.866 20 15C20 9 14 4 14 4Z" fill="currentColor" opacity="0.9"/>
+      <path d="M14 22V26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10 18C10 18 6 17 5 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+      <path d="M18 18C18 18 22 17 23 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+    <span class="navbar-logo-text">FORESTRY</span>
+  </div>
+
+  <ul class="navbar-links" role="list">
+    <li><a href="#products" onclick="scrollToSection('products')">Products</a></li>
+    <li><a href="#about" onclick="scrollToSection('how-it-works')">About</a></li>
+    <li><a href="#contact" onclick="scrollToSection('contact')">Contact</a></li>
+  </ul>
+
+  <div class="navbar-cta-desktop">
+    <button class="btn btn-primary" onclick="showPage('request')" aria-label="Request vendor access">
+      Request Access
+    </button>
+  </div>
+
+  <button class="navbar-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false" id="menu-toggle">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+  <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <a href="#products" onclick="toggleMobileMenu(); scrollToSection('products')">Products</a>
+  <a href="#about" onclick="toggleMobileMenu(); scrollToSection('how-it-works')">About</a>
+  <a href="#contact" onclick="toggleMobileMenu(); scrollToSection('contact')">Contact</a>
+  <button class="btn btn-primary btn-lg" onclick="toggleMobileMenu(); showPage('request')">Request Access</button>
+</div>
+
+<!-- ===================== PAGE: HOME ===================== -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-headline">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge animate-fade-up delay-1">
+          <span class="hero-badge-dot" aria-hidden="true"></span>
+          UAE's Premier Manufacturer
+        </div>
+
+        <h1 class="hero-headline animate-fade-up delay-2" id="hero-headline">
+          Crafted to Order.<br/><em>Built to Last.</em>
+        </h1>
+
+        <p class="hero-sub animate-fade-up delay-3">
+          UAE's premium custom pot manufacturer for interior designers, landscapers &amp; commercial projects. Any size. Any quantity.
+        </p>
+
+        <div class="hero-ctas animate-fade-up delay-4">
+          <button class="btn btn-primary btn-lg" onclick="showPage('request')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 21-3-3m0 0a5 5 0 1 0-7.07-7.07A5 5 0 0 0 19 18z"/>
+            </svg>
+            Request Vendor Access
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="scrollToSection('products')">
+            View Collection
+          </button>
+        </div>
+      </div>
+
+      <!-- CSS Pot Illustration -->
+      <div class="hero-visual animate-fade-up delay-5" aria-label="Decorative illustration of custom pots" role="img">
+        <div class="pot-scene animate-float">
+          <div class="pot-small-1" aria-hidden="true"></div>
+          <div class="pot-small-2" aria-hidden="true"></div>
+          <div class="pot-main" aria-hidden="true"></div>
+          <div class="pot-shadow" aria-hidden="true"></div>
+          <div class="deco-circle-1" aria-hidden="true"></div>
+          <div class="deco-circle-2" aria-hidden="true"></div>
+          <div class="deco-line" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar" aria-label="Company statistics">
+    <div class="stats-inner">
+      <div class="stat-item reveal">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">Active Vendors</span>
+      </div>
+      <div class="stat-item reveal">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Custom Sizes Available</span>
+      </div>
+      <div class="stat-item reveal">
+        <span class="stat-number">UAE</span>
+        <span class="stat-label">Based Production</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how-it-works" aria-labelledby="hiw-title">
+    <div class="section-inner">
+      <p class="section-label reveal">Process</p>
+      <h2 class="section-title reveal" id="hiw-title">How It Works</h2>
+      <p class="section-sub reveal">Our vendor portal streamlines the entire process from product discovery to final quotation.</p>
+
+      <div class="steps-grid">
+        <div class="step-item reveal">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Request Access</h3>
+          <p class="step-desc">Submit your company details. Our team reviews and approves qualified vendors within 24–48 hours.</p>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Browse &amp; Customize</h3>
+          <p class="step-desc">Explore our full collection. Select dimensions, colors, textures, and finishes for each product.</p>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Submit RFP</h3>
+          <p class="step-desc">Add customized items to your enquiry list and submit a formal Request for Proposal with project details.</p>
+        </div>
+        <div class="step-item reveal">
+          <div class="step-number">4</div>
+          <h3 class="step-title">Receive Quote</h3>
+          <p class="step-desc">Our team prepares a detailed quotation with unit pricing, totals, and delivery terms within 1–2 days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="products-section" id="products" aria-labelledby="products-title">
+    <div class="section-inner">
+      <p class="section-label reveal">Our Collection</p>
+      <h2 class="section-title reveal" id="products-title">Signature Designs</h2>
+      <p class="section-sub reveal">Each piece is manufactured to order with your exact specifications. Available in all standard and custom dimensions.</p>
+
+      <div class="products-grid" role="list">
+        <!-- Card 1 -->
+        <article class="product-card reveal" role="listitem" tabindex="0" aria-label="Classic Cylinder Pot product card">
+          <div class="product-image product-image-bg-1" aria-hidden="true">
+            <div class="mini-pot" style="position:relative;">
+              <div class="mini-pot-cylinder"></div>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <span class="product-badge">Cylinder</span>
+            <h3 class="product-name">Classic Cylinder Pot</h3>
+            <div class="product-cta">
+              View Details
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="product-card reveal" role="listitem" tabindex="0" aria-label="Modern Square Planter product card">
+          <div class="product-image product-image-bg-2" aria-hidden="true">
+            <div class="mini-pot" style="position:relative;">
+              <div class="mini-pot-square" style="position:relative;"></div>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <span class="product-badge">Square</span>
+            <h3 class="product-name">Modern Square Planter</h3>
+            <div class="product-cta">
+              View Details
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="product-card reveal" role="listitem" tabindex="0" aria-label="Rectangular Trough product card">
+          <div class="product-image product-image-bg-3" aria-hidden="true">
+            <div class="mini-pot" style="position:relative; padding-bottom: 24px;">
+              <div class="mini-pot-rect" style="position:relative;"></div>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <span class="product-badge">Trough</span>
+            <h3 class="product-name">Rectangular Trough</h3>
+            <div class="product-cta">
+              View Details
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="product-card reveal" role="listitem" tabindex="0" aria-label="Conical Tapered Pot product card">
+          <div class="product-image product-image-bg-4" aria-hidden="true">
+            <div class="mini-pot" style="position:relative; padding-bottom: 8px;">
+              <div class="mini-pot-cone"></div>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <span class="product-badge">Conical</span>
+            <h3 class="product-name">Conical Tapered Pot</h3>
+            <div class="product-cta">
+              View Details
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div style="text-align:center; margin-top: 40px;" class="reveal">
+        <button class="btn btn-outline-terra btn-lg" onclick="showPage('request')">
+          Request Access to View Full Catalog
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section class="capabilities-section" id="capabilities" aria-labelledby="cap-title">
+    <div class="section-inner">
+      <p class="section-label reveal">Why Forestry</p>
+      <h2 class="section-title reveal" id="cap-title">Built for Volume. <br/>Designed for Detail.</h2>
+      <p class="section-sub reveal">We don't do off-the-shelf. Every piece is manufactured to your exact specifications, at any scale.</p>
+
+      <div class="capabilities-grid">
+        <!-- Cap 1 -->
+        <div class="capability-card reveal">
+          <div class="cap-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+            </svg>
+          </div>
+          <h3 class="cap-title">Any Quantity</h3>
+          <p class="cap-desc">From a single prototype to 10,000-unit orders. Our manufacturing capacity scales to your project needs without compromising quality or lead times.</p>
+        </div>
+
+        <!-- Cap 2 -->
+        <div class="capability-card reveal">
+          <div class="cap-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <h3 class="cap-title">Custom Dimensions</h3>
+          <p class="cap-desc">Need a specific height, width, or depth? Submit custom measurements with your RFP. We manufacture to millimetre precision across all product lines.</p>
+        </div>
+
+        <!-- Cap 3 -->
+        <div class="capability-card reveal">
+          <div class="cap-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+            </svg>
+          </div>
+          <h3 class="cap-title">Full Customization</h3>
+          <p class="cap-desc">Choose from 8 colors, 6 textures, and 5 finishes — or request a bespoke combination. Our team works with you to achieve the exact aesthetic your project demands.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta-section" aria-labelledby="cta-title">
+    <div style="position:relative; z-index:1;">
+      <p class="section-label" style="margin-bottom: 16px;">Get Started</p>
+      <h2 class="cta-title reveal" id="cta-title">Ready to Explore the Collection?</h2>
+      <p class="cta-sub reveal">Join 500+ approved vendors who trust Forestry for their commercial and residential projects across the UAE.</p>
+      <div class="reveal">
+        <button class="btn btn-primary btn-lg" onclick="showPage('request')" style="font-size:1.05rem; padding: 16px 40px;">
+          Request Vendor Access
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+      <p class="cta-note reveal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Approved vendors get exclusive access to pricing, customizer &amp; RFP system
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <!-- Company Info -->
+        <div>
+          <div class="footer-logo">
+            <svg width="22" height="22" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14 4C14 4 8 9 8 15C8 18.866 10.686 22 14 22C17.314 22 20 18.866 20 15C20 9 14 4 14 4Z" fill="#B35C2A"/>
+              <path d="M14 22V26" stroke="#B35C2A" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="footer-logo-text">FORESTRY</span>
+          </div>
+          <p class="footer-desc">UAE's premier custom pot manufacturer. Crafting premium planters for commercial and residential projects since 2018.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h3 class="footer-heading">Quick Links</h3>
+          <ul class="footer-links" role="list">
+            <li><a href="#products" onclick="scrollToSection('products')">Product Collection</a></li>
+            <li><a href="#how-it-works" onclick="scrollToSection('how-it-works')">How It Works</a></li>
+            <li><a href="#" onclick="showPage('request'); return false;">Request Access</a></li>
+            <li><a href="#" onclick="showPage('login'); return false;">Vendor Login</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h3 class="footer-heading">Contact</h3>
+          <address style="font-style:normal;">
+            <div class="footer-contact-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Address">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Industrial Area 12, Sharjah, United Arab Emirates</span>
+            </div>
+            <div class="footer-contact-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Phone">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12.7 19.79 19.79 0 0 1 1.6 4.12 2 2 0 0 1 3.57 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <a href="tel:+97165000000">+971 6 500 0000</a>
+            </div>
+            <div class="footer-contact-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Email">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <a href="mailto:vendors@forestry.ae">vendors@forestry.ae</a>
+            </div>
+          </address>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 Forestry Manufacturing LLC. All rights reserved.</span>
+        <div style="display:flex; gap:20px;">
+          <a href="#" style="color:inherit; transition: color 200ms;" onmouseenter="this.style.color='#D4784A'" onmouseleave="this.style.color=''">Privacy Policy</a>
+          <a href="#" style="color:inherit; transition: color 200ms;" onmouseenter="this.style.color='#D4784A'" onmouseleave="this.style.color=''">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: REQUEST ACCESS ===================== -->
+<div class="page" id="page-request">
+  <div class="request-page-inner">
+    <div class="request-card">
+      <!-- Back nav -->
+      <button onclick="showPage('home')" style="display:flex; align-items:center; gap:6px; background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:500; margin-bottom:28px; transition:color 200ms; padding:0;" onmouseenter="this.style.color='var(--terracotta)'" onmouseleave="this.style.color='var(--muted)'" aria-label="Back to home">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to Home
+      </button>
+
+      <div class="request-card-header">
+        <div class="request-card-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h1 class="request-card-title">Request Vendor Access</h1>
+        <p class="request-card-sub">Fill in your company details below. Our team reviews all applications within 24–48 hours.</p>
+      </div>
+
+      <!-- Form -->
+      <form id="request-form" onsubmit="handleRequestSubmit(event)" novalidate>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="req-name">Full Name</label>
+            <input class="form-input" type="text" id="req-name" name="name" placeholder="Ahmed Al Mansouri" required autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="req-email">Email Address</label>
+            <input class="form-input" type="email" id="req-email" name="email" placeholder="ahmed@company.ae" required autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-company">Company Name</label>
+          <input class="form-input" type="text" id="req-company" name="company" placeholder="Al Nakheel Landscaping LLC" required autocomplete="organization" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-phone">Phone Number</label>
+          <input class="form-input" type="tel" id="req-phone" name="phone" placeholder="+971 50 123 4567" required autocomplete="tel" />
+          <p class="form-hint">UAE format preferred: +971 XX XXX XXXX</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-license">Trade License Number <span class="optional">(optional)</span></label>
+          <input class="form-input" type="text" id="req-license" name="license" placeholder="CN-1234567" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-message">How will you use Forestry products? <span class="optional">(optional)</span></label>
+          <textarea class="form-input" id="req-message" name="message" placeholder="e.g. Large-scale landscaping projects, hotel interior design, retail installations..." rows="3"></textarea>
+        </div>
+
+        <!-- Form state: default -->
+        <div id="form-content">
+          <button type="submit" class="form-submit-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Submit Request
+          </button>
+        </div>
+      </form>
+
+      <!-- Success state -->
+      <div class="success-state" id="success-state" role="status" aria-live="polite">
+        <div class="success-icon" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <h2 class="success-title">Request Received!</h2>
+        <p class="success-sub">Thank you for your interest. We'll review your application and contact you within 24–48 hours with your access credentials.</p>
+        <button class="btn btn-primary" onclick="showPage('home')" style="margin: 0 auto; display: inline-flex;">
+          Return to Home
+        </button>
+      </div>
+
+      <div class="form-divider">or</div>
+      <p class="form-link">Already have an account? <a href="#" onclick="showPage('login'); return false;">Sign in here</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: LOGIN ===================== -->
+<div class="page" id="page-login">
+  <div class="login-split">
+    <!-- Visual Side -->
+    <div class="login-visual" aria-hidden="true">
+      <div class="login-visual-content">
+        <div class="login-visual-logo">
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 4C14 4 8 9 8 15C8 18.866 10.686 22 14 22C17.314 22 20 18.866 20 15C20 9 14 4 14 4Z" fill="#B35C2A"/>
+            <path d="M14 22V26" stroke="#B35C2A" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="login-visual-logo-text">FORESTRY</span>
+        </div>
+
+        <div class="login-pot-scene animate-float">
+          <div class="login-pot-square"></div>
+          <div class="login-pot-small"></div>
+          <div class="login-pot-main"></div>
+        </div>
+
+        <p class="login-visual-quote">
+          Every great space begins with a single, perfectly crafted piece.
+        </p>
+      </div>
+    </div>
+
+    <!-- Form Side -->
+    <div class="login-form-side">
+      <div class="login-form-inner">
+        <!-- Back nav -->
+        <button onclick="showPage('home')" style="display:flex; align-items:center; gap:6px; background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:500; margin-bottom:36px; transition:color 200ms; padding:0;" onmouseenter="this.style.color='var(--terracotta)'" onmouseleave="this.style.color='var(--muted)'" aria-label="Back to home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back to Home
+        </button>
+
+        <div class="login-form-header">
+          <h1 class="login-form-title">Welcome back</h1>
+          <p class="login-form-sub">Sign in to your Forestry vendor portal.</p>
+        </div>
+
+        <form id="login-form" onsubmit="handleLoginSubmit(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input class="form-input" type="email" id="login-email" name="email" placeholder="ahmed@company.ae" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">
+              Password
+              <a href="#" class="forgot-link" onclick="return false;">Forgot password?</a>
+            </label>
+            <div style="position:relative;">
+              <input class="form-input" type="password" id="login-password" name="password" placeholder="Enter your password" required autocomplete="current-password" style="padding-right: 44px;" />
+              <button type="button" onclick="togglePasswordVisibility()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); padding:0; display:flex;" aria-label="Toggle password visibility" id="pw-toggle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="pw-icon">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="login-error" role="alert" aria-live="polite" style="display:none; background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:0.875rem; color:#B91C1C; display:none; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Invalid email or password. Please try again.
+          </div>
+
+          <button type="submit" class="form-submit-btn" id="login-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            Sign In
+          </button>
+        </form>
+
+        <div class="form-divider" style="margin-top:24px;">or</div>
+        <p class="form-link">
+          Don't have an account?
+          <a href="#" onclick="showPage('request'); return false;">Request vendor access</a>
+        </p>
+
+        <p style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--muted);">
+          Admin access?
+          <a href="#" style="color:var(--charcoal); font-weight:500;" onclick="return false;">Admin portal →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =====================
+     PAGE ROUTING
+     ===================== */
+  const pages = ['home', 'request', 'login'];
+
+  function showPage(name) {
+    pages.forEach(p => {
+      const el = document.getElementById(`page-${p}`);
+      if (el) el.classList.remove('active');
+    });
+
+    const target = document.getElementById(`page-${name}`);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.location.hash = name === 'home' ? '' : name;
+    }
+  }
+
+  // Init from URL hash
+  function initFromHash() {
+    const hash = window.location.hash.slice(1);
+    if (hash === 'request') showPage('request');
+    else if (hash === 'login') showPage('login');
+    else showPage('home');
+  }
+
+  /* =====================
+     NAVBAR SCROLL
+     ===================== */
+  const navbar = document.getElementById('navbar');
+
+  function handleNavbarScroll() {
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  }
+
+  window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+
+  /* =====================
+     SCROLL TO SECTION
+     ===================== */
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+
+  /* =====================
+     MOBILE MENU
+     ===================== */
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const toggle = document.getElementById('menu-toggle');
+    const isOpen = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  /* =====================
+     SCROLL REVEAL
+     ===================== */
+  function setupReveal() {
+    const els = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    els.forEach(el => observer.observe(el));
+  }
+
+  /* =====================
+     FORM HANDLERS
+     ===================== */
+  function handleRequestSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit-btn');
+
+    // Basic validation
+    const name = document.getElementById('req-name').value.trim();
+    const email = document.getElementById('req-email').value.trim();
+    const company = document.getElementById('req-company').value.trim();
+    const phone = document.getElementById('req-phone').value.trim();
+
+    if (!name || !email || !company || !phone) {
+      // Highlight empty required fields
+      [
+        { el: document.getElementById('req-name'), val: name },
+        { el: document.getElementById('req-email'), val: email },
+        { el: document.getElementById('req-company'), val: company },
+        { el: document.getElementById('req-phone'), val: phone },
+      ].forEach(({ el, val }) => {
+        if (!val) {
+          el.style.borderColor = '#DC2626';
+          el.addEventListener('input', () => { el.style.borderColor = ''; }, { once: true });
+        }
+      });
+      return;
+    }
+
+    // Simulate loading
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      Submitting...
+    `;
+    btn.style.opacity = '0.8';
+    btn.disabled = true;
+
+    // Add spin style dynamically
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin { to { transform: rotate(360deg); } } .spin { animation: spin 0.8s linear infinite; }';
+    document.head.appendChild(style);
+
+    setTimeout(() => {
+      document.getElementById('request-form').style.display = 'none';
+      document.querySelector('.request-card-header').style.display = 'none';
+      document.getElementById('success-state').style.display = 'block';
+    }, 1800);
+  }
+
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-btn');
+    const errorEl = document.getElementById('login-error');
+
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation: spin 0.8s linear infinite;" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      Signing in...
+    `;
+    btn.disabled = true;
+    btn.style.opacity = '0.8';
+    errorEl.style.display = 'none';
+
+    setTimeout(() => {
+      // Simulate wrong credentials for demo
+      btn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Sign In
+      `;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      errorEl.style.display = 'flex';
+    }, 1500);
+  }
+
+  function togglePasswordVisibility() {
+    const input = document.getElementById('login-password');
+    const icon = document.getElementById('pw-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      input.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  }
+
+  /* =====================
+     PRODUCT CARD CLICK
+     ===================== */
+  document.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('click', () => showPage('request'));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        showPage('request');
+      }
+    });
+  });
+
+  /* =====================
+     INIT
+     ===================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    initFromHash();
+    setupReveal();
+    handleNavbarScroll();
+  });
+
+  window.addEventListener('hashchange', initFromHash);
+</script>
+</body>
+</html>

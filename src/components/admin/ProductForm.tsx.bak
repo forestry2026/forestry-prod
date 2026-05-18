@@ -1,0 +1,808 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Loader2, X, Upload } from 'lucide-react'
+import { DimensionSpecifications } from './DimensionSpecifications'
+
+const productSchema = z.object({
+  sku: z.string().min(1, 'SKU is required'),
+  name: z.string().min(1, 'Product name is required'),
+  description: z.string().optional(),
+  category: z.string().optional(),
+  basePrice: z.coerce.number().optional(),
+  isActive: z.boolean().default(true),
+  isFeatured: z.boolean().default(false),
+  dimensionIds: z.array(z.string()).default([]),
+  dimensionSpecs: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    value: z.number().nullable().optional(),
+    unit: z.string(),
+  })).default([]),
+  colorIds: z.array(z.string()).default([]),
+  textureIds: z.array(z.string()).default([]),
+  finishIds: z.array(z.string()).default([]),
+  images: z.array(z.object({
+    url: z.string().url('Invalid image URL'),
+    alt: z.string().optional(),
+    isPrimary: z.boolean().default(false),
+    sortOrder: z.number().default(0),
+  })).max(6, 'Maximum 6 images allowed').default([]),
+})
+
+type ProductFormData = z.infer<typeof productSchema>
+
+interface ProductFormProps {
+  initialData?: ProductFormData & { id?: string }
+  attributes?: {
+    dimensions: Array<{ id: string; name: string }>
+    colors: Array<{ id: string; name: string; hexCode?: string }>
+    textures: Array<{ id: string; name: string }>
+    finishes: Array<{ id: string; name: string }>
+  }
+}
+
+export function ProductForm({ initialData, attributes }: ProductFormProps) {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [liveColors, setLiveColors] = useState<Array<{ id: string; name: string; hexCode?: string }>>(attributes?.colors || [])
+  const [liveDimensions, setLiveDimensions] = useState<Array<{ id: string; name: string }>>(attributes?.dimensions || [])
+  const [liveTextures, setLiveTextures] = useState<Array<{ id: string; name: string; description?: string; imageUrl?: string }>>(attributes?.textures || [])
+  const [liveFinishes, setLiveFinishes] = useState<Array<{ id: string; name: string }>>(attributes?.finishes || [])
+  const [hoveredTextureId, setHoveredTextureId] = useState<string | null>(null)
+
+  // Fetch attributes from API
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const [colorsRes, dimensionsRes, texturesRes, finishesRes] = await Promise.all([
+          fetch('/api/attributes/colors'),
+          fetch('/api/attributes/dimensions'),
+          fetch('/api/attributes/textures'),
+          fetch('/api/attributes/finishes'),
+        ])
+
+        if (colorsRes.ok) {
+          const colorsData = await colorsRes.json()
+          setLiveColors(colorsData.data || [])
+        }
+        if (dimensionsRes.ok) {
+          const dimensionsData = await dimensionsRes.json()
+          setLiveDimensions(dimensionsData.data || [])
+        }
+        if (texturesRes.ok) {
+          const texturesData = await texturesRes.json()
+          setLiveTextures(texturesData.data || [])
+        }
+        if (finishesRes.ok) {
+          const finishesData = await finishesRes.json()
+          setLiveFinishes(finishesData.data || [])
+        }
+      } catch (err) {
+        console.error('Failed to fetch attributes:', err)
+      }
+    }
+
+    fetchAttributes()
+  }, [])
+
+  const { register, control, watch, handleSubmit, formState: { errors }, reset, setValue } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      ...initialData,
+      dimensionSpecs: initialData?.dimensionSpecs || [],
+    },
+  })
+
+  const imageCount = watch('images')?.length || 0
+  const dimensionSpecs = watch('dimensionSpecs') || []
+  const selectedColors = watch('colorIds') || []
+  const selectedTextures = watch('textureIds') || []
+  const selectedFinishes = watch('finishIds') || []
+
+  const onSubmit = async (data: ProductFormData) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const url = initialData?.id ? `/api/products/${initialData.id}` : '/api/products'
+      const method = initialData?.id ? 'PATCH' : 'POST'
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save product')
+      }
+
+      router.push('/admin/products')
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8">
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
+      {/* Basic Info */}
+      <div className="space-y-6 pb-8 border-b border-cream-darker">
+        <div>
+          <h2 className="text-2xl font-bold text-charcoal mb-6">Basic Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="sku" className="block text-sm font-semibold text-charcoal mb-2">
+                SKU *
+              </label>
+              <input
+                {...register('sku')}
+                id="sku"
+                type="text"
+                className="form-input w-full px-4 py-3 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition"
+                placeholder="e.g., POT-001"
+              />
+              {errors.sku && <p className="text-red-600 text-xs mt-2">{errors.sku.message}</p>}
+            </div>
+            <div>
+              <label htmlFor="name" className="block text-sm font-semibold text-charcoal mb-2">
+                Product Name *
+              </label>
+              <input
+                {...register('name')}
+                id="name"
+                type="text"
+                className="form-input w-full px-4 py-3 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition"
+                placeholder="e.g., Classic Cylinder Pot"
+              />
+              {errors.name && <p className="text-red-600 text-xs mt-2">{errors.name.message}</p>}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-semibold text-charcoal mb-2">
+            Category
+          </label>
+          <input
+            {...register('category')}
+            id="category"
+            type="text"
+            className="form-input w-full px-4 py-3 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition"
+            placeholder="e.g., Indoor, Outdoor, Commercial"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-semibold text-charcoal mb-2">
+            Description
+          </label>
+          <textarea
+            {...register('description')}
+            id="description"
+            className="form-input w-full px-4 py-3 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition resize-none h-32"
+            placeholder="Product description and features..."
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="basePrice" className="block text-sm font-semibold text-charcoal mb-2">
+              Base Price (AED)
+            </label>
+            <input
+              {...register('basePrice')}
+              id="basePrice"
+              type="number"
+              step="0.01"
+              className="form-input w-full px-4 py-3 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition"
+              placeholder="0.00"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-charcoal mb-2">Status</label>
+            <div className="flex gap-6 pt-1">
+              <label className="flex items-center gap-3 cursor-pointer hover:bg-cream/30 px-3 py-2 rounded-lg transition">
+                <input {...register('isActive')} type="checkbox" className="w-5 h-5 accent-terracotta" />
+                <span className="text-sm font-medium text-charcoal">Active</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer hover:bg-cream/30 px-3 py-2 rounded-lg transition">
+                <input {...register('isFeatured')} type="checkbox" className="w-5 h-5 accent-terracotta" />
+                <span className="text-sm font-medium text-charcoal">Featured</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Attributes */}
+      {attributes && (
+        <div className="space-y-8 pb-8 border-b border-cream-darker">
+          {/* Dimension Specifications Section */}
+          <div>
+            <h2 className="text-xl font-bold text-charcoal mb-6">Product Dimensions & Specifications</h2>
+            <DimensionSpecifications
+              specifications={dimensionSpecs}
+              onSpecificationsChange={(specs) => {
+                setValue('dimensionSpecs', specs, { shouldDirty: true, shouldValidate: true })
+              }}
+            />
+          </div>
+
+          {/* Colors Section - Sleek Compact Block */}
+          <div className="bg-gradient-to-br from-cream/30 to-cream/10 border border-cream-darker rounded-xl p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-charcoal">Colors</h2>
+              <span className="text-sm text-charcoal/60">Selected: {selectedColors.length}</span>
+            </div>
+
+            {selectedColors.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {selectedColors.map((colorId) => {
+                  const color = liveColors.find(c => c.id === colorId)
+                  if (!color) return null
+                  return (
+                    <div
+                      key={color.id}
+                      className="relative group flex flex-col items-center gap-2 p-3 rounded-lg bg-white border-2 border-terracotta shadow-md hover:shadow-lg transition"
+                    >
+                      {color.hexCode && (
+                        <div
+                          className="w-12 h-12 rounded-lg border-2 border-cream-darker shadow-sm transition group-hover:scale-110"
+                          style={{ backgroundColor: color.hexCode }}
+                          title={color.hexCode}
+                        />
+                      )}
+                      <div className="text-center">
+                        <span className="text-xs font-medium text-charcoal block line-clamp-2">
+                          {color.name}
+                        </span>
+                        {color.hexCode && (
+                          <span className="text-xs text-charcoal/60">{color.hexCode}</span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setValue('colorIds', selectedColors.filter(id => id !== color.id), { shouldDirty: true, shouldValidate: true })
+                        }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-terracotta rounded-full flex items-center justify-center hover:bg-terracotta-dark transition"
+                      >
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Add Colors Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-terracotta hover:bg-terracotta-dark text-white font-semibold rounded-lg transition"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  const dropdown = parent?.querySelector('[class*="color-dropdown"]')
+                  const overlay = parent?.querySelector('[class*="color-overlay"]')
+                  dropdown?.classList.toggle('hidden')
+                  overlay?.classList.toggle('hidden')
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add Color
+              </button>
+
+              {/* Dropdown List */}
+              <div className="color-dropdown hidden absolute top-full left-0 right-0 mt-2 bg-white border border-cream-darker rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto">
+                {liveColors.filter(c => !selectedColors.includes(c.id)).length === 0 ? (
+                  <div className="p-4 text-center text-charcoal/60 text-sm">
+                    All colors selected
+                  </div>
+                ) : (
+                  liveColors
+                    .filter(c => !selectedColors.includes(c.id))
+                    .map((color) => (
+                      <button
+                        key={color.id}
+                        type="button"
+                        onClick={() => {
+                          setValue('colorIds', [...selectedColors, color.id], { shouldDirty: true, shouldValidate: true })
+                          const parent = document.querySelector('[class*="color-dropdown"]')?.parentElement
+                          parent?.querySelector('[class*="color-dropdown"]')?.classList.add('hidden')
+                          parent?.querySelector('[class*="color-overlay"]')?.classList.add('hidden')
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-cream/50 transition flex items-center gap-3 group border-b border-cream-darker last:border-b-0"
+                      >
+                        {color.hexCode && (
+                          <div
+                            className="w-10 h-10 rounded-md border border-cream-darker shadow-sm flex-shrink-0"
+                            style={{ backgroundColor: color.hexCode }}
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-charcoal">{color.name}</p>
+                          {color.hexCode && (
+                            <p className="text-xs text-charcoal/60">{color.hexCode}</p>
+                          )}
+                        </div>
+                        <div className="w-5 h-5 rounded border border-cream-darker group-hover:border-terracotta transition flex-shrink-0" />
+                      </button>
+                    ))
+                )}
+              </div>
+
+              {/* Overlay */}
+              <div
+                className="color-overlay hidden fixed inset-0 z-40"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  parent?.querySelector('[class*="color-dropdown"]')?.classList.add('hidden')
+                  e.currentTarget.classList.add('hidden')
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Textures Section */}
+          <div className="bg-gradient-to-br from-cream/30 to-cream/10 border border-cream-darker rounded-xl p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-charcoal">Textures</h2>
+              <span className="text-sm text-charcoal/60">Selected: {selectedTextures.length}</span>
+            </div>
+
+            {selectedTextures.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {selectedTextures.map((textureId) => {
+                  const texture = liveTextures.find(t => t.id === textureId)
+                  if (!texture) return null
+                  return (
+                    <div
+                      key={texture.id}
+                      className="relative group flex flex-col items-center gap-2 p-3 rounded-lg bg-white border-2 border-sage shadow-md hover:shadow-lg transition"
+                      onMouseEnter={() => setHoveredTextureId(texture.id)}
+                      onMouseLeave={() => setHoveredTextureId(null)}
+                    >
+                      {texture.imageUrl ? (
+                        <div className="w-12 h-12 rounded-lg border-2 border-sage/30 shadow-sm overflow-hidden">
+                          <img
+                            src={texture.imageUrl}
+                            alt={texture.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-sage/10 flex items-center justify-center border border-sage/30">
+                          <span className="text-lg">🎨</span>
+                        </div>
+                      )}
+                      <span className="text-xs font-medium text-charcoal text-center line-clamp-2">{texture.name}</span>
+                      {hoveredTextureId === texture.id && texture.imageUrl && (
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 pointer-events-none">
+                          <div className="w-32 h-32 rounded-lg border-2 border-sage overflow-hidden shadow-lg bg-white">
+                            <img
+                              src={texture.imageUrl}
+                              alt={texture.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setValue('textureIds', selectedTextures.filter(id => id !== texture.id), { shouldDirty: true, shouldValidate: true })
+                        }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-sage rounded-full flex items-center justify-center hover:bg-sage-dark transition"
+                      >
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <div className="relative">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-sage hover:bg-sage-dark text-white font-semibold rounded-lg transition"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  const dropdown = parent?.querySelector('[class*="texture-dropdown"]')
+                  const overlay = parent?.querySelector('[class*="texture-overlay"]')
+                  dropdown?.classList.toggle('hidden')
+                  overlay?.classList.toggle('hidden')
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add Texture
+              </button>
+
+              <div className="texture-dropdown hidden absolute top-full left-0 right-0 mt-2 bg-white border border-cream-darker rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto">
+                {liveTextures.filter(t => !selectedTextures.includes(t.id)).length === 0 ? (
+                  <div className="p-4 text-center text-charcoal/60 text-sm">All textures selected</div>
+                ) : (
+                  liveTextures
+                    .filter(t => !selectedTextures.includes(t.id))
+                    .map((texture) => (
+                      <button
+                        key={texture.id}
+                        type="button"
+                        onClick={() => {
+                          setValue('textureIds', [...selectedTextures, texture.id], { shouldDirty: true, shouldValidate: true })
+                          const parent = document.querySelector('[class*="texture-dropdown"]')?.parentElement
+                          parent?.querySelector('[class*="texture-dropdown"]')?.classList.add('hidden')
+                          parent?.querySelector('[class*="texture-overlay"]')?.classList.add('hidden')
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-cream/50 transition flex items-center gap-3 group border-b border-cream-darker last:border-b-0"
+                      >
+                        {texture.imageUrl ? (
+                          <div className="w-10 h-10 rounded-md border border-cream-darker shadow-sm flex-shrink-0 overflow-hidden">
+                            <img
+                              src={texture.imageUrl}
+                              alt={texture.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <span className="text-lg flex-shrink-0">🎨</span>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-charcoal">{texture.name}</p>
+                          {texture.description && (
+                            <p className="text-xs text-charcoal/60">{texture.description}</p>
+                          )}
+                        </div>
+                        <div className="w-5 h-5 rounded border border-cream-darker group-hover:border-sage transition flex-shrink-0" />
+                      </button>
+                    ))
+                )}
+              </div>
+
+              <div
+                className="texture-overlay hidden fixed inset-0 z-40"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  parent?.querySelector('[class*="texture-dropdown"]')?.classList.add('hidden')
+                  e.currentTarget.classList.add('hidden')
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Finishes Section */}
+          <div className="bg-gradient-to-br from-cream/30 to-cream/10 border border-cream-darker rounded-xl p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-charcoal">Finishes</h2>
+              <span className="text-sm text-charcoal/60">Selected: {selectedFinishes.length}</span>
+            </div>
+
+            {selectedFinishes.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {selectedFinishes.map((finishId) => {
+                  const finish = liveFinishes.find(f => f.id === finishId)
+                  if (!finish) return null
+                  return (
+                    <div key={finish.id} className="relative group flex flex-col items-center gap-2 p-3 rounded-lg bg-white border-2 border-terracotta shadow-md hover:shadow-lg transition">
+                      <div className="w-12 h-12 rounded-lg bg-terracotta/10 flex items-center justify-center border border-terracotta/30">
+                        <span className="text-lg">✨</span>
+                      </div>
+                      <span className="text-xs font-medium text-charcoal text-center line-clamp-2">{finish.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setValue('finishIds', selectedFinishes.filter(id => id !== finish.id), { shouldDirty: true, shouldValidate: true })
+                        }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-terracotta rounded-full flex items-center justify-center hover:bg-terracotta-dark transition"
+                      >
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <div className="relative">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-terracotta hover:bg-terracotta-dark text-white font-semibold rounded-lg transition"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  const dropdown = parent?.querySelector('[class*="finish-dropdown"]')
+                  const overlay = parent?.querySelector('[class*="finish-overlay"]')
+                  dropdown?.classList.toggle('hidden')
+                  overlay?.classList.toggle('hidden')
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add Finish
+              </button>
+
+              <div className="finish-dropdown hidden absolute top-full left-0 right-0 mt-2 bg-white border border-cream-darker rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto">
+                {liveFinishes.filter(f => !selectedFinishes.includes(f.id)).length === 0 ? (
+                  <div className="p-4 text-center text-charcoal/60 text-sm">All finishes selected</div>
+                ) : (
+                  liveFinishes
+                    .filter(f => !selectedFinishes.includes(f.id))
+                    .map((finish) => (
+                      <button
+                        key={finish.id}
+                        type="button"
+                        onClick={() => {
+                          setValue('finishIds', [...selectedFinishes, finish.id], { shouldDirty: true, shouldValidate: true })
+                          const parent = document.querySelector('[class*="finish-dropdown"]')?.parentElement
+                          parent?.querySelector('[class*="finish-dropdown"]')?.classList.add('hidden')
+                          parent?.querySelector('[class*="finish-overlay"]')?.classList.add('hidden')
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-cream/50 transition flex items-center gap-3 group border-b border-cream-darker last:border-b-0"
+                      >
+                        <span className="text-lg flex-shrink-0">✨</span>
+                        <span className="text-sm font-medium text-charcoal flex-1">{finish.name}</span>
+                        <div className="w-5 h-5 rounded border border-cream-darker group-hover:border-terracotta transition flex-shrink-0" />
+                      </button>
+                    ))
+                )}
+              </div>
+
+              <div
+                className="finish-overlay hidden fixed inset-0 z-40"
+                onClick={(e) => {
+                  const parent = e.currentTarget.parentElement
+                  parent?.querySelector('[class*="finish-dropdown"]')?.classList.add('hidden')
+                  e.currentTarget.classList.add('hidden')
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Images */}
+      <div className="pb-8 border-b border-cream-darker space-y-6">
+        <div>
+          <h2 className="text-xl font-bold text-charcoal mb-2">Product Images ({imageCount}/6)</h2>
+          <p className="text-sm text-charcoal/60">Upload primary and gallery images for your product (max 6 images: 1 primary + 5 secondary)</p>
+        </div>
+
+        {/* Current Images Gallery */}
+        {watch('images') && watch('images').length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-charcoal">Current Images</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {watch('images').map((image, idx) => (
+                <div
+                  key={idx}
+                  className={`relative group rounded-lg overflow-hidden border-2 transition-all ${
+                    image.isPrimary
+                      ? 'border-terracotta shadow-lg'
+                      : 'border-cream-darker hover:border-terracotta'
+                  }`}
+                >
+                  <img
+                    src={image.url}
+                    alt={image.alt || 'Product image'}
+                    className="w-full aspect-square object-cover"
+                  />
+
+                  {/* Primary Badge */}
+                  {image.isPrimary && (
+                    <div className="absolute top-2 left-2 bg-terracotta text-white px-2 py-1 rounded-md text-xs font-semibold">
+                      Primary
+                    </div>
+                  )}
+
+                  {/* Hover Actions */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
+                    {!image.isPrimary && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const images = watch('images');
+                          images.forEach(img => (img.isPrimary = false));
+                          images[idx].isPrimary = true;
+                          setValue('images', images, { shouldDirty: true, shouldValidate: true });
+                        }}
+                        title="Set as primary"
+                        className="w-8 h-8 rounded-full bg-terracotta hover:bg-terracotta-dark text-white flex items-center justify-center transition"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const images = watch('images');
+                        images.splice(idx, 1);
+                        setValue('images', images, { shouldDirty: true, shouldValidate: true });
+                      }}
+                      title="Delete image"
+                      className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Image Upload Area */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-charcoal">Add Images</h3>
+          <div className={`border-2 border-dashed rounded-lg p-8 text-center transition cursor-pointer group ${
+            imageCount >= 6
+              ? 'border-gray-300 bg-gray-50 cursor-not-allowed opacity-60'
+              : 'border-cream-darker hover:border-terracotta'
+          }`}>
+            <label className={`flex flex-col items-center justify-center gap-3 ${imageCount >= 6 ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+              <Upload className={`w-8 h-8 transition ${
+                imageCount >= 6
+                  ? 'text-charcoal/20'
+                  : 'text-charcoal/40 group-hover:text-terracotta'
+              }`} />
+              <div>
+                <p className={`text-sm font-semibold mb-1 ${imageCount >= 6 ? 'text-charcoal/40' : 'text-charcoal'}`}>
+                  {imageCount >= 6 ? 'Maximum images reached' : 'Click to upload or drag and drop'}
+                </p>
+                <p className="text-xs text-charcoal/60">PNG, JPG, WebP (Max 5MB)</p>
+              </div>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                disabled={imageCount >= 6}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  const currentImages = watch('images') || [];
+                  const maxImages = 6;
+                  let addedCount = 0;
+
+                  files.forEach((file) => {
+                    if (currentImages.length + addedCount >= maxImages) {
+                      alert(`Maximum ${maxImages} images allowed. You can only add ${maxImages - currentImages.length} more image(s).`);
+                      return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      alert(`${file.name} is too large (Max 5MB)`);
+                      return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      const url = event.target?.result as string;
+                      const images = watch('images') || [];
+                      const newImage = {
+                        url,
+                        alt: file.name.replace(/\.[^/.]+$/, ''),
+                        isPrimary: images.length === 0,
+                        sortOrder: images.length,
+                      };
+                      setValue('images', [...images, newImage], {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                    addedCount++;
+                  });
+                  e.target.value = '';
+                }}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Add URL Option */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-charcoal">Or add by URL</h3>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              id="imageUrl"
+              className="flex-1 px-4 py-2 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const input = document.getElementById('imageUrl') as HTMLInputElement;
+                if (!input.value) return;
+                const images = watch('images') || [];
+                const maxImages = 6;
+                if (images.length >= maxImages) {
+                  alert(`Maximum ${maxImages} images allowed. You cannot add more images.`);
+                  return;
+                }
+                const newImage = {
+                  url: input.value,
+                  alt: '',
+                  isPrimary: images.length === 0,
+                  sortOrder: images.length,
+                };
+                setValue('images', [...images, newImage], {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+                input.value = '';
+              }}
+              className="px-4 py-2 bg-terracotta hover:bg-terracotta-dark text-white font-semibold rounded-lg transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* Alt Text Management */}
+        {watch('images') && watch('images').length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-charcoal">Image Descriptions</h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {watch('images').map((image, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder={`Alt text for image ${idx + 1}`}
+                    value={image.alt || ''}
+                    onChange={(e) => {
+                      const images = watch('images');
+                      images[idx].alt = e.target.value;
+                      setValue('images', images, { shouldDirty: true, shouldValidate: true });
+                    }}
+                    className="flex-1 px-3 py-2 bg-cream/30 border border-cream-darker rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent transition text-sm"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Submit */}
+      <div className="flex gap-4 pt-4">
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="flex items-center gap-2 px-6 py-3 bg-terracotta hover:bg-terracotta-dark text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+          {initialData?.id ? 'Update Product' : 'Create Product'}
+        </button>
+      </div>
+    </form>
+  )
+}
