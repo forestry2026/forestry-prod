@@ -106,11 +106,11 @@ export default async function LandingPage() {
               </p>
 
               <h1 className="font-heading text-cream font-bold leading-[0.98] tracking-tight text-[clamp(1.46rem,4.19vw,3.73rem)]">
-                Custom pots, <em className="not-italic text-terracotta-light">manufactured to brief.</em> Quoted in <em className="not-italic text-terracotta-light">48 hours.</em>
+                Custom pots, <em className="not-italic text-terracotta-light">manufactured to brief.</em>
               </h1>
 
-              <p className="mt-4 font-heading text-cream/70 text-base lg:text-xl tracking-wide">
-                Crafted to Order. Built to Last.
+              <p className="mt-4 font-heading text-cream/90 text-lg lg:text-2xl tracking-wide leading-snug">
+                Any color, any texture, any size — quoted in <span className="text-terracotta-light font-semibold">48 hours.</span>
               </p>
 
               <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
