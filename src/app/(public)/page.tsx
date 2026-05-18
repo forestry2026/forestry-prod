@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, ArrowDown } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { ProductCarousel } from './ProductCarousel'
+import { ScrollResetOnLoad } from '@/components/public/ScrollResetOnLoad'
 
 /* ── Editorial content ─────────────────────────────────────────── */
 const STEPS = [
@@ -64,6 +65,7 @@ export default async function LandingPage() {
 
   return (
     <>
+      <ScrollResetOnLoad />
       {/* ════════════════════════════════════════════════════════════════
          HERO — Editorial full-bleed banner
          ════════════════════════════════════════════════════════════════ */}
@@ -122,14 +124,14 @@ export default async function LandingPage() {
                 <div className="lg:col-span-7 flex items-center justify-start lg:justify-end gap-3 flex-wrap">
                   <Link
                     href="/request-access"
-                    className="group inline-flex items-center gap-3 px-7 py-4 bg-cream text-charcoal text-sm font-bold tracking-wide uppercase hover:bg-terracotta hover:text-cream transition-colors duration-300"
+                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-xl bg-cream text-charcoal text-sm font-bold tracking-wide uppercase hover:bg-terracotta hover:text-cream transition-colors duration-300"
                   >
                     Request Access
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     href="#collection"
-                    className="inline-flex items-center gap-3 px-7 py-4 border border-cream/30 text-cream text-sm font-bold tracking-wide uppercase hover:bg-cream/10 transition-colors duration-300"
+                    className="inline-flex items-center gap-3 px-7 py-4 rounded-xl border border-cream/30 text-cream text-sm font-bold tracking-wide uppercase hover:bg-cream/10 transition-colors duration-300"
                   >
                     View Collection
                   </Link>
@@ -353,7 +355,7 @@ export default async function LandingPage() {
 
             <Link
               href="/request-access"
-              className="group inline-flex items-center gap-3 px-9 py-4 bg-charcoal text-cream text-sm font-bold tracking-[0.16em] uppercase hover:bg-terracotta transition-colors duration-300"
+              className="group inline-flex items-center gap-3 px-9 py-4 rounded-xl bg-charcoal text-cream text-sm font-bold tracking-[0.16em] uppercase hover:bg-terracotta transition-colors duration-300"
             >
               Request Vendor Access
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
