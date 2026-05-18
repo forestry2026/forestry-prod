@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { redirect, notFound } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getColors, getTextures, getFinishes, getDimensions, getCategories } from '@/lib/reference-data'
 import Link from 'next/link'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { ProductFilesSection } from '@/components/admin/ProductFilesSection'
@@ -35,11 +36,11 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   if (!product) notFound()
 
   const [dimensions, colors, textures, finishes, categories] = await Promise.all([
-    prisma.dimension.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.color.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.texture.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.finish.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.category.findMany({ orderBy: { sortOrder: 'asc' } }),
+    getDimensions(),
+    getColors(),
+    getTextures(),
+    getFinishes(),
+    getCategories(),
   ])
 
   // Parse specifications from the database

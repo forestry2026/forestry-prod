@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCategories } from '@/lib/reference-data'
 import ProductsCatalogueClient from './products-client'
 
 export const metadata: Metadata = {
@@ -49,11 +50,7 @@ export default async function ProductsPage({
       },
       orderBy: { createdAt: 'desc' },
     }),
-    prisma.category.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: 'asc' },
-      select: { id: true, name: true },
-    }),
+    getCategories(),
   ])
 
   return (

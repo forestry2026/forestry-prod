@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getColors, getTextures, getFinishes, getDimensions, getCategories } from '@/lib/reference-data'
 import Link from 'next/link'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { ArrowLeft } from 'lucide-react'
@@ -18,11 +19,11 @@ export default async function NewProductPage() {
   }
 
   const [dimensions, colors, textures, finishes, categories] = await Promise.all([
-    prisma.dimension.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.color.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.texture.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.finish.findMany({ orderBy: { sortOrder: 'asc' } }),
-    prisma.category.findMany({ orderBy: { sortOrder: 'asc' } }),
+    getDimensions(),
+    getColors(),
+    getTextures(),
+    getFinishes(),
+    getCategories(),
   ])
 
   return (

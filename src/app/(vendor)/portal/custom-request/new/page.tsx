@@ -4,6 +4,7 @@ import Link                 from 'next/link'
 import { ArrowLeft, Wand2 } from 'lucide-react'
 import { authOptions }      from '@/lib/auth'
 import { prisma }           from '@/lib/prisma'
+import { getActiveColors, getActiveTextures, getActiveFinishes } from '@/lib/reference-data'
 import { CustomRequestForm } from '../CustomRequestForm'
 
 export const dynamic = 'force-dynamic'
@@ -17,9 +18,9 @@ export default async function NewCustomRequestPage() {
 
   // Fetch catalog options
   const [colors, textures, finishes] = await Promise.all([
-    prisma.color.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.texture.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.finish.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
+    getActiveColors(),
+    getActiveTextures(),
+    getActiveFinishes(),
   ])
 
   return (
