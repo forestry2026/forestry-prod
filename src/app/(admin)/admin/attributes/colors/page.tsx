@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { Plus, Edit2, Trash2, ArrowLeft, Search, X as XIcon, Palette } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { RalColorPicker } from '@/components/shared/RalColorPicker';
+import type { RalColor as SharedRal } from '@/lib/ralColors';
 
 // Seed initial colors if database is empty
 const SEED_COLORS = [
@@ -266,6 +268,7 @@ export default function ColorsPage() {
   const [showRalPicker, setShowRalPicker] = useState(false);
   const [ralSearch, setRalSearch] = useState('');
   const [colorSearch, setColorSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState<'Classic' | 'Effect' | 'Metallic' | 'Other'>('Classic');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -405,6 +408,31 @@ export default function ColorsPage() {
     (c.ralCode || '').includes(colorSearch)
   )
 
+  // Categorize by RAL code pattern: -M suffix = Metallic, -N suffix = Effect, else Classic.
+  function ralCategoryOf(code: string | null | undefined): 'Classic' | 'Effect' | 'Metallic' | 'Other' {
+    if (!code) return 'Other'
+    if (/-M$/.test(code))    return 'Metallic'
+    if (/-\d$/.test(code))   return 'Effect'
+    if (/^RAL \d{4}$/.test(code)) return 'Classic'
+    return 'Other'
+  }
+
+  const grouped = {
+    Classic:  filteredColors.filter(c => ralCategoryOf(c.ralCode) === 'Classic'),
+    Effect:   filteredColors.filter(c => ralCategoryOf(c.ralCode) === 'Effect'),
+    Metallic: filteredColors.filter(c => ralCategoryOf(c.ralCode) === 'Metallic'),
+    Other:    filteredColors.filter(c => ralCategoryOf(c.ralCode) === 'Other'),
+  }
+
+  const CATEGORY_TABS: Array<{ key: keyof typeof grouped; label: string }> = [
+    { key: 'Classic',  label: 'Classic'  },
+    { key: 'Effect',   label: 'Effect'   },
+    { key: 'Metallic', label: 'Metallic' },
+    { key: 'Other',    label: 'Legacy'   },
+  ]
+
+  const activeColors = grouped[activeCategory]
+
   return (
     <div className="space-y-6">
 
@@ -499,32 +527,15 @@ export default function ColorsPage() {
 
             {showRalPicker && (
               <div className="border border-[#E8E0D5] rounded-2xl p-4 bg-cream/30">
-                <div className="flex items-center gap-2 mb-3">
-                  <Search className="w-4 h-4 text-charcoal-300 flex-shrink-0" />
-                  <input
-                    type="text"
-                    value={ralSearch}
-                    onChange={e => setRalSearch(e.target.value)}
-                    placeholder="Search RAL code or name…"
-                    className="flex-1 text-sm text-charcoal-900 bg-transparent outline-none placeholder-charcoal-300"
-                  />
-                  <span className="text-xs text-charcoal-400 flex-shrink-0">{filteredRalColors.length} results</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-72 overflow-y-auto">
-                  {filteredRalColors.map(ral => (
-                    <button
-                      key={ral.ral}
-                      onClick={() => handleRalSelect(ral)}
-                      className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors text-left"
-                    >
-                      <div className="w-7 h-7 rounded-lg border border-black/5 flex-shrink-0" style={{ backgroundColor: ral.hex }} />
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-charcoal-700 truncate">RAL {ral.ral}</p>
-                        <p className="text-[10px] text-charcoal-400 truncate">{ral.name}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                <RalColorPicker
+                  value={formData.ralCode}
+                  onChange={(c: SharedRal | null) => {
+                    if (c) {
+                      setFormData({ name: c.name, code: c.hex, ralCode: c.code })
+                      setShowRalPicker(false)
+                    }
+                  }}
+                />
               </div>
             )}
 
@@ -598,41 +609,37 @@ export default function ColorsPage() {
               <span className="font-semibold text-charcoal-600">"{colorSearch}"</span>
             </p>
           )}
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-3">
+          {/* Flat tile grid — all existing colors. */}
+          <div className="flex flex-wrap gap-2.5">
             {filteredColors.map(color => (
               <div key={color.id} className="group relative">
-                {/* Swatch */}
                 <div
-                  className="w-full aspect-square rounded-xl border border-black/5 shadow-sm"
+                  className="w-[60px] h-[60px] rounded-xl border border-black/5 shadow-sm"
                   style={{ backgroundColor: color.hexCode }}
+                  title={`${color.ralCode ?? ''} ${color.name}`}
                 />
-                {/* Labels */}
-                <div className="mt-1.5 px-0.5">
-                  <p className="text-[11px] font-semibold text-charcoal-800 truncate leading-tight">{color.name}</p>
-                  <p className="text-[10px] font-mono text-charcoal-400 truncate">{color.hexCode}</p>
-                  {color.ralCode && (
-                    <p className="text-[9px] text-charcoal-300 truncate">RAL {color.ralCode}</p>
-                  )}
-                </div>
                 {/* Hover actions */}
                 <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEdit(color)}
-                    className="w-6 h-6 rounded-md bg-white/95 shadow-sm flex items-center justify-center text-terracotta hover:bg-terracotta hover:text-white transition-colors"
+                    className="w-5 h-5 rounded-md bg-white/95 shadow-sm flex items-center justify-center text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                     title="Edit"
                   >
-                    <Edit2 className="w-3 h-3" />
+                    <Edit2 className="w-2.5 h-2.5" />
                   </button>
                   <button
                     onClick={() => handleDelete(color.id)}
-                    className="w-6 h-6 rounded-md bg-white/95 shadow-sm flex items-center justify-center text-charcoal-300 hover:bg-red-500 hover:text-white transition-colors"
+                    className="w-5 h-5 rounded-md bg-white/95 shadow-sm flex items-center justify-center text-charcoal-300 hover:bg-red-500 hover:text-white transition-colors"
                     title="Delete"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-2.5 h-2.5" />
                   </button>
                 </div>
               </div>
             ))}
+            {filteredColors.length === 0 && (
+              <p className="text-sm text-charcoal-400 py-6 px-2">No colors yet.</p>
+            )}
           </div>
         </>
       )}

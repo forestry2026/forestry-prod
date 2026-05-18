@@ -95,7 +95,9 @@ export default async function RfpDetailPage({ params }: { params: Promise<{ id: 
   ])
 
   const latestQuote      = rfp.quotes[0] ?? null
-  const showQuotation    = latestQuote && QUOTED_OR_LATER.includes(rfp.status)
+  // Show quotation section once a quote has actually been sent (admin clicked "Send Quotation"),
+  // not just based on RFP status which can lag.
+  const showQuotation    = !!(latestQuote && (latestQuote.sentAt || QUOTED_OR_LATER.includes(rfp.status)))
   const canWithdraw      = WITHDRAWABLE.includes(rfp.status)
   const canDelete        = DELETABLE.includes(rfp.status)
   const totalUnits       = rfp.items.reduce((s, i) => s + i.quantity, 0)
