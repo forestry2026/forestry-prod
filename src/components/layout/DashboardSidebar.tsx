@@ -10,8 +10,8 @@ import {
   ClipboardList, ListOrdered, BarChart3, ShoppingBag, Loader2, MonitorPlay, Wand2, UserCircle, Image,
 } from 'lucide-react'
 import { canAccess, parsePermissions, type UserPermissions } from '@/lib/portal-permissions'
-import { useOnboarding } from '@/components/onboarding/OnboardingProvider'
-import { adminTour }     from '@/components/onboarding/tours/adminTour'
+import { useOnboardingOptional } from '@/components/onboarding/OnboardingProvider'
+import { adminTour }              from '@/components/onboarding/tours/adminTour'
 
 /* ── Types ──────────────────────────────────────────────────────── */
 interface BadgeCounts {
@@ -268,11 +268,13 @@ export default function DashboardSidebar() {
 
 /* ── Replay tour button ─────────────────────────────────────────── */
 function ReplayTourButton() {
-  const { replay } = useOnboarding()
+  const ctx = useOnboardingOptional()
+  // Hide when used outside an OnboardingProvider (manager/production layouts).
+  if (!ctx) return null
   return (
     <button
       type="button"
-      onClick={() => replay(adminTour)}
+      onClick={() => ctx.replay(adminTour)}
       title="Replay the first-run tour"
       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors text-charcoal-500 hover:bg-cream hover:text-terracotta"
     >

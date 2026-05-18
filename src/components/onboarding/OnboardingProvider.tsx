@@ -27,6 +27,15 @@ export function useOnboarding() {
   return ctx
 }
 
+/**
+ * Same as useOnboarding but returns null when no provider is mounted.
+ * Use this in shared components (sidebars used across admin + manager + production layouts)
+ * where the provider only wraps a subset of routes.
+ */
+export function useOnboardingOptional() {
+  return useContext(OnboardingCtx)
+}
+
 interface ProviderProps {
   children:  ReactNode
   /** Optional auto-start tour when user has no progress. Pass the appropriate tour for the layout. */

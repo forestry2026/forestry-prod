@@ -3,6 +3,10 @@ import { Zilla_Slab, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 
+// Force every route to render at request time. Pages depend on session + DB,
+// so static prerender would either crash or serve stale data.
+export const dynamic = 'force-dynamic'
+
 const zillaSlab = Zilla_Slab({
   subsets:  ['latin'],
   weight:   ['400', '500', '600', '700'],
