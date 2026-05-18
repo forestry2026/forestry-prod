@@ -30,3 +30,12 @@ Thumbs.db
 postgres_data/
 pgadmin_data/
 redis_data/
+
+# Migration leftovers (after SQLite → Postgres + Cloudinary)
+public/uploads/
+prisma/migrations.sqlite.bak/
+*.bak
+
+# Tool state
+.claude-flow/
+.ruflo/
