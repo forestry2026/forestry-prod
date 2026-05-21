@@ -126,10 +126,10 @@ export default async function ProductDetailPage({
       </div>
 
       {/* ── Main two-column grid ──────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[360px_1fr] gap-8 xl:gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
 
         {/* ════ LEFT: Gallery ════ */}
-        <div className="lg:sticky lg:top-6 space-y-5">
+        <div className="lg:col-span-1 space-y-5 lg:sticky lg:top-28 lg:h-fit">
           <ProductGallery images={product.images} productName={product.name} />
 
           {/* Attribute count strip */}
@@ -154,7 +154,7 @@ export default async function ProductDetailPage({
         </div>
 
         {/* ════ RIGHT: Info ════ */}
-        <div className="space-y-0 min-w-0">
+        <div className="lg:col-span-2 space-y-0 min-w-0">
 
           {/* ── ZONE 1: Identity ─────────────────────────── */}
           <div>

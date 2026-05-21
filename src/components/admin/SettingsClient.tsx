@@ -39,16 +39,17 @@ interface Props {
 }
 
 /* ── Navigation ─────────────────────────────────────────────────── */
-type Section = 'brand' | 'company' | 'general' | 'account' | 'email' | 'security' | 'system'
+type Section = 'brand' | 'company' | 'general' | 'account' | 'email' | 'templates' | 'security' | 'system'
 
 const NAV: { id: Section; label: string; icon: React.ElementType; desc: string }[] = [
-  { id: 'brand',    label: 'Brand & Logo',  icon: Paintbrush, desc: 'Logo & identity'       },
-  { id: 'company',  label: 'Company Info',  icon: Building2,  desc: 'TRN, contact, address' },
-  { id: 'general',  label: 'General',       icon: Settings,  desc: 'Platform & region'     },
-  { id: 'account',  label: 'My Account',    icon: User,      desc: 'Profile & password'    },
-  { id: 'email',    label: 'Email',         icon: Mail,      desc: 'Notifications & sender'},
-  { id: 'security', label: 'Security',      icon: Shield,    desc: 'Roles & session'       },
-  { id: 'system',   label: 'System',        icon: Server,    desc: 'Status & build info'   },
+  { id: 'brand',     label: 'Brand & Logo',     icon: Paintbrush, desc: 'Logo & identity'       },
+  { id: 'company',   label: 'Company Info',     icon: Building2,  desc: 'TRN, contact, address' },
+  { id: 'general',   label: 'General',          icon: Settings,   desc: 'Platform & region'     },
+  { id: 'account',   label: 'My Account',       icon: User,       desc: 'Profile & password'    },
+  { id: 'email',     label: 'Email',            icon: Mail,       desc: 'Notifications & sender'},
+  { id: 'templates', label: 'Email Templates',  icon: FileImage,  desc: 'Edit transactional copy'},
+  { id: 'security',  label: 'Security',         icon: Shield,     desc: 'Roles & session'       },
+  { id: 'system',    label: 'System',           icon: Server,     desc: 'Status & build info'   },
 ]
 
 /* ── Helpers ────────────────────────────────────────────────────── */
@@ -1030,6 +1031,7 @@ export function SettingsClient({ user, systemInfo }: Props) {
         {active === 'general'  && <GeneralSection  systemInfo={systemInfo} />}
         {active === 'account'  && <AccountSection  user={user} />}
         {active === 'email'    && <EmailSection    systemInfo={systemInfo} />}
+        {active === 'templates' && <EmailTemplatesSection />}
         {active === 'security' && <SecuritySection systemInfo={systemInfo} />}
         {active === 'system'   && <SystemSection   systemInfo={systemInfo} />}
       </div>
@@ -1154,6 +1156,274 @@ function CompanySection() {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * EmailTemplatesSection — list, edit, preview, reset transactional emails.
+ * ──────────────────────────────────────────────────────────────────── */
+interface TemplateRow {
+  key:         string
+  label:       string
+  description: string
+  recipient:   string
+  variables:   Array<{ token: string; example: string }>
+  isCustom:    boolean
+  subject:     string
+  html:        string
+  updatedAt:   string | null
+}
+
+function EmailTemplatesSection() {
+  const [templates, setTemplates] = useState<TemplateRow[]>([])
+  const [loading,   setLoading]   = useState(true)
+  const [activeKey, setActiveKey] = useState<string | null>(null)
+  const [subject,   setSubject]   = useState('')
+  const [html,      setHtml]      = useState('')
+  const [previewHtml, setPreviewHtml] = useState('')
+  const [previewSubject, setPreviewSubject] = useState('')
+  const [saving,    setSaving]    = useState(false)
+  const [msg,       setMsg]       = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const [testEmail, setTestEmail] = useState('')
+  const [sendingTest, setSendingTest] = useState(false)
+
+  async function sendTest() {
+    if (!activeKey) return
+    if (!/.+@.+\..+/.test(testEmail.trim())) {
+      setMsg({ type: 'err', text: 'Enter a valid email address.' })
+      setTimeout(() => setMsg(null), 3500)
+      return
+    }
+    setSendingTest(true); setMsg(null)
+    try {
+      const res = await fetch(`/api/admin/email-templates/${encodeURIComponent(activeKey)}/test`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ to: testEmail.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Send failed')
+      setMsg({ type: 'ok', text: `Sent to ${testEmail.trim()}. Check inbox + Resend dashboard.` })
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e?.message ?? 'Send failed' })
+    } finally {
+      setSendingTest(false)
+      setTimeout(() => setMsg(null), 5000)
+    }
+  }
+
+  useEffect(() => {
+    fetch('/api/admin/email-templates')
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('Failed to load')))
+      .then(d => setTemplates(d.templates ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const active = templates.find(t => t.key === activeKey)
+
+  function openTemplate(t: TemplateRow) {
+    setActiveKey(t.key)
+    setSubject(t.subject)
+    setHtml(t.html)
+    setMsg(null)
+    runPreview(t.key, t.subject, t.html)
+  }
+
+  async function runPreview(key: string, subj: string, body: string) {
+    try {
+      const res = await fetch(`/api/admin/email-templates/${encodeURIComponent(key)}`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ subject: subj, html: body }),
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      setPreviewSubject(data.subject ?? '')
+      setPreviewHtml(data.html ?? '')
+    } catch { /* ignore */ }
+  }
+
+  async function save() {
+    if (!activeKey) return
+    setSaving(true); setMsg(null)
+    try {
+      const res = await fetch(`/api/admin/email-templates/${encodeURIComponent(activeKey)}`, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ subject, html }),
+      })
+      if (!res.ok) throw new Error('Save failed')
+      const data = await res.json()
+      setTemplates(prev => prev.map(t => t.key === activeKey ? { ...t, subject, html, isCustom: true, updatedAt: data.updatedAt } : t))
+      setMsg({ type: 'ok', text: 'Saved. New copy is live for the next send.' })
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e?.message ?? 'Save failed' })
+    } finally {
+      setSaving(false)
+      setTimeout(() => setMsg(null), 3500)
+    }
+  }
+
+  async function resetToDefault() {
+    if (!activeKey) return
+    if (!confirm('Reset this template to the built-in default? Your edits will be discarded.')) return
+    setSaving(true); setMsg(null)
+    try {
+      const res = await fetch(`/api/admin/email-templates/${encodeURIComponent(activeKey)}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Reset failed')
+      // refetch the row to get the default
+      const fresh = await fetch(`/api/admin/email-templates/${encodeURIComponent(activeKey)}`).then(r => r.json())
+      setSubject(fresh.subject)
+      setHtml(fresh.html)
+      setTemplates(prev => prev.map(t => t.key === activeKey ? { ...t, subject: fresh.subject, html: fresh.html, isCustom: false, updatedAt: null } : t))
+      runPreview(activeKey, fresh.subject, fresh.html)
+      setMsg({ type: 'ok', text: 'Reset to default.' })
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e?.message ?? 'Reset failed' })
+    } finally {
+      setSaving(false)
+      setTimeout(() => setMsg(null), 3500)
+    }
+  }
+
+  if (loading) return <p className="text-sm text-charcoal-400 py-8">Loading templates…</p>
+
+  return (
+    <div className="grid grid-cols-12 gap-4">
+
+      {/* List */}
+      <div className="col-span-4 bg-white rounded-2xl border border-[#E8E0D5] shadow-card overflow-hidden">
+        <div className="px-4 py-3 border-b border-[#F0EBE3] bg-cream/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">Templates</p>
+          <p className="text-xs text-charcoal-500">{templates.length} transactional emails</p>
+        </div>
+        <div className="divide-y divide-[#F0EBE3] max-h-[640px] overflow-y-auto">
+          {templates.map(t => (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => openTemplate(t)}
+              className={`w-full text-left px-4 py-3 transition-colors ${activeKey === t.key ? 'bg-terracotta/10' : 'hover:bg-cream/50'}`}
+            >
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-semibold ${activeKey === t.key ? 'text-terracotta' : 'text-charcoal-900'}`}>{t.label}</span>
+                {t.isCustom && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">Edited</span>}
+              </div>
+              <p className="text-[11px] text-charcoal-500 mt-0.5 leading-snug">{t.description}</p>
+              <p className="text-[10px] text-charcoal-400 mt-1">To: {t.recipient}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Editor + preview */}
+      <div className="col-span-8 space-y-3">
+        {!active && (
+          <div className="bg-white rounded-2xl border border-[#E8E0D5] shadow-card p-8 text-center text-sm text-charcoal-400">
+            Select a template on the left to edit.
+          </div>
+        )}
+
+        {active && (
+          <>
+            <div className="bg-white rounded-2xl border border-[#E8E0D5] shadow-card overflow-hidden">
+              <div className="px-5 py-3 border-b border-[#F0EBE3] bg-cream/40 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">{active.recipient} email</p>
+                  <h3 className="text-base font-bold text-charcoal-900">{active.label}</h3>
+                </div>
+                <div className="flex gap-2">
+                  {active.isCustom && (
+                    <button onClick={resetToDefault} disabled={saving} className="text-xs font-semibold text-charcoal-500 hover:text-rose-600 px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-colors disabled:opacity-50">
+                      Reset to default
+                    </button>
+                  )}
+                  <button onClick={save} disabled={saving} className="text-xs font-semibold text-white bg-terracotta hover:bg-terracotta-dark px-4 py-1.5 rounded-lg transition-colors disabled:opacity-50">
+                    {saving ? 'Saving…' : 'Save changes'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="px-5 py-4 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">Subject line</label>
+                  <input
+                    type="text"
+                    value={subject}
+                    onChange={e => { setSubject(e.target.value); runPreview(active.key, e.target.value, html) }}
+                    className="w-full px-3 py-2 rounded-lg border border-[#E8E0D5] bg-cream/30 text-sm font-medium focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal-600 mb-1.5">HTML body</label>
+                  <textarea
+                    value={html}
+                    onChange={e => { setHtml(e.target.value); runPreview(active.key, subject, e.target.value) }}
+                    rows={14}
+                    className="w-full px-3 py-2 rounded-lg border border-[#E8E0D5] bg-cream/30 text-xs font-mono focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors resize-y"
+                  />
+                </div>
+
+                {/* Variables */}
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-charcoal-400 mb-2">Available variables</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {active.variables.map(v => (
+                      <code key={v.token} className="text-[11px] font-mono px-2 py-0.5 rounded bg-cream text-charcoal-700 border border-[#E8E0D5]" title={`Example: ${v.example}`}>
+                        {v.token}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Send test */}
+                <div className="border-t border-[#F0EBE3] pt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-charcoal-400 mb-2">Send test email</p>
+                  <p className="text-xs text-charcoal-500 mb-2">Fires a real send via Resend using example variable values. Subject prefixed with [TEST].</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      value={testEmail}
+                      onChange={e => setTestEmail(e.target.value)}
+                      placeholder="you@yourcompany.com"
+                      className="flex-1 px-3 py-2 rounded-lg border border-[#E8E0D5] bg-cream/30 text-sm focus:outline-none focus:border-terracotta/60 focus:bg-white transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={sendTest}
+                      disabled={sendingTest || !testEmail.trim()}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-charcoal text-white hover:bg-charcoal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {sendingTest ? 'Sending…' : 'Send test'}
+                    </button>
+                  </div>
+                </div>
+
+                {msg && (
+                  <div className={`text-xs font-semibold px-3 py-2 rounded-lg ${msg.type === 'ok' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                    {msg.text}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="bg-white rounded-2xl border border-[#E8E0D5] shadow-card overflow-hidden">
+              <div className="px-5 py-3 border-b border-[#F0EBE3] bg-cream/40">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">Live preview</p>
+                <p className="text-xs text-charcoal-500">Rendered with example values from the variables list above</p>
+              </div>
+              <div className="px-5 py-3 border-b border-[#F0EBE3] bg-white text-xs">
+                <span className="font-bold text-charcoal-500">Subject:</span> <span className="font-semibold text-charcoal-900">{previewSubject}</span>
+              </div>
+              <iframe srcDoc={previewHtml} className="w-full bg-white" style={{ height: 640, border: 0 }} title="Email preview" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

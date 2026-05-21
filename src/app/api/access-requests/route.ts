@@ -4,6 +4,7 @@ import { authOptions }               from '@/lib/auth'
 import { prisma }                    from '@/lib/prisma'
 import { z }                         from 'zod'
 import { sendAccessRequestReceived } from '@/lib/email'
+import { HONEYPOT_FIELD, honeypotTriggered, isDisposableEmail } from '@/lib/antiSpam'
 
 const schema = z.object({
   name:          z.string().min(2),
@@ -14,6 +15,8 @@ const schema = z.object({
   tradeLicense:  z.string().optional(),
   documentPaths: z.array(z.string()).optional(),
   message:       z.string().optional(),
+  // Honeypot — humans never fill this, bots do. Field name attractive to scrapers.
+  [HONEYPOT_FIELD]: z.string().optional(),
 })
 
 // POST /api/access-requests — public
@@ -27,6 +30,22 @@ export async function POST(req: NextRequest) {
     }
 
     const data = parsed.data
+
+    // ── Anti-spam layer 1: honeypot ───────────────────────────────
+    // Bots auto-fill every visible field including the hidden one.
+    // Return a fake-success response so they stop retrying, but discard.
+    if (honeypotTriggered((data as any)[HONEYPOT_FIELD])) {
+      console.warn('[access-requests] honeypot triggered — discarding bot submission', { email: data.email })
+      return NextResponse.json({ success: true, data: { id: 'noop' } }, { status: 201 })
+    }
+
+    // ── Anti-spam layer 2: disposable email block ─────────────────
+    if (isDisposableEmail(data.email)) {
+      return NextResponse.json(
+        { error: 'Please use a business email address. Disposable / temporary email providers are not accepted.' },
+        { status: 400 },
+      )
+    }
 
     // Duplicate pending request check
     const existing = await prisma.accessRequest.findFirst({

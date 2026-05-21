@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { redirect }        from 'next/navigation'
 import { authOptions }     from '@/lib/auth'
 import { prisma }          from '@/lib/prisma'
-import { Plus }            from 'lucide-react'
+import { Plus, FileSpreadsheet } from 'lucide-react'
 import { ProductsListContent } from '@/components/admin/ProductsListContent'
 import { parsePermissions, canAccess, canEdit } from '@/lib/portal-permissions'
 
@@ -69,13 +69,26 @@ export default async function ProductsPage() {
             </div>
           )}
           {!readonly && (
-            <Link
-              href="/admin/products/new"
-              className="inline-flex items-center gap-2 bg-terracotta hover:bg-terracotta-dark text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors shadow-warm-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Add Product
-            </Link>
+            <>
+              {/* Bulk Import — temporarily hidden, route still works via direct URL */}
+              {/*
+              <Link
+                href="/admin/products/bulk-import"
+                className="inline-flex items-center gap-2 bg-white hover:bg-cream text-charcoal-700 border border-[#E8E0D5] text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
+                title="Upload Excel to create/update many products at once"
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                Bulk Import
+              </Link>
+              */}
+              <Link
+                href="/admin/products/new"
+                className="inline-flex items-center gap-2 bg-terracotta hover:bg-terracotta-dark text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors shadow-warm-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Add Product
+              </Link>
+            </>
           )}
         </div>
       </div>

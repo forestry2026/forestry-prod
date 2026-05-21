@@ -67,7 +67,7 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
 
   return (
     <div
-      className="fixed inset-0 z-[200] bg-charcoal-900/90 backdrop-blur-sm flex items-center justify-center p-8 cursor-zoom-out"
+      className="fixed inset-0 z-[200] bg-charcoal-900 backdrop-blur-md flex items-center justify-center p-8 cursor-zoom-out"
       onClick={onClose}
     >
       <div className="relative max-w-4xl max-h-full" onClick={e => e.stopPropagation()}>
@@ -97,7 +97,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       <div className="space-y-3">
         {/* ── Main image ─────────────────────────── */}
         <div
-          className="group relative w-full aspect-[9/16] rounded-2xl overflow-hidden bg-cream-dark border border-[#E8E0D5] shadow-card cursor-zoom-in"
+          className="group relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-cream cursor-zoom-in"
           onClick={() => current.url && setLightboxSrc(current.url)}
         >
           <ImageSlot
@@ -133,10 +133,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 type="button"
                 onClick={() => setCurrentIdx(i)}
                 aria-label={`View image ${i + 1}`}
-                className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 flex-shrink-0 ${
+                className={`relative aspect-[3/4] w-16 rounded-lg overflow-hidden border-2 transition-all ${
                   i === currentIdx
-                    ? 'border-terracotta shadow-warm-sm'
-                    : 'border-[#E8E0D5] hover:border-charcoal-200 opacity-70 hover:opacity-100'
+                    ? 'border-terra-600 ring-1 ring-terra-600'
+                    : 'border-charcoal-200 hover:border-charcoal-300'
                 }`}
               >
                 <ImageSlot

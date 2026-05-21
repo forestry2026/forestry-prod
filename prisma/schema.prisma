@@ -709,3 +709,19 @@ model LoginSlide {
   @@index([isActive])
   @@index([sortOrder])
 }
+
+// ============ EMAIL TEMPLATES ============
+
+// Admin-editable override for file-based default email templates.
+// If a row exists for a given `key`, it takes precedence over the file default.
+// Variables like {{name}}, {{rfpNumber}}, etc. are substituted at send time.
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  key       String   @unique  // matches the template registry, e.g. "access.approved"
+  subject   String              // may contain {{tokens}}
+  html      String              // raw HTML body, may contain {{tokens}}
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([key])
+}

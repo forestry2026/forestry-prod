@@ -1,226 +1,82 @@
 /**
- * Email notifications using Resend (production + quotation flows)
+ * Email notifications for production + quotation flows.
+ * All bodies + subjects come from the central template engine.
+ * Admin can edit copy via Settings → Email Templates (DB overrides default).
  */
 
 import { getEmailConfig } from '@/lib/emailConfig'
+import { buildEmail }     from '@/lib/emailTemplates/engine'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+const APP_URL = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
+/* ── Quotation: initial send ─────────────────────────────────────────
+   Legacy quotation flow — used by /api/quotations/[id]/send.
+   Mirrors rfp.quoteSent template for consistency. */
 export async function sendQuotationEmail(
   vendorEmail:  string,
   companyName:  string,
-  quotation:    any,
+  quotation:    { id: string; total: number | string; validUntil?: Date | string | null },
   quotationUrl: string,
 ) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: vendorEmail,
-    subject: 'New Quotation Ready for Review',
-    html: `
-      <h2>Hello ${companyName},</h2>
-      <p>A new quotation has been prepared for your review.</p>
-      <div style="background:#f5f5f5;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Quotation Details:</strong></p>
-        <ul>
-          <li>Total Amount: AED ${quotation.total.toFixed(2)}</li>
-          <li>Valid Until: ${new Date(quotation.validUntil).toLocaleDateString()}</li>
-          <li>Items: ${quotation.items?.length || 0}</li>
-        </ul>
-      </div>
-      <p>
-        <a href="${quotationUrl}" style="display:inline-block;background:#B35C2A;color:white;padding:12px 24px;text-decoration:none;border-radius:4px;">
-          Review Quotation
-        </a>
-      </p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
+  const totalNum = typeof quotation.total === 'string' ? parseFloat(quotation.total) : quotation.total
+  const totalStr = `AED ${Number(totalNum || 0).toLocaleString('en-AE', { minimumFractionDigits: 2 })}`
+  const validStr = quotation.validUntil
+    ? new Date(quotation.validUntil).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '—'
+
+  // Reuses the same rfp.quoteSent template (companyName goes into the {{name}} slot).
+  const { subject, html } = await buildEmail('rfp.quoteSent', {
+    name:       companyName,
+    rfpNumber:  quotation.id,
+    total:      totalStr,
+    validUntil: validStr,
+    rfpUrl:     quotationUrl || `${APP_URL}/portal`,
   })
+  return resend.emails.send({ from, to: vendorEmail, subject, html })
 }
 
-export async function sendQuotationApprovedEmail(
-  email:       string,
-  companyName: string,
-  quotationId: string,
-  amount:      number,
-) {
+/* ── Quotation lifecycle (admin notifications) ──────────────────── */
+export async function sendQuotationApprovedEmail(adminEmail: string, vendorName: string, quotationId: string, total: number | string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Quotation Approved - ${companyName}`,
-    html: `
-      <h2>Quotation Approved!</h2>
-      <p>The quotation for ${companyName} has been approved.</p>
-      <div style="background:#dcfce7;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Amount: AED ${amount.toFixed(2)}</strong></p>
-        <p>Quotation ID: ${quotationId}</p>
-      </div>
-      <p>The order has moved to production queue.</p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const totalStr = `AED ${Number(total || 0).toLocaleString('en-AE', { minimumFractionDigits: 2 })}`
+  const { subject, html } = await buildEmail('quote.approved', { vendorName, quotationId, total: totalStr })
+  return resend.emails.send({ from, to: adminEmail, subject, html })
 }
 
-export async function sendQuotationDeclinedEmail(
-  email:       string,
-  companyName: string,
-  quotationId: string,
-  reason?:     string,
-) {
+export async function sendQuotationDeclinedEmail(adminEmail: string, vendorName: string, quotationId: string, notes?: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Quotation Declined - ${companyName}`,
-    html: `
-      <h2>Quotation Declined</h2>
-      <p>The quotation for ${companyName} has been declined.</p>
-      <div style="background:#fee2e2;padding:20px;border-radius:8px;margin:20px 0;">
-        <p>Quotation ID: ${quotationId}</p>
-        ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
-      </div>
-      <p>Please follow up with the vendor.</p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('quote.declined', { vendorName, quotationId, notes: notes || '—' })
+  return resend.emails.send({ from, to: adminEmail, subject, html })
 }
 
-export async function sendQuotationRevisionEmail(
-  email:       string,
-  companyName: string,
-  quotationId: string,
-  notes?:      string,
-) {
+export async function sendQuotationRevisionEmail(adminEmail: string, vendorName: string, quotationId: string, notes?: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Quotation Revision Requested - ${companyName}`,
-    html: `
-      <h2>Quotation Revision Requested</h2>
-      <p>${companyName} has requested revisions to their quotation.</p>
-      <div style="background:#fef3c7;padding:20px;border-radius:8px;margin:20px 0;">
-        <p>Quotation ID: ${quotationId}</p>
-        ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ''}
-      </div>
-      <p>Please review and update the quotation.</p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('quote.revisionRequest', { vendorName, quotationId, notes: notes || '—' })
+  return resend.emails.send({ from, to: adminEmail, subject, html })
 }
 
-export async function sendProductionApprovedEmail(
-  email:               string,
-  companyName:         string,
-  orderNumber:         string,
-  estimatedCompletion: Date,
-) {
+/* ── Production lifecycle (vendor notifications) ─────────────────── */
+export async function sendProductionApprovedEmail(vendorEmail: string, vendorName: string, orderNumber: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Production Approved - Order ${orderNumber}`,
-    html: `
-      <h2>Production Approved!</h2>
-      <p>Hello ${companyName},</p>
-      <p>Your order has been approved and moved into production.</p>
-      <div style="background:#dcfce7;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Order Number:</strong> ${orderNumber}</p>
-        <p><strong>Estimated Completion:</strong> ${new Date(estimatedCompletion).toLocaleDateString()}</p>
-      </div>
-      <p>
-        <a href="${APP_URL}/portal/orders/${orderNumber}" style="display:inline-block;background:#B35C2A;color:white;padding:12px 24px;text-decoration:none;border-radius:4px;">
-          Track Order
-        </a>
-      </p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('production.approved', { vendorName, orderNumber })
+  return resend.emails.send({ from, to: vendorEmail, subject, html })
 }
 
-export async function sendProductionStartedEmail(
-  email:               string,
-  companyName:         string,
-  orderNumber:         string,
-  estimatedCompletion: Date,
-) {
+export async function sendProductionStartedEmail(vendorEmail: string, vendorName: string, orderNumber: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Production Started - Order ${orderNumber}`,
-    html: `
-      <h2>Production Started!</h2>
-      <p>Hello ${companyName},</p>
-      <p>Your order has started production.</p>
-      <div style="background:#dbeafe;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Order Number:</strong> ${orderNumber}</p>
-        <p><strong>Estimated Completion:</strong> ${new Date(estimatedCompletion).toLocaleDateString()}</p>
-      </div>
-      <p>
-        <a href="${APP_URL}/portal/orders/${orderNumber}" style="display:inline-block;background:#B35C2A;color:white;padding:12px 24px;text-decoration:none;border-radius:4px;">
-          Track Order
-        </a>
-      </p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('production.started', { vendorName, orderNumber })
+  return resend.emails.send({ from, to: vendorEmail, subject, html })
 }
 
-export async function sendProductionUpdateEmail(
-  email:       string,
-  companyName: string,
-  orderNumber: string,
-  stage:       string,
-  notes?:      string,
-) {
-  const stageNames: Record<string, string> = {
-    MOLDING: 'Molding', DRYING: 'Drying', FINISHING: 'Finishing',
-    GLAZING: 'Glazing', QUALITY_CHECK: 'Quality Check',
-    PACKAGING: 'Packaging', READY: 'Ready for Delivery',
-  }
+export async function sendProductionUpdateEmail(vendorEmail: string, vendorName: string, orderNumber: string, stage: string, notes?: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Production Update - Order ${orderNumber}`,
-    html: `
-      <h2>Production Update</h2>
-      <p>Hello ${companyName},</p>
-      <p>Your order has progressed to the <strong>${stageNames[stage] || stage}</strong> stage.</p>
-      <div style="background:#dbeafe;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Order Number:</strong> ${orderNumber}</p>
-        <p><strong>Current Stage:</strong> ${stageNames[stage] || stage}</p>
-        ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ''}
-      </div>
-      <p>
-        <a href="${APP_URL}/portal/orders/${orderNumber}" style="display:inline-block;background:#B35C2A;color:white;padding:12px 24px;text-decoration:none;border-radius:4px;">
-          View Full Details
-        </a>
-      </p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('production.update', { vendorName, orderNumber, stage, notes: notes || '—' })
+  return resend.emails.send({ from, to: vendorEmail, subject, html })
 }
 
-export async function sendProductionCompleteEmail(
-  email:          string,
-  companyName:    string,
-  orderNumber:    string,
-  completionDate: Date,
-) {
+export async function sendProductionCompleteEmail(vendorEmail: string, vendorName: string, orderNumber: string) {
   const { resend, from } = await getEmailConfig()
-  await resend.emails.send({
-    from, to: email,
-    subject: `Order Complete - ${orderNumber}`,
-    html: `
-      <h2>Your Order is Ready!</h2>
-      <p>Hello ${companyName},</p>
-      <p>Your order has been completed and is ready for delivery.</p>
-      <div style="background:#dcfce7;padding:20px;border-radius:8px;margin:20px 0;">
-        <p><strong>Order Number:</strong> ${orderNumber}</p>
-        <p><strong>Completed Date:</strong> ${new Date(completionDate).toLocaleDateString()}</p>
-      </div>
-      <p>
-        <a href="${APP_URL}/portal/orders/${orderNumber}" style="display:inline-block;background:#B35C2A;color:white;padding:12px 24px;text-decoration:none;border-radius:4px;">
-          View Order Details
-        </a>
-      </p>
-      <p>Best regards,<br>Forestry Team</p>
-    `,
-  })
+  const { subject, html } = await buildEmail('production.complete', { vendorName, orderNumber })
+  return resend.emails.send({ from, to: vendorEmail, subject, html })
 }

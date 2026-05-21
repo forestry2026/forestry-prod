@@ -36,6 +36,8 @@ const schema = z.object({
   country:      z.string().min(1,  'Country is required'),
   tradeLicense: z.string().optional(),
   message:      z.string().optional(),
+  // Honeypot — humans never fill this; bots auto-fill every field.
+  website_url:  z.string().optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -166,6 +168,7 @@ export default function RequestAccessPage() {
           tradeLicense:  data.tradeLicense,
           documentPaths,
           message:       data.message,
+          website_url:   data.website_url,
         }),
       })
       const json = await res.json()
@@ -221,6 +224,18 @@ export default function RequestAccessPage() {
               )}
 
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+
+                {/* Honeypot — hidden from real users, attractive to bots. */}
+                <div aria-hidden="true" className="absolute -left-[9999px] opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+                  <label htmlFor="website_url">Website (leave blank)</label>
+                  <input
+                    id="website_url"
+                    type="text"
+                    autoComplete="off"
+                    tabIndex={-1}
+                    {...register('website_url')}
+                  />
+                </div>
 
                 {/* Name + Email */}
                 <div className="grid grid-cols-2 gap-4">

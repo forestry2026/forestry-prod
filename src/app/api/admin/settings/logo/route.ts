@@ -5,6 +5,7 @@ import { getServerSession }          from 'next-auth'
 import { authOptions }               from '@/lib/auth'
 import { prisma }                    from '@/lib/prisma'
 import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary'
+import { clearLogoCache } from '@/lib/emailTemplates/engine'
 
 const ALLOWED  = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
 const MAX_SIZE = 2 * 1024 * 1024 // 2 MB
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
     update: { value: logoUrl },
     create: { key: 'logoUrl', value: logoUrl },
   })
+  clearLogoCache()
 
   return NextResponse.json({ success: true, logoUrl })
 }
@@ -53,6 +55,7 @@ export async function DELETE(req: NextRequest) {
   if (existing?.value) await deleteFromCloudinary(existing.value)
 
   await prisma.siteSetting.deleteMany({ where: { key: 'logoUrl' } })
+  clearLogoCache()
 
   return NextResponse.json({ success: true })
 }

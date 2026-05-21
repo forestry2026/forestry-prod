@@ -3,28 +3,47 @@
 import { useEffect } from 'react'
 
 /**
- * Forces the page to start at the top on initial mount.
+ * Landing-page scroll behaviour controller:
+ *   - On first mount with no hash → force top.
+ *   - On mount WITH a hash (e.g. /#collection) → scroll to that element.
+ *   - On hash change (clicking View Collection etc.) → scroll to target.
  *
- * Why this is needed:
- *   - Browsers + Next.js try to restore the scroll position from the previous
- *     session. On the landing page, this is often wrong — visitors expect to
- *     see the hero, not wherever they left off.
- *   - Only resets when there's no URL hash, so `/#collection` etc. still work.
- *   - Uses `scrollRestoration = 'manual'` to disable the browser's automatic
- *     restoration for this entry, preventing the brief jump-then-snap-back
- *     flash.
+ * Sets `history.scrollRestoration = 'manual'` so the browser doesn't
+ * auto-restore an old scroll position on refresh. Because that disables
+ * browser-native scroll-on-hash, we re-implement the hash scroll here.
  */
 export function ScrollResetOnLoad() {
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (window.location.hash) return // honour anchor links like #collection
+
     try {
       if ('scrollRestoration' in window.history) {
         window.history.scrollRestoration = 'manual'
       }
     } catch { /* ignore */ }
-    // Run after paint so we override any restoration that already happened.
-    requestAnimationFrame(() => window.scrollTo(0, 0))
+
+    function scrollToHash(hash: string) {
+      const id = hash.replace(/^#/, '')
+      if (!id) return false
+      const el = document.getElementById(id)
+      if (!el) return false
+      // Wait one frame so layout settles, then smooth-scroll.
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      return true
+    }
+
+    // Initial load
+    if (window.location.hash) {
+      // Defer slightly so server-rendered content (images, etc.) mount first.
+      requestAnimationFrame(() => scrollToHash(window.location.hash))
+    } else {
+      requestAnimationFrame(() => window.scrollTo(0, 0))
+    }
+
+    // Subsequent clicks on in-page anchors
+    function onHashChange() { scrollToHash(window.location.hash) }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
   return null
