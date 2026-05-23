@@ -5,8 +5,8 @@ import { ForestryLogo } from '@/components/ui/ForestryLogo'
 import { MapPin, Phone, Mail } from 'lucide-react'
 import { useSiteLogo } from '@/hooks/useSiteLogo'
 
-export function Footer() {
-  const logoUrl = useSiteLogo()
+export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | null } = {}) {
+  const logoUrl = useSiteLogo(initialLogoUrl)
 
   return (
     <footer id="contact" className="bg-charcoal text-cream/70">

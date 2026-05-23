@@ -1,24 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react'
 import DashboardSidebar from '@/components/layout/DashboardSidebar';
-
-function useSiteLogo() {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
-  useEffect(() => {
-    fetch('/api/admin/settings/brand')
-      .then(r => r.json())
-      .then(d => { if (d.logoUrl) setLogoUrl(d.logoUrl + '?t=' + Date.now()) })
-      .catch(() => {})
-    const handler = (e: Event) => {
-      const url = (e as CustomEvent).detail?.logoUrl
-      setLogoUrl(url ? url + '?t=' + Date.now() : null)
-    }
-    window.addEventListener('logo-updated', handler)
-    return () => window.removeEventListener('logo-updated', handler)
-  }, [])
-  return logoUrl
-}
+import { useSiteLogo } from '@/hooks/useSiteLogo'
 
 export default function ProductionLayout({ children }: { children: React.ReactNode }) {
   const logoUrl = useSiteLogo()

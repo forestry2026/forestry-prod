@@ -3,46 +3,52 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Fetches and caches the site logo URL from brand settings.
- * Automatically updates when the logo changes via the 'logo-updated' event.
- * Adds a cache-busting timestamp query parameter to ensure the latest logo is displayed.
+ * Site-wide logo URL hook.
  *
- * The hook initializes the logo URL by fetching from '/api/admin/settings/brand' and listens
- * for 'logo-updated' custom events (dispatched when admin updates branding). Returns null
- * if the logo is not configured or the fetch fails.
+ * Resolution order:
+ *  1. `initial` argument (server-passed prop) — preferred.
+ *  2. `<html data-site-logo-url="…">` (set by the root layout on every SSR).
+ *  3. Client-side fetch to /api/admin/settings/brand (fallback only).
  *
- * @returns The site logo URL string with cache-busting timestamp query, or null if not available
+ * Steps 1 + 2 eliminate the "FORESTRY text fallback flash" on first paint
+ * that used to appear because the hook started with `null` until the
+ * client fetch resolved.
  *
- * @example
- * export function Header() {
- *   const logoUrl = useSiteLogo()
- *   return logoUrl ? <img src={logoUrl} alt="Site Logo" /> : null
- * }
- *
- * @remarks
- * - The timestamp (?t=) prevents browser caching issues when logo is updated
- * - Custom 'logo-updated' event listener enables real-time UI updates without page reload
- * - Automatically unsubscribes from event listener on unmount
- * - Silently catches fetch errors and returns null
+ * Also listens for the `logo-updated` window event so the admin's "Save
+ * brand logo" action propagates without a page refresh.
  */
-export function useSiteLogo(): string | null {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+function readDomLogo(): string | null {
+  if (typeof document === 'undefined') return null
+  const el = document.documentElement
+  const v = el.dataset.siteLogoUrl
+  return v && v.length > 0 ? v : null
+}
+
+export function useSiteLogo(initial: string | null = null): string | null {
+  // useState initializer runs once: try server prop, then DOM dataset.
+  // Both are available during SSR/hydration, so the rendered HTML contains
+  // the real <img> immediately — no fallback text flash.
+  const [logoUrl, setLogoUrl] = useState<string | null>(() => initial ?? readDomLogo())
 
   useEffect(() => {
-    // Fetch initial logo from brand settings endpoint
-    fetch('/api/admin/settings/brand')
-      .then(r => r.json())
-      .then(d => { if (d.logoUrl) setLogoUrl(d.logoUrl + '?t=' + Date.now()) })
-      .catch(() => {})
+    const haveInitial = (initial ?? readDomLogo()) != null
 
-    // Listen for logo updates triggered from admin panel
+    if (!haveInitial) {
+      // No server-provided URL — fall back to a client fetch.
+      fetch('/api/admin/settings/brand')
+        .then(r => r.json())
+        .then(d => { if (d.logoUrl) setLogoUrl(d.logoUrl + '?t=' + Date.now()) })
+        .catch(() => {})
+    }
+
+    // Live updates from the admin panel.
     const handler = (e: Event) => {
       const url = (e as CustomEvent).detail?.logoUrl
       setLogoUrl(url ? url + '?t=' + Date.now() : null)
     }
     window.addEventListener('logo-updated', handler)
     return () => window.removeEventListener('logo-updated', handler)
-  }, [])
+  }, [initial])
 
   return logoUrl
 }

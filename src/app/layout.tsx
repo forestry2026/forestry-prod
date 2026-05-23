@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Zilla_Slab, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
+import { getSiteLogo } from '@/lib/getSiteLogo'
 
 // Force every route to render at request time. Pages depend on session + DB,
 // so static prerender would either crash or serve stale data.
@@ -37,9 +38,19 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Server-fetch the admin-uploaded brand logo and embed it on <html>.
+  // Client hooks (useSiteLogo) read this on first render to avoid the
+  // text-fallback flash that happens when only a client-side fetch is used.
+  const siteLogoUrl = await getSiteLogo()
+
   return (
-    <html lang="en" className={`${zillaSlab.variable} ${dmSans.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${zillaSlab.variable} ${dmSans.variable}`}
+      data-site-logo-url={siteLogoUrl ?? ''}
+      suppressHydrationWarning
+    >
       <body className="font-body antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>

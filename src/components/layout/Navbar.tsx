@@ -14,11 +14,11 @@ const navLinks = [
   { label: 'Contact',  href: '/#contact'      },
 ]
 
-export function Navbar() {
+export function Navbar({ initialLogoUrl = null }: { initialLogoUrl?: string | null } = {}) {
   const [scrolled,    setScrolled]    = useState(false)
   const [menuOpen,    setMenuOpen]    = useState(false)
   const pathname = usePathname()
-  const logoUrl  = useSiteLogo()
+  const logoUrl  = useSiteLogo(initialLogoUrl)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
