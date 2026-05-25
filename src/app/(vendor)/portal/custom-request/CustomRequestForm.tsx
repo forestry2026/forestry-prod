@@ -325,7 +325,15 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
      Open-top box surface area × AED 300/m².
         SA = 2(L×H) + 2(W×H) + (L×W)   in m²
      All three (Length, Width, Height) required; any unit accepted. */
-  const CUSTOM_RATE_PER_SQM = 300 // AED
+  /* Tiered rate based on total surface area (m²):
+        SA ≤ 1.5      → AED 300/m²
+        1.5 < SA ≤ 2  → AED 350/m²
+        SA > 2        → AED 400/m² */
+  function rateForArea(sa: number): number {
+    if (sa > 2.0) return 400
+    if (sa > 1.5) return 350
+    return 300
+  }
 
   function toMetres(value: number, unit: string): number {
     const u = unit.toLowerCase()
@@ -360,12 +368,14 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
     const hM = toMetres(H.value, H.unit) + 0.05
     if (lM <= 0 || wM <= 0 || hM <= 0) return null
     const surfaceArea = 2 * (lM * hM) + 2 * (wM * hM) + (lM * wM)
-    const unitPrice   = surfaceArea * CUSTOM_RATE_PER_SQM
+    const rate        = rateForArea(surfaceArea)
+    const unitPrice   = surfaceArea * rate
     return {
       L: { raw: L },
       W: { raw: W },
       H: { raw: H },
       surfaceArea,
+      rate,
       unitPrice,
     }
   })()
@@ -542,7 +552,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
       // Auto-calculated price — only set when L+W+H all present.
       customUnitPrice:   customPriceCalc?.unitPrice    ?? null,
       customSurfaceArea: customPriceCalc?.surfaceArea  ?? null,
-      customPriceRate:   customPriceCalc ? CUSTOM_RATE_PER_SQM : null,
+      customPriceRate:   customPriceCalc?.rate ?? null,
     }
 
     const res = await fetch('/api/custom-design', {
@@ -718,7 +728,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                       <span className="font-mono font-semibold text-charcoal-800">
                         {customPriceCalc.surfaceArea.toFixed(3)} m²
                       </span>
-                      {' '}× AED {CUSTOM_RATE_PER_SQM}/m²
+                      {' '}× AED {customPriceCalc.rate}/m²
                     </p>
                     <p className="text-[10px] text-charcoal-400 mt-0.5 leading-snug">
                       {customPriceCalc.L.raw.value}{customPriceCalc.L.raw.unit} ×{' '}

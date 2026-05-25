@@ -130,13 +130,21 @@ export function ProductCustomizer({
   }
 
   /* ── custom-size pricing ─────────────────────────────────────────────────
-     Surface area of an open-top box (4 walls + base):
-        SA = 2(L×H) + 2(W×H) + (L×W)   in m²
-     Price = SA × AED 300 per m².
-     L/W/H are matched case-insensitively against the dimension `label`.
-     All three required; any unit (mm/cm/m/in/inches/feet) accepted and
-     normalised to metres before computing. */
-  const CUSTOM_RATE_PER_SQM = 300 // AED
+     Open-top box surface area:
+        SA = 2(L×H) + 2(W×H) + (L×W)   in m²   (Height includes +5 cm allowance)
+
+     Rate is tiered on the surface area:
+        SA ≤ 1.5 m²              → AED 300 / m²
+        1.5 m² < SA ≤ 2.0 m²     → AED 350 / m²
+        SA > 2.0 m²              → AED 400 / m²
+
+     L/W/H matched case-insensitively against the dimension `label`. All
+     three required; any unit (mm/cm/m/in/inches/feet) accepted. */
+  function rateForArea(sa: number): number {
+    if (sa > 2.0) return 400
+    if (sa > 1.5) return 350
+    return 300
+  }
 
   function toMetres(value: number, unit: string): number {
     const u = unit.toLowerCase()
@@ -172,12 +180,14 @@ export function ProductCustomizer({
     const hM = toMetres(H.value, H.unit) + 0.05
     if (lM <= 0 || wM <= 0 || hM <= 0) return null
     const surfaceArea = 2 * (lM * hM) + 2 * (wM * hM) + (lM * wM)
-    const unitPrice   = surfaceArea * CUSTOM_RATE_PER_SQM
+    const rate        = rateForArea(surfaceArea)
+    const unitPrice   = surfaceArea * rate
     return {
       L:           { metres: lM, raw: L },
       W:           { metres: wM, raw: W },
       H:           { metres: hM, raw: H },
       surfaceArea, // m²
+      rate,        // AED / m²  (300 | 350 | 400)
       unitPrice,   // AED, single unit
     }
   })()
@@ -252,7 +262,7 @@ export function ProductCustomizer({
         if (customPriceCalc) {
           payload.customUnitPrice    = customPriceCalc.unitPrice
           payload.customSurfaceArea  = customPriceCalc.surfaceArea
-          payload.customPriceRate    = CUSTOM_RATE_PER_SQM
+          payload.customPriceRate    = customPriceCalc.rate
         }
       } else if (useVariants && selectedVariant) {
         payload.variantName  = selectedVariant.name
@@ -537,7 +547,7 @@ export function ProductCustomizer({
                         <span className="font-mono font-semibold text-charcoal-800">
                           {customPriceCalc.surfaceArea.toFixed(3)} m²
                         </span>
-                        {' '}× AED {CUSTOM_RATE_PER_SQM}/m²
+                        {' '}× AED {customPriceCalc.rate}/m²
                       </p>
                       <p className="text-[10px] text-charcoal-400 mt-0.5 leading-snug">
                         {customPriceCalc.L.raw.value}{customPriceCalc.L.raw.unit} ×{' '}
