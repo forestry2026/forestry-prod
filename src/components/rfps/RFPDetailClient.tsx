@@ -519,6 +519,21 @@ export default function RFPDetailClient({ rfp, brandLogoDataUrl, vendorLogoDataU
                     </div>
                   </div>
 
+                  {/* Vendor-submitted unit price (variant price from product spec) */}
+                  {item.unitPrice != null && (
+                    <span className="flex-shrink-0 inline-flex flex-col items-end leading-tight px-2.5 py-1 rounded-lg bg-cream border border-[#EDE8E1]">
+                      <span className="text-[8px] font-bold uppercase tracking-wider text-charcoal-400">Submitted</span>
+                      <span className="text-xs font-bold text-terracotta tabular-nums">
+                        AED {Number(item.unitPrice).toLocaleString()}
+                      </span>
+                      {item.quantity > 1 && (
+                        <span className="text-[9px] text-charcoal-400 tabular-nums">
+                          ×{item.quantity} = {(Number(item.unitPrice) * item.quantity).toLocaleString()}
+                        </span>
+                      )}
+                    </span>
+                  )}
+
                   {/* Quantity */}
                   <span className="flex-shrink-0 inline-flex items-center justify-center h-7 min-w-[36px] px-2 rounded-lg bg-terracotta/8 text-terracotta text-xs font-bold tabular-nums border border-terracotta/15">
                     ×{item.quantity}

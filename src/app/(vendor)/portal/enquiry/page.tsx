@@ -325,8 +325,21 @@ export default async function EnquiryPage() {
                       </div>
                     </div>
 
-                    {/* Right: quantity + delete */}
+                    {/* Right: price + quantity + delete */}
                     <div className="flex items-center gap-4 flex-shrink-0 pl-4 border-l border-[#E8E0D5]">
+                      {item.variantPrice != null && (
+                        <div className="text-right min-w-[88px]">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-charcoal-400 block mb-0.5">Unit AED</span>
+                          <span className="font-heading text-lg font-bold text-terracotta leading-none">
+                            {Number(item.variantPrice).toLocaleString()}
+                          </span>
+                          {item.quantity > 1 && (
+                            <span className="block text-[10px] text-charcoal-400 mt-1">
+                              × {item.quantity} = AED {(Number(item.variantPrice) * item.quantity).toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <div className="text-center min-w-[40px]">
                         <span className="text-[9px] font-bold uppercase tracking-wider text-charcoal-400 block mb-0.5">Qty</span>
                         <span className="font-heading text-2xl font-bold text-charcoal-900 leading-none">
