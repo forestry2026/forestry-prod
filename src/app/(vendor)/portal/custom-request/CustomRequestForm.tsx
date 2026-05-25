@@ -41,7 +41,7 @@ interface Props {
   finishes: Finish[]
 }
 
-interface Dim { id: string; label: string; value: string; unit: string }
+interface Dim { id: string; label: string; value: string; unit: string; custom?: boolean }
 
 const uid    = () => Math.random().toString(36).slice(2)
 const UNITS  = ['mm', 'cm', 'm', 'in']
@@ -421,8 +421,8 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
   }
 
   /* ── Dimension helpers ── */
-  function addDim(label = '') {
-    setDims(prev => [...prev, { id: uid(), label, value: '', unit: 'mm' }])
+  function addDim(label = '', opts: { custom?: boolean } = {}) {
+    setDims(prev => [...prev, { id: uid(), label, value: '', unit: 'mm', custom: opts.custom }])
     if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
   }
   /** Click on a preset chip (+ Length, + Width, …): fill the first empty
@@ -675,7 +675,19 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
           <div className="space-y-3">
             {dims.map(d => (
               <div key={d.id} className="flex items-center gap-2">
-                <LabelSelect value={d.label} onChange={v => updateDim(d.id, 'label', v)} />
+                {d.custom ? (
+                  /* Custom row — free-text label (no preset dropdown) */
+                  <input
+                    type="text"
+                    value={d.label}
+                    onChange={e => updateDim(d.id, 'label', e.target.value)}
+                    placeholder="Custom label"
+                    autoFocus
+                    className="form-input text-sm flex-1 min-w-0"
+                  />
+                ) : (
+                  <LabelSelect value={d.label} onChange={v => updateDim(d.id, 'label', v)} />
+                )}
                 <input type="number" value={d.value} onChange={e => updateDim(d.id, 'value', e.target.value)}
                   placeholder="0" className="form-input text-sm w-28 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                 <UnitSelect value={d.unit} onChange={v => updateDim(d.id, 'unit', v)} />
@@ -730,7 +742,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                   + {l}
                 </button>
               ))}
-              <button type="button" onClick={() => addDim()}
+              <button type="button" onClick={() => addDim('', { custom: true })}
                 className="px-2.5 py-1 text-[11px] font-semibold rounded-full border border-dashed border-charcoal-300 text-charcoal-400 hover:border-terracotta hover:text-terracotta transition-colors">
                 + Custom
               </button>
