@@ -321,6 +321,54 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
   // Dimensions
   const [dims, setDims] = useState<Dim[]>([{ id: uid(), label: '', value: '', unit: 'mm' }])
 
+  /* ── Custom-size pricing (mirrors ProductCustomizer) ────────────────────
+     Open-top box surface area × AED 300/m².
+        SA = 2(L×H) + 2(W×H) + (L×W)   in m²
+     All three (Length, Width, Height) required; any unit accepted. */
+  const CUSTOM_RATE_PER_SQM = 300 // AED
+
+  function toMetres(value: number, unit: string): number {
+    const u = unit.toLowerCase()
+    if (u === 'mm') return value / 1000
+    if (u === 'cm') return value / 100
+    if (u === 'm')  return value
+    if (u === 'in' || u === 'inch' || u === 'inches') return value * 0.0254
+    if (u === 'ft' || u === 'feet') return value * 0.3048
+    return value
+  }
+
+  function findDimByLabel(label: string): { value: number; unit: string } | null {
+    const want = label.toLowerCase()
+    const d = dims.find(x =>
+      x.label.trim().toLowerCase() === want ||
+      x.label.trim().toLowerCase() === want.charAt(0)
+    )
+    if (!d) return null
+    const n = parseFloat(d.value)
+    if (!Number.isFinite(n) || n <= 0) return null
+    return { value: n, unit: d.unit }
+  }
+
+  const customPriceCalc = (() => {
+    const L = findDimByLabel('length')
+    const W = findDimByLabel('width')
+    const H = findDimByLabel('height')
+    if (!L || !W || !H) return null
+    const lM = toMetres(L.value, L.unit)
+    const wM = toMetres(W.value, W.unit)
+    const hM = toMetres(H.value, H.unit)
+    if (lM <= 0 || wM <= 0 || hM <= 0) return null
+    const surfaceArea = 2 * (lM * hM) + 2 * (wM * hM) + (lM * wM)
+    const unitPrice   = surfaceArea * CUSTOM_RATE_PER_SQM
+    return {
+      L: { raw: L },
+      W: { raw: W },
+      H: { raw: H },
+      surfaceArea,
+      unitPrice,
+    }
+  })()
+
   // Finish options
   const [colorMode,       setColorMode]       = useState<'catalog' | 'custom'>('catalog')
   const [selectedColor,   setSelectedColor]   = useState('')
@@ -473,6 +521,10 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
       holesOption:     holesOption || null,
       notes:           notes.trim() || null,
       referenceImages: images,
+      // Auto-calculated price — only set when L+W+H all present.
+      customUnitPrice:   customPriceCalc?.unitPrice    ?? null,
+      customSurfaceArea: customPriceCalc?.surfaceArea  ?? null,
+      customPriceRate:   customPriceCalc ? CUSTOM_RATE_PER_SQM : null,
     }
 
     const res = await fetch('/api/custom-design', {
@@ -622,6 +674,40 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                 <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />{fieldErrors.dimensions}
               </p>
             )}
+
+            {/* Auto-calculated price (only when Length, Width, Height all present) */}
+            {customPriceCalc && (
+              <div className="rounded-xl border border-terracotta/30 bg-terracotta/5 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">
+                      Calculated Price
+                    </p>
+                    <p className="text-[11px] text-charcoal-500 mt-1 leading-snug">
+                      Surface area{' '}
+                      <span className="font-mono font-semibold text-charcoal-800">
+                        {customPriceCalc.surfaceArea.toFixed(3)} m²
+                      </span>
+                      {' '}× AED {CUSTOM_RATE_PER_SQM}/m²
+                    </p>
+                    <p className="text-[10px] text-charcoal-400 mt-0.5 leading-snug">
+                      {customPriceCalc.L.raw.value}{customPriceCalc.L.raw.unit} ×{' '}
+                      {customPriceCalc.W.raw.value}{customPriceCalc.W.raw.unit} ×{' '}
+                      {customPriceCalc.H.raw.value}{customPriceCalc.H.raw.unit}{' '}
+                      (L × W × H)
+                    </p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-[10px] font-semibold text-charcoal-400 uppercase tracking-wider">AED</p>
+                    <p className="font-heading text-2xl font-bold text-terracotta leading-none">
+                      {customPriceCalc.unitPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-[10px] text-charcoal-400 mt-0.5">per unit</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2 pt-1">
               {LABELS.filter(l => !dims.some(d => d.label === l)).map(l => (
                 <button key={l} type="button" onClick={() => addDim(l)}
