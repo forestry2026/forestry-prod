@@ -168,7 +168,8 @@ export function ProductCustomizer({
     if (!L || !W || !H) return null
     const lM = toMetres(L.value, L.unit)
     const wM = toMetres(W.value, W.unit)
-    const hM = toMetres(H.value, H.unit)
+    // Fixed +5 cm (0.05 m) allowance added to Height before SA calculation.
+    const hM = toMetres(H.value, H.unit) + 0.05
     if (lM <= 0 || wM <= 0 || hM <= 0) return null
     const surfaceArea = 2 * (lM * hM) + 2 * (wM * hM) + (lM * wM)
     const unitPrice   = surfaceArea * CUSTOM_RATE_PER_SQM
@@ -542,7 +543,7 @@ export function ProductCustomizer({
                         {customPriceCalc.L.raw.value}{customPriceCalc.L.raw.unit} ×{' '}
                         {customPriceCalc.W.raw.value}{customPriceCalc.W.raw.unit} ×{' '}
                         {customPriceCalc.H.raw.value}{customPriceCalc.H.raw.unit}{' '}
-                        (L × W × H)
+                        (L × W × H, height +5 cm allowance applied)
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
