@@ -433,7 +433,9 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
       const emptyIdx = prev.findIndex(d => !d.label.trim())
       if (emptyIdx >= 0) {
         const next = [...prev]
-        next[emptyIdx] = { ...next[emptyIdx], label }
+        // Clear the custom flag too — picking a preset should switch the
+        // row back to the LabelSelect dropdown.
+        next[emptyIdx] = { ...next[emptyIdx], label, custom: false }
         return next
       }
       return [...prev, { id: uid(), label, value: '', unit: 'cm' }]
@@ -742,7 +744,19 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                   + {l}
                 </button>
               ))}
-              <button type="button" onClick={() => addDim('', { custom: true })}
+              <button type="button" onClick={() => {
+                // If an empty row already exists, convert it to free-text mode
+                // rather than appending another row.
+                setDims(prev => {
+                  const idx = prev.findIndex(d => !d.label.trim())
+                  if (idx >= 0) {
+                    const next = [...prev]
+                    next[idx] = { ...next[idx], custom: true }
+                    return next
+                  }
+                  return [...prev, { id: uid(), label: '', value: '', unit: 'cm', custom: true }]
+                })
+              }}
                 className="px-2.5 py-1 text-[11px] font-semibold rounded-full border border-dashed border-charcoal-300 text-charcoal-400 hover:border-terracotta hover:text-terracotta transition-colors">
                 + Custom
               </button>
