@@ -425,6 +425,21 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
     setDims(prev => [...prev, { id: uid(), label, value: '', unit: 'mm' }])
     if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
   }
+  /** Click on a preset chip (+ Length, + Width, …): fill the first empty
+   * dimension row instead of always appending a new row. Only when every
+   * existing row already has a label do we append. */
+  function addPreset(label: string) {
+    setDims(prev => {
+      const emptyIdx = prev.findIndex(d => !d.label.trim())
+      if (emptyIdx >= 0) {
+        const next = [...prev]
+        next[emptyIdx] = { ...next[emptyIdx], label }
+        return next
+      }
+      return [...prev, { id: uid(), label, value: '', unit: 'mm' }]
+    })
+    if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
+  }
   function updateDim(id: string, field: keyof Omit<Dim, 'id'>, val: string) {
     setDims(prev => prev.map(d => d.id === id ? { ...d, [field]: val } : d))
     if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
@@ -710,7 +725,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
 
             <div className="flex flex-wrap gap-2 pt-1">
               {LABELS.filter(l => !dims.some(d => d.label === l)).map(l => (
-                <button key={l} type="button" onClick={() => addDim(l)}
+                <button key={l} type="button" onClick={() => addPreset(l)}
                   className="px-2.5 py-1 text-[11px] font-semibold rounded-full border border-[#EDE7DE] text-charcoal-500 hover:border-terracotta hover:text-terracotta transition-colors">
                   + {l}
                 </button>
