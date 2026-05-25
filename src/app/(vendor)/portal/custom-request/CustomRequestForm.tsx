@@ -723,19 +723,6 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">
                       Calculated Price
                     </p>
-                    <p className="text-[11px] text-charcoal-500 mt-1 leading-snug">
-                      Surface area{' '}
-                      <span className="font-mono font-semibold text-charcoal-800">
-                        {customPriceCalc.surfaceArea.toFixed(3)} m²
-                      </span>
-                      {' '}× AED {customPriceCalc.rate}/m²
-                    </p>
-                    <p className="text-[10px] text-charcoal-400 mt-0.5 leading-snug">
-                      {customPriceCalc.L.raw.value}{customPriceCalc.L.raw.unit} ×{' '}
-                      {customPriceCalc.W.raw.value}{customPriceCalc.W.raw.unit} ×{' '}
-                      {customPriceCalc.H.raw.value}{customPriceCalc.H.raw.unit}{' '}
-                      (L × W × H, height +5 cm allowance applied)
-                    </p>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-[10px] font-semibold text-charcoal-400 uppercase tracking-wider">AED</p>
