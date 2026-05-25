@@ -319,7 +319,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
   const [quantity,    setQuantity]    = useState(1)
 
   // Dimensions
-  const [dims, setDims] = useState<Dim[]>([{ id: uid(), label: '', value: '', unit: 'mm' }])
+  const [dims, setDims] = useState<Dim[]>([{ id: uid(), label: '', value: '', unit: 'cm' }])
 
   /* ── Custom-size pricing (mirrors ProductCustomizer) ────────────────────
      Open-top box surface area × AED 300/m².
@@ -422,7 +422,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
 
   /* ── Dimension helpers ── */
   function addDim(label = '', opts: { custom?: boolean } = {}) {
-    setDims(prev => [...prev, { id: uid(), label, value: '', unit: 'mm', custom: opts.custom }])
+    setDims(prev => [...prev, { id: uid(), label, value: '', unit: 'cm', custom: opts.custom }])
     if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
   }
   /** Click on a preset chip (+ Length, + Width, …): fill the first empty
@@ -436,7 +436,7 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
         next[emptyIdx] = { ...next[emptyIdx], label }
         return next
       }
-      return [...prev, { id: uid(), label, value: '', unit: 'mm' }]
+      return [...prev, { id: uid(), label, value: '', unit: 'cm' }]
     })
     if (fieldErrors.dimensions) setFieldErrors(p => ({ ...p, dimensions: '' }))
   }

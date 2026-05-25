@@ -142,7 +142,7 @@ function newItem(p: Product | null): Item {
     selectedVariantId: useVariants ? variants![0].id : null,
     dimensionId:       !p ? null : (!useVariants && (p.dimensions.length ?? 0) > 0 ? p.dimensions[0].id : null),
     isCustomSize:      !p,   // custom items start directly in the dimension builder
-    customDims:        [{ id: crypto.randomUUID(), label: '', value: '', unit: 'mm' }],
+    customDims:        [{ id: crypto.randomUUID(), label: '', value: '', unit: 'cm' }],
     colorMode:         'preset',
     colorId:          null,
     customColorName:  null,
@@ -1143,7 +1143,7 @@ function ItemRow({ item, product, summary, onUpdate, onRemove, onToggle }: RowPr
                     {PRESET_DIM_LABELS.map(lbl => (
                       <button key={lbl} type="button"
                         onClick={() => onUpdate({
-                          customDims: [...item.customDims, { id: crypto.randomUUID(), label: lbl, value: '', unit: 'mm' }],
+                          customDims: [...item.customDims, { id: crypto.randomUUID(), label: lbl, value: '', unit: 'cm' }],
                         })}
                         className="px-2.5 py-1 rounded-full border border-terracotta/40 text-terracotta text-[11px] font-semibold hover:bg-terracotta/10 transition-colors"
                       >
@@ -1193,7 +1193,7 @@ function ItemRow({ item, product, summary, onUpdate, onRemove, onToggle }: RowPr
                 {/* Add row */}
                 <button type="button"
                   onClick={() => onUpdate({
-                    customDims: [...item.customDims, { id: crypto.randomUUID(), label: '', value: '', unit: 'mm' }],
+                    customDims: [...item.customDims, { id: crypto.randomUUID(), label: '', value: '', unit: 'cm' }],
                   })}
                   className="flex items-center gap-1.5 text-[11px] font-semibold text-terracotta hover:underline"
                 >

@@ -80,7 +80,7 @@ export function ProductCustomizer({
   const [selectedDimId,  setSelectedDimId]  = useState(dimensions[0]?.id ?? '')
   const [isCustomSize,   setIsCustomSize]   = useState(false)
   const [customDims,     setCustomDims]     = useState<CustomDim[]>([
-    { id: uid(), label: '', value: '', unit: 'mm' },
+    { id: uid(), label: '', value: '', unit: 'cm' },
   ])
 
   const selectedVariant = useVariants
@@ -183,7 +183,7 @@ export function ProductCustomizer({
 
   /* ── custom dim helpers ── */
   function addDim(label = '') {
-    setCustomDims(prev => [...prev, { id: uid(), label, value: '', unit: 'mm' }])
+    setCustomDims(prev => [...prev, { id: uid(), label, value: '', unit: 'cm' }])
   }
   function updateDim(id: string, field: keyof Omit<CustomDim,'id'>, val: string) {
     setCustomDims(prev => prev.map(d => d.id === id ? { ...d, [field]: val } : d))
@@ -302,7 +302,7 @@ export function ProductCustomizer({
       setSelectedVariantId((variants ?? [])[0]?.id ?? '')
       setSelectedDimId(dimensions[0]?.id ?? '')
       setIsCustomSize(false)
-      setCustomDims([{ id: uid(), label: '', value: '', unit: 'mm' }])
+      setCustomDims([{ id: uid(), label: '', value: '', unit: 'cm' }])
       setIsCustomColor(false)
       setCustomColor(null)
       setSelectedColorId(colors[0]?.id ?? '')

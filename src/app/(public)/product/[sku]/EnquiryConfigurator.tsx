@@ -248,7 +248,7 @@ export default function EnquiryConfigurator({
 
   // Custom size state — dynamic dimension tags
   const [customDimensions, setCustomDimensions] = useState<CustomDimension[]>([
-    { id: uid(), label: '', value: '', unit: 'mm' },
+    { id: uid(), label: '', value: '', unit: 'cm' },
   ])
   const [notes, setNotes] = useState('')
 
@@ -386,7 +386,7 @@ export default function EnquiryConfigurator({
 
   // Dimension helpers
   function addDimension(label = '') {
-    setCustomDimensions(prev => [...prev, { id: uid(), label, value: '', unit: 'mm' }])
+    setCustomDimensions(prev => [...prev, { id: uid(), label, value: '', unit: 'cm' }])
   }
 
   function updateDimension(id: string, field: keyof Omit<CustomDimension, 'id'>, value: string) {
@@ -613,7 +613,7 @@ export default function EnquiryConfigurator({
                 showDrawer({ variantName: null, colorHex: isCustomColor ? (customColor?.hex ?? null) : (selectedColor?.hexCode ?? null), colorName: resolvedColorName, quantity })
                 setIsCustom(false)
                 setSelectedVariantId(variants[0]?.id ?? null)
-                setCustomDimensions([{ id: uid(), label: '', value: '', unit: 'mm' }])
+                setCustomDimensions([{ id: uid(), label: '', value: '', unit: 'cm' }])
                 setNotes('')
               }
               if (!session) {
