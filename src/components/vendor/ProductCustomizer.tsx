@@ -542,6 +542,12 @@ export function ProductCustomizer({
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-terracotta">
                         Calculated Price
                       </p>
+                      <p className="text-[11px] text-charcoal-500 mt-1.5 leading-snug">
+                        {customDims
+                          .filter(d => d.label.trim() && parseFloat(d.value) > 0)
+                          .map(d => `${d.label.trim()} ${d.value}${d.unit}`)
+                          .join(' × ')}
+                      </p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-[10px] font-semibold text-charcoal-400 uppercase tracking-wider">AED</p>
