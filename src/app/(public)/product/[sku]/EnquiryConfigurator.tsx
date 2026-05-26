@@ -688,7 +688,7 @@ export default function EnquiryConfigurator({
                 'ring-1 ring-offset-[3px] ring-offset-transparent',
                 !isCustomColor && selectedColorId === c.id
                   ? 'ring-[#C96B4A] scale-105 shadow-md'
-                  : 'ring-charcoal-200 hover:ring-[#C96B4A]',
+                  : 'ring-charcoal-400 hover:ring-[#C96B4A]',
               ].join(' ')}
               style={{ backgroundColor: c.hexCode ?? '#ccc' }}
             />
