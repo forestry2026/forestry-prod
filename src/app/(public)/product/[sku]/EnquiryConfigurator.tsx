@@ -252,6 +252,52 @@ export default function EnquiryConfigurator({
   ])
   const [notes, setNotes] = useState('')
 
+  /* ── Custom-size pricing (mirrors ProductCustomizer + CustomRequestForm) ──
+     SA = 2(L×H) + 2(W×H) + (L×W) in m², Height includes +5 cm allowance.
+     Rate tiers:
+       SA ≤ 1.5      → AED 300/m²
+       1.5 < SA ≤ 2  → AED 350/m²
+       SA > 2        → AED 400/m² */
+  function rateForArea(sa: number): number {
+    if (sa > 2.0) return 400
+    if (sa > 1.5) return 350
+    return 300
+  }
+  function toMetres(value: number, unit: string): number {
+    const u = unit.toLowerCase()
+    if (u === 'mm') return value / 1000
+    if (u === 'cm') return value / 100
+    if (u === 'm')  return value
+    if (u === 'in' || u === 'inch' || u === 'inches') return value * 0.0254
+    if (u === 'ft' || u === 'feet') return value * 0.3048
+    return value
+  }
+  function findCustomDim(label: string): { value: number; unit: string } | null {
+    const want = label.toLowerCase()
+    const d = customDimensions.find(x =>
+      x.label.trim().toLowerCase() === want ||
+      x.label.trim().toLowerCase() === want.charAt(0),
+    )
+    if (!d) return null
+    const n = parseFloat(d.value)
+    if (!Number.isFinite(n) || n <= 0) return null
+    return { value: n, unit: d.unit }
+  }
+  const customPriceCalc = (() => {
+    const L = findCustomDim('length')
+    const W = findCustomDim('width')
+    const H = findCustomDim('height')
+    if (!L || !W || !H) return null
+    const lM = toMetres(L.value, L.unit)
+    const wM = toMetres(W.value, W.unit)
+    const hM = toMetres(H.value, H.unit) + 0.05 // +5 cm allowance
+    if (lM <= 0 || wM <= 0 || hM <= 0) return null
+    const surfaceArea = 2 * (lM * hM) + 2 * (wM * hM) + (lM * wM)
+    const rate        = rateForArea(surfaceArea)
+    const unitPrice   = surfaceArea * rate
+    return { surfaceArea, rate, unitPrice }
+  })()
+
   // Session log of custom sizes added from this product page
   const [addedCustomSizes, setAddedCustomSizes] = useState<Array<{
     id: string
@@ -375,7 +421,9 @@ export default function EnquiryConfigurator({
       colorId: isCustomColor ? undefined : (selectedColorId ?? undefined),
       textureId: isCustomTexture ? undefined : (selectedTextureId ?? undefined),
       finishId: isCustomFinish ? undefined : (selectedFinishId ?? undefined),
-    })
+      // Auto-calculated L×W×H price (when all three dimensions filled in)
+      unitPrice: customPriceCalc?.unitPrice ?? undefined,
+    } as any)
     showDrawer({
       variantName: null,
       colorHex:    isCustomColor ? (customColor?.hex ?? null) : (selectedColor?.hexCode ?? null),
@@ -596,6 +644,32 @@ export default function EnquiryConfigurator({
             <PlusCircle className="w-3.5 h-3.5" />
             Add another dimension
           </button>
+
+          {/* Auto-calculated price (only when L, W and H all present) */}
+          {customPriceCalc && (
+            <div className="rounded-xl border border-[#C96B4A]/30 bg-[#C96B4A]/5 px-4 py-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96B4A]">
+                    Calculated Price
+                  </p>
+                  <p className="text-[11px] text-[#2D2926]/60 mt-1.5 leading-snug">
+                    {customDimensions
+                      .filter(d => d.label.trim() && parseFloat(d.value) > 0)
+                      .map(d => `${d.label.trim()} ${d.value}${d.unit}`)
+                      .join(' × ')}
+                  </p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-[10px] font-semibold text-[#2D2926]/40 uppercase tracking-wider">AED</p>
+                  <p className="font-heading text-2xl font-bold text-[#C96B4A] leading-none">
+                    {customPriceCalc.unitPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-[10px] text-[#2D2926]/40 mt-0.5">per unit</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Notes */}
           <div className="space-y-1">
