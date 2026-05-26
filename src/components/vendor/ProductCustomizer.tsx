@@ -590,7 +590,7 @@ export function ProductCustomizer({
                   'ring-[3px] ring-offset-[3px] ring-offset-transparent',
                   !isCustomColor && selectedColorId === c.id
                     ? 'ring-terracotta scale-105 shadow-md'
-                    : 'ring-charcoal-200 hover:ring-terracotta/50',
+                    : 'ring-charcoal-200 hover:ring-terracotta',
                 ].join(' ')}
                 style={{ backgroundColor: c.hexCode ?? '#ccc' }}
               />
