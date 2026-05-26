@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 import { z } from 'zod';
 
 const categorySchema = z.object({
@@ -10,7 +11,10 @@ const categorySchema = z.object({
 });
 
 async function getAuthenticatedUser() {
-  const session = await getServerSession();
+  // Must pass `authOptions` — otherwise session role/email mapping
+  // configured in NextAuth callbacks is not applied and the call
+  // returns null in the App Router, producing a spurious 403.
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return null;
