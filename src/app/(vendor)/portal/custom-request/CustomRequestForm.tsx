@@ -897,11 +897,11 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                         <img
                           src={t.imageUrl}
                           alt=""
-                          width={65}
-                          height={65}
+                          width={75}
+                          height={75}
                           style={{
-                            width:  '65px',
-                            height: '65px',
+                            width:  '75px',
+                            height: '75px',
                             objectFit: 'cover',
                             borderRadius: '8px',
                             border: '2px solid #fff',
