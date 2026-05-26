@@ -578,7 +578,7 @@ export function ProductCustomizer({
             <h3 className="font-semibold text-charcoal-900 uppercase tracking-wide text-xs">Color</h3>
             <span className="text-xs text-charcoal-600">
               {isCustomColor
-                ? [customColor?.name, customColor?.ralCode ? `RAL ${customColor.ralCode}` : ''].filter(Boolean).join(' · ')
+                ? [customColor?.name, customColor?.ralCode || ''].filter(Boolean).join(' · ')
                 : colors.find(c => c.id === selectedColorId)?.name}
             </span>
           </div>
@@ -641,7 +641,7 @@ export function ProductCustomizer({
                     className="w-3.5 h-3.5 rounded-full border border-black/10 flex-shrink-0"
                     style={{ backgroundColor: customColor.hex }}
                   />
-                  {customColor.ralCode ? `RAL ${customColor.ralCode}` : customColor.name}
+                  {customColor.ralCode || customColor.name}
                 </>
               ) : (
                 <>
@@ -692,7 +692,7 @@ export function ProductCustomizer({
               <div className="w-8 h-8 rounded-lg border border-terracotta/20 flex-shrink-0" style={{ backgroundColor: customColor.hex }} />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-charcoal-900 truncate">{customColor.name}</p>
-                {customColor.ralCode && <p className="text-[10px] text-charcoal-400">RAL {customColor.ralCode}</p>}
+                {customColor.ralCode && <p className="text-[10px] text-charcoal-400">{customColor.ralCode}</p>}
               </div>
               <button
                 type="button"
