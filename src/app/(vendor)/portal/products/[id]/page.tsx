@@ -26,7 +26,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 /* ── Divider ───────────────────────────────────────────────────── */
 function Divider() {
-  return <div className="h-px bg-[#EDE7DE] my-8" />
+  // Use padding instead of margin: the outer container uses
+  // `space-y-0` which strips child margin-top via the
+  // `> * + *` selector, collapsing the divider's spacing.
+  return (
+    <div className="py-6">
+      <div className="h-px bg-[#EDE7DE]" />
+    </div>
+  )
 }
 
 /* ── File type config ──────────────────────────────────────────── */
