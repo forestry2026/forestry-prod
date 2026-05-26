@@ -685,10 +685,10 @@ export default function EnquiryConfigurator({
                 'w-9 h-9 rounded-xl transition-all overflow-hidden',
                 // Offset ring on every swatch — keeps very light colors
                 // (whites, creams) visible against the cream page background.
-                'ring-1 ring-offset-1 ring-offset-transparent',
+                'ring-[3px] ring-offset-[3px] ring-offset-transparent',
                 !isCustomColor && selectedColorId === c.id
-                  ? 'ring-[#C96B4A] scale-110 shadow-md'
-                  : 'ring-charcoal-200 hover:ring-[#C96B4A]/50 hover:scale-105',
+                  ? 'ring-[#C96B4A] scale-105 shadow-md'
+                  : 'ring-charcoal-200 hover:ring-[#C96B4A]/50',
               ].join(' ')}
               style={{ backgroundColor: c.hexCode ?? '#ccc' }}
             />
