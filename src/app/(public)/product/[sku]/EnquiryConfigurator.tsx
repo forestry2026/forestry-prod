@@ -871,28 +871,63 @@ export default function EnquiryConfigurator({
               {isCustomTexture ? (customTextureFile ? `Custom: ${customTextureFile.name}` : 'Custom') : selectedTexture?.name}
             </span>
           </div>
-          <div className="flex flex-wrap gap-2 items-center">
-            {textures.map(t => (
-              <button
-                key={t.id}
-                onClick={() => { setSelectedTextureId(t.id); setIsCustomTexture(false) }}
-                title={t.name}
-                className={[
-                  'w-9 h-9 rounded-xl border-2 overflow-hidden transition-all flex items-center justify-center',
-                  !isCustomTexture && selectedTextureId === t.id
-                    ? 'border-[#C96B4A] scale-110 shadow-md'
-                    : 'border-[#D9D0C7] hover:border-[#C96B4A]/50 hover:scale-105',
-                ].join(' ')}
-              >
-                {t.imageUrl ? (
-                  <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-[9px] font-bold text-[#6B6B6B] uppercase leading-tight text-center px-0.5">
-                    {t.name.slice(0, 3)}
-                  </span>
-                )}
-              </button>
-            ))}
+          <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center">
+            {textures.map(t => {
+              const isSelected = !isCustomTexture && selectedTextureId === t.id
+              const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
+              return (
+                <div key={t.id} className="relative group/tex">
+                  <button
+                    type="button"
+                    onClick={() => { setSelectedTextureId(t.id); setIsCustomTexture(false) }}
+                    aria-label={t.name}
+                    className={`w-10 h-10 rounded-xl overflow-hidden transition-all flex items-center justify-center ${isSelected ? 'scale-105 shadow-md' : ''}`}
+                    style={{
+                      outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+                      outlineOffset: '3px',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+                    }}
+                    onMouseLeave={e => {
+                      if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                    }}
+                  >
+                    {t.imageUrl ? (
+                      <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[9px] font-bold text-[#6B6B6B] uppercase leading-tight text-center px-0.5">
+                        {t.name.slice(0, 3)}
+                      </span>
+                    )}
+                  </button>
+                  {/* Hover popup — 65 × 65 texture preview */}
+                  {t.imageUrl && (
+                    <div
+                      className="pointer-events-none absolute z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity"
+                      style={{ bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }}
+                    >
+                      <img
+                        src={t.imageUrl}
+                        alt=""
+                        width={65}
+                        height={65}
+                        style={{
+                          width:  '65px',
+                          height: '65px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          border: '2px solid #fff',
+                          boxShadow: '0 6px 18px rgba(0,0,0,0.18)',
+                          display: 'block',
+                          maxWidth: 'none',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
 
             {/* Custom Texture chip */}
             <button
@@ -901,7 +936,7 @@ export default function EnquiryConfigurator({
                 setSelectedTextureId(null)
               }}
               className={[
-                'h-9 border-2 border-dashed font-semibold text-xs px-3 rounded-xl transition-colors flex items-center gap-1.5',
+                'h-12 border-2 border-dashed font-semibold text-xs px-3 rounded-xl transition-colors flex items-center gap-1.5 self-start -mt-1',
                 isCustomTexture
                   ? 'border-[#C96B4A] bg-[#C96B4A]/10 text-[#C96B4A]'
                   : 'border-[#C96B4A]/50 text-[#C96B4A] hover:bg-[#C96B4A]/5',
