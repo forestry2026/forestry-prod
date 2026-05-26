@@ -767,11 +767,11 @@ export function ProductCustomizer({
                       <img
                         src={t.imageUrl}
                         alt=""
-                        width={75}
-                        height={75}
+                        width={80}
+                        height={80}
                         style={{
-                          width:  '75px',
-                          height: '75px',
+                          width:  '80px',
+                          height: '80px',
                           objectFit: 'cover',
                           borderRadius: '8px',
                           border: '2px solid #fff',

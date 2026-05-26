@@ -910,11 +910,11 @@ export default function EnquiryConfigurator({
                       <img
                         src={t.imageUrl}
                         alt=""
-                        width={65}
-                        height={65}
+                        width={80}
+                        height={80}
                         style={{
-                          width:  '65px',
-                          height: '65px',
+                          width:  '80px',
+                          height: '80px',
                           objectFit: 'cover',
                           borderRadius: '8px',
                           border: '2px solid #fff',
