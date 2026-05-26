@@ -30,23 +30,22 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user || (user.role !== 'ADMIN' && user.role !== 'MANAGER')) {
+    const role = (session.user as { role?: string }).role;
+    if (role !== 'ADMIN' && role !== 'MANAGER') {
       return NextResponse.json(
         { error: 'Forbidden - Admin or Manager role required' },
         { status: 403 }
       );
     }
+
+    const user = { id: session.user.id as string };
 
     const body = await request.json();
     const validatedData = categorySchema.parse(body);

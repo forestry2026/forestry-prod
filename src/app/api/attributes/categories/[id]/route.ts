@@ -11,24 +11,23 @@ const categorySchema = z.object({
 });
 
 async function getAuthenticatedUser() {
-  // Must pass `authOptions` — otherwise session role/email mapping
-  // configured in NextAuth callbacks is not applied and the call
-  // returns null in the App Router, producing a spurious 403.
+  // Read role directly off the JWT-backed session — no extra DB round-trip
+  // and no dependency on session.user.email being populated (some NextAuth
+  // setups omit it). authOptions MUST be passed to getServerSession in the
+  // App Router, otherwise the configured callbacks (which populate role) do
+  // not run and the session is effectively unauthenticated.
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     return null;
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
-
-  if (!user || (user.role !== 'ADMIN' && user.role !== 'MANAGER')) {
+  const role = (session.user as { role?: string }).role;
+  if (role !== 'ADMIN' && role !== 'MANAGER') {
     return null;
   }
 
-  return user;
+  return { id: session.user.id as string, role };
 }
 
 export async function PUT(
