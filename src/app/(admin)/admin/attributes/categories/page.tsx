@@ -174,7 +174,11 @@ export default function CategoriesPage() {
       });
 
       if (!response.ok) {
-        setError('Failed to delete category');
+        // Surface the server's human-readable error message instead of a
+        // generic string — backend returns reasons like "Cannot delete — N
+        // products are still assigned to this category."
+        const data = await response.json().catch(() => ({} as { error?: string }));
+        setError(data.error ?? `Failed to delete category (HTTP ${response.status}).`);
         setDeleteConfirmation((prev) => ({ ...prev, isDeleting: false }));
         return;
       }
@@ -184,7 +188,7 @@ export default function CategoriesPage() {
       await fetchCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
-      setError('Failed to delete category');
+      setError(error instanceof Error ? error.message : 'Failed to delete category');
       setDeleteConfirmation((prev) => ({ ...prev, isDeleting: false }));
     }
   };
