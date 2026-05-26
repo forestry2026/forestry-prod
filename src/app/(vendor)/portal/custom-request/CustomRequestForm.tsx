@@ -172,6 +172,106 @@ function UnitSelect({ value, onChange }: { value: string; onChange: (v: string) 
   )
 }
 
+/* ─────────────────────────────────────────────────────── TextureSwatch
+   Single texture chip with a portal-rendered 100×100 hover popup that
+   escapes the parent Section's overflow-hidden card. */
+function TextureSwatch({
+  texture, isSelected, onToggle,
+}: {
+  texture:    Texture
+  isSelected: boolean
+  onToggle:   () => void
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const ringColor = isSelected ? '#C96B4A' : '#B8BEBE'
+
+  function showPopup() {
+    if (!texture.imageUrl || !btnRef.current) return
+    const r = btnRef.current.getBoundingClientRect()
+    const POPUP = 100
+    setPos({
+      top:  r.top - POPUP - 8, // 8 px gap above the swatch
+      left: r.left + r.width / 2 - POPUP / 2,
+    })
+  }
+  function hidePopup() { setPos(null) }
+
+  // Recompute on scroll/resize while visible.
+  useEffect(() => {
+    if (!pos) return
+    function on() { showPopup() }
+    window.addEventListener('scroll', on, true)
+    window.addEventListener('resize', on)
+    return () => {
+      window.removeEventListener('scroll', on, true)
+      window.removeEventListener('resize', on)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pos !== null])
+
+  return (
+    <div className="relative">
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={onToggle}
+        onMouseEnter={e => {
+          showPopup()
+          if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+        }}
+        onMouseLeave={e => {
+          hidePopup()
+          if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+        }}
+        aria-label={texture.name}
+        className={`w-10 h-10 rounded-xl overflow-hidden transition-all flex items-center justify-center ${isSelected ? 'scale-105 shadow-md' : ''}`}
+        style={{
+          outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+          outlineOffset: '3px',
+        }}
+      >
+        {texture.imageUrl ? (
+          <img src={texture.imageUrl} alt={texture.name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-[9px] font-bold text-charcoal-400 uppercase leading-tight text-center px-0.5">
+            {texture.name.slice(0, 3)}
+          </span>
+        )}
+      </button>
+      {texture.imageUrl && pos && typeof window !== 'undefined' && createPortal(
+        <div
+          className="pointer-events-none"
+          style={{
+            position: 'fixed',
+            top:      pos.top,
+            left:     pos.left,
+            zIndex:   9999,
+          }}
+        >
+          <img
+            src={texture.imageUrl}
+            alt=""
+            width={100}
+            height={100}
+            style={{
+              width:  '100px',
+              height: '100px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              border: '2px solid #fff',
+              boxShadow: '0 6px 18px rgba(0,0,0,0.18)',
+              display: 'block',
+              maxWidth: 'none',
+            }}
+          />
+        </div>,
+        document.body,
+      )}
+    </div>
+  )
+}
+
 /* ─────────────────────────────────────────────────────── CustomColorPicker */
 function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
   hex: string; name: string; ral: string
@@ -874,64 +974,17 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
 
           {textureMode === 'catalog' ? (
             <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1 pb-1">
-              {textures.map(t => {
-                const isSelected = selectedTexture === t.id
-                const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
-                return (
-                  <div key={t.id} className="relative group/tex">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedTexture(isSelected ? '' : t.id)
-                        if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' }))
-                      }}
-                      aria-label={t.name}
-                      className={`w-10 h-10 rounded-xl overflow-hidden transition-all flex items-center justify-center ${isSelected ? 'scale-105 shadow-md' : ''}`}
-                      style={{
-                        outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
-                        outlineOffset: '3px',
-                      }}
-                      onMouseEnter={e => {
-                        if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
-                      }}
-                      onMouseLeave={e => {
-                        if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
-                      }}
-                    >
-                      {t.imageUrl ? (
-                        <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-[9px] font-bold text-charcoal-400 uppercase leading-tight text-center px-0.5">
-                          {t.name.slice(0, 3)}
-                        </span>
-                      )}
-                    </button>
-                    {t.imageUrl && (
-                      <div
-                        className="pointer-events-none absolute z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity"
-                        style={{ bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }}
-                      >
-                        <img
-                          src={t.imageUrl}
-                          alt=""
-                          width={100}
-                          height={100}
-                          style={{
-                            width:  '100px',
-                            height: '100px',
-                            objectFit: 'cover',
-                            borderRadius: '8px',
-                            border: '2px solid #fff',
-                            boxShadow: '0 6px 18px rgba(0,0,0,0.18)',
-                            display: 'block',
-                            maxWidth: 'none',
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+              {textures.map(t => (
+                <TextureSwatch
+                  key={t.id}
+                  texture={t}
+                  isSelected={selectedTexture === t.id}
+                  onToggle={() => {
+                    setSelectedTexture(selectedTexture === t.id ? '' : t.id)
+                    if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' }))
+                  }}
+                />
+              ))}
             </div>
           ) : (
             <div className="space-y-4">
