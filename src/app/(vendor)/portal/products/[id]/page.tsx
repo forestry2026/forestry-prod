@@ -189,8 +189,8 @@ export default async function ProductDetailPage({
               )}
             </div>
 
-            {/* Price */}
-            {product.basePrice != null && (
+            {/* Base price — hidden when variants exist (variant price is shown inside the configurator instead) */}
+            {product.basePrice != null && variants.length === 0 && (
               <div className="inline-flex items-baseline gap-1.5 bg-terracotta text-white px-4 py-2 rounded-xl mb-5">
                 <span className="text-[11px] font-semibold opacity-80 tracking-wide uppercase">AED</span>
                 <span className="font-heading font-bold text-xl leading-none">
