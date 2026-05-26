@@ -179,11 +179,19 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
 }) {
   const [activeCategory, setActiveCategory] = useState<RalCategory>('Classic')
   const [activeGroup,    setActiveGroup]    = useState<string>(CLASSIC_GROUPS[0])
+  const [ralSearch,      setRalSearch]      = useState<string>('')
   const [hoveredRal,     setHoveredRal]     = useState<string | null>(null)
 
-  const groupColors = activeCategory === 'Classic'
-    ? RAL_COLORS.filter(c => c.category === 'Classic' && classicGroup(c.code) === activeGroup)
+  // Active-category / family filter, then narrowed further by live search.
+  // When the search box is non-empty we ignore the family chip and search
+  // across the whole active category so the user can find anything quickly.
+  const q = ralSearch.trim().toLowerCase()
+  const categoryColors = activeCategory === 'Classic'
+    ? RAL_COLORS.filter(c => c.category === 'Classic' && (q ? true : classicGroup(c.code) === activeGroup))
     : RAL_COLORS.filter(c => c.category === activeCategory)
+  const groupColors = q
+    ? categoryColors.filter(c => c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+    : categoryColors
 
   function selectRal(c: typeof RAL_COLORS[0]) { onHex(c.hex); onRal(c.code); onName(c.name) }
 
@@ -209,15 +217,25 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
         <div className="flex-1 h-px bg-[#EDE7DE]" />
       </div>
 
-      {/* Category tabs: Classic / Effect / Metallic */}
-      <div className="flex gap-1 flex-wrap">
-        {RAL_CATEGORIES.map(cat => (
-          <button key={cat} type="button" onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
-              activeCategory === cat ? 'bg-charcoal-900 text-white' : 'bg-[#F5F0EB] text-charcoal-600 hover:bg-[#EDE7DE]'
-            }`}
-          >{cat}</button>
-        ))}
+      {/* Category tabs: Classic / Effect / Metallic — plus inline live search */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex gap-1 flex-wrap">
+          {RAL_CATEGORIES.map(cat => (
+            <button key={cat} type="button" onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
+                activeCategory === cat ? 'bg-charcoal-900 text-white' : 'bg-[#F5F0EB] text-charcoal-600 hover:bg-[#EDE7DE]'
+              }`}
+            >{cat}</button>
+          ))}
+        </div>
+        {/* Live RAL search — narrows the active category by code or name */}
+        <input
+          type="text"
+          value={ralSearch}
+          onChange={e => setRalSearch(e.target.value)}
+          placeholder="Search RAL code or name…"
+          className="flex-1 min-w-[180px] form-input text-xs py-1.5"
+        />
       </div>
 
       {/* Color family chips — only meaningful for Classic */}
