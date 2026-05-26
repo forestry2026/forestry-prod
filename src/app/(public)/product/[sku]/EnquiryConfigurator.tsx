@@ -678,7 +678,7 @@ export default function EnquiryConfigurator({
         <div className="flex flex-wrap gap-x-5 gap-y-4 items-center">
           {colors.map(c => {
             const isSelected = !isCustomColor && selectedColorId === c.id
-            const ringColor  = isSelected ? '#C96B4A' : '#636E6F'
+            const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
             return (
               <div key={c.id} className="relative group/swatch">
                 <button
@@ -700,7 +700,7 @@ export default function EnquiryConfigurator({
                     if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
                   }}
                   onMouseLeave={e => {
-                    if (!isSelected) e.currentTarget.style.outline = `1px solid #636E6F`
+                    if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
                   }}
                 />
                 <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-7 whitespace-nowrap rounded-md bg-charcoal-900 text-white text-[10px] font-semibold px-2 py-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity z-20">

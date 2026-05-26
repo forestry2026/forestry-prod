@@ -579,7 +579,7 @@ export function ProductCustomizer({
           <div className="flex flex-wrap gap-x-5 gap-y-4 items-center">
             {colors.map(c => {
               const isSelected = !isCustomColor && selectedColorId === c.id
-              const ringColor  = isSelected ? '#C96B4A' : '#636E6F'
+              const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
               return (
                 <div key={c.id} className="relative group/swatch">
                   <button
@@ -602,7 +602,7 @@ export function ProductCustomizer({
                       if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
                     }}
                     onMouseLeave={e => {
-                      if (!isSelected) e.currentTarget.style.outline = `1px solid #636E6F`
+                      if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
                     }}
                   />
                   {/* Hover label tooltip */}
