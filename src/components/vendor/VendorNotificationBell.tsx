@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bell, FileText, MessageSquare, Inbox } from 'lucide-react'
 
 interface Counts {
@@ -27,6 +28,7 @@ export function VendorNotificationBell() {
   const [open,       setOpen]       = useState(false)
   const [clickedKey, setClickedKey] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   // Poll every 30s
   useEffect(() => {
@@ -109,9 +111,15 @@ export function VendorNotificationBell() {
                   <Link
                     key={key}
                     href={href}
-                    onClick={() => {
+                    onClick={e => {
+                      // Force navigation even if a parent handler (onMouseLeave
+                      // on the dropdown shell) tries to close the panel and
+                      // unmount this link mid-click.
+                      e.preventDefault()
                       setClickedKey(key)
-                      setTimeout(() => { setOpen(false); setClickedKey(null) }, 180)
+                      setOpen(false)
+                      router.push(href)
+                      setTimeout(() => setClickedKey(null), 250)
                     }}
                     className={`
                       flex items-center gap-3 px-5 py-3.5 transition-all border-b border-cream-darker/50 last:border-b-0 group
