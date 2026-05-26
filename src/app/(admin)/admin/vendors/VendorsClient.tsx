@@ -1192,7 +1192,7 @@ export default function VendorsClient({ vendors, statusCounts, accessRequests, a
                           <ArrowRight className="w-4 h-4" />
                         </Link>
                         {!readonly && (
-                          <button type="button" onClick={() => { setDeleteVendor(v); setDeleteError(null) }}
+                          <button type="button" onClick={() => { setDeleteVendor(v); setDeleteError(null); setIsDeleting(false) }}
                             className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 text-charcoal-300 hover:text-red-500 transition-colors"
                             title="Delete vendor">
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1227,7 +1227,7 @@ export default function VendorsClient({ vendors, statusCounts, accessRequests, a
         message="Are you sure you want to permanently delete this vendor? Their account and all profile data will be removed."
         itemName={deleteVendor ? `${deleteVendor.companyName} — ${deleteVendor.user.email}` : ''}
         onConfirm={handleDeleteVendor}
-        onCancel={() => { setDeleteVendor(null); setDeleteError(null) }}
+        onCancel={() => { setDeleteVendor(null); setDeleteError(null); setIsDeleting(false) }}
         isLoading={isDeleting}
       />
 
