@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo, useTransition, useRef, useEffect } from 'react'
+import { useState, useMemo, useTransition, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -146,15 +147,52 @@ function ActionMenu({
   onDelete:        () => void
 }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref     = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number; openUp: boolean } | null>(null)
+
+  /* Position the portal-rendered menu relative to the trigger button.
+     Flips above the trigger when there isn't enough room below — fixes
+     the previous "dropdown clipped at table edge" bug caused by an
+     ancestor with overflow-hidden. */
+  const position = useCallback(() => {
+    if (!ref.current) return
+    const MENU_W = 176 // w-44
+    const MENU_H = 232 // approx for 5 items
+    const r = ref.current.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - r.bottom
+    const openUp     = spaceBelow < MENU_H && r.top > spaceBelow
+
+    setPos({
+      top:  openUp ? r.top - MENU_H - 6 : r.bottom + 6,
+      left: Math.max(8, r.right - MENU_W), // right-align, clamp to viewport
+      openUp,
+    })
+  }, [])
+
+  function toggle() {
+    if (!open) position()
+    setOpen(o => !o)
+  }
 
   useEffect(() => {
+    if (!open) return
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      const t = e.target as Node
+      if (ref.current?.contains(t)) return
+      if (menuRef.current?.contains(t)) return
+      setOpen(false)
     }
+    function onScrollOrResize() { position() }
     document.addEventListener('mousedown', handle)
-    return () => document.removeEventListener('mousedown', handle)
-  }, [])
+    window.addEventListener('scroll', onScrollOrResize, true)
+    window.addEventListener('resize', onScrollOrResize)
+    return () => {
+      document.removeEventListener('mousedown', handle)
+      window.removeEventListener('scroll', onScrollOrResize, true)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [open, position])
 
   const items = [
     {
@@ -199,44 +237,49 @@ function ActionMenu({
     },
   ]
 
+  const dropdown = open && pos ? (
+    <div
+      ref={menuRef}
+      style={{ position: 'fixed', top: pos.top, left: pos.left, width: 176, zIndex: 9999 }}
+      className="bg-white rounded-xl border border-[#E8E0D5] shadow-card-lg overflow-hidden"
+    >
+      {items.filter(i => !i.hidden).map(item => {
+        const Icon = item.icon
+        const isPerms = item.label === 'Permissions'
+        return (
+          <div key={item.label}>
+            {isPerms && <div className="my-0.5 border-t border-[#E8E0D5]" />}
+            <button
+              onClick={item.disabled ? undefined : item.action}
+              disabled={item.disabled}
+              title={isPerms && item.disabled ? 'Admin users always have full access' : undefined}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors text-left disabled:opacity-40 disabled:cursor-not-allowed ${
+                item.danger
+                  ? 'text-rose-600 hover:bg-rose-50'
+                  : 'text-charcoal-700 hover:bg-cream'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+              {item.label}
+              {item.disabled && !isPerms && <span className="ml-auto text-[9px] text-charcoal-400">Self</span>}
+              {item.disabled &&  isPerms && <LockKeyhole className="ml-auto w-3 h-3 text-charcoal-400" />}
+            </button>
+            {isPerms && <div className="my-0.5 border-t border-[#E8E0D5]" />}
+          </div>
+        )
+      })}
+    </div>
+  ) : null
+
   return (
     <div ref={ref} className="relative flex-shrink-0">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={toggle}
         className="w-8 h-8 rounded-lg flex items-center justify-center text-charcoal-400 hover:bg-cream hover:text-charcoal-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
       >
         <MoreHorizontal className="w-4 h-4" />
       </button>
-
-      {open && (
-        <div className="absolute right-0 top-10 z-50 w-44 bg-white rounded-xl border border-[#E8E0D5] shadow-card-lg overflow-hidden">
-          {items.filter(i => !i.hidden).map((item, idx, arr) => {
-            const Icon = item.icon
-            const isPerms = item.label === 'Permissions'
-            return (
-              <div key={item.label}>
-                {isPerms && <div className="my-0.5 border-t border-[#E8E0D5]" />}
-                <button
-                  onClick={item.disabled ? undefined : item.action}
-                  disabled={item.disabled}
-                  title={isPerms && item.disabled ? 'Admin users always have full access' : undefined}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors text-left disabled:opacity-40 disabled:cursor-not-allowed ${
-                    item.danger
-                      ? 'text-rose-600 hover:bg-rose-50'
-                      : 'text-charcoal-700 hover:bg-cream'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-                  {item.label}
-                  {item.disabled && !isPerms && <span className="ml-auto text-[9px] text-charcoal-400">Self</span>}
-                  {item.disabled &&  isPerms && <LockKeyhole className="ml-auto w-3 h-3 text-charcoal-400" />}
-                </button>
-                {isPerms && <div className="my-0.5 border-t border-[#E8E0D5]" />}
-              </div>
-            )
-          })}
-        </div>
-      )}
+      {typeof window !== 'undefined' && createPortal(dropdown, document.body)}
     </div>
   )
 }
