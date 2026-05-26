@@ -98,12 +98,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <h1 className="text-4xl font-bold text-charcoal-900 mb-2">{product.name}</h1>
                 <p className="text-xs font-mono text-charcoal-400 mb-2">SKU: {product.sku}</p>
                 {product.description && (
-                  <p className="text-charcoal-600 leading-relaxed">{product.description}</p>
+                  <p className="text-charcoal-600 leading-relaxed mb-6">{product.description}</p>
                 )}
               </div>
             </div>
 
-            <div className="h-px bg-charcoal-200" />
+            <div className="h-px bg-charcoal-200 my-2" />
 
             {/* SECTION 2: CUSTOMIZATION + BASKET */}
             <div className="space-y-6">
