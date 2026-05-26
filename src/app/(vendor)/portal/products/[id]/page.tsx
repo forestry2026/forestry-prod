@@ -237,8 +237,9 @@ export default async function ProductDetailPage({
                     hexCode: c.color.hexCode ?? undefined,
                   }))}
                   textures={product.textures.map(t => ({
-                    id:   t.textureId,
-                    name: t.texture.name,
+                    id:       t.textureId,
+                    name:     t.texture.name,
+                    imageUrl: t.texture.imageUrl ?? undefined,
                   }))}
                   finishes={product.finishes.map(f => ({
                     id:   f.finishId,
