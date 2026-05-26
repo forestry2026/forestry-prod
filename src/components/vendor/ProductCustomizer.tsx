@@ -584,10 +584,13 @@ export function ProductCustomizer({
                 onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
                 title={c.name}
                 className={[
-                  'w-9 h-9 rounded-xl border-2 transition-all overflow-hidden',
+                  'w-9 h-9 rounded-xl transition-all overflow-hidden',
+                  // Offset ring on every swatch — keeps very light colors
+                  // (whites, creams) visually distinct from the page background.
+                  'ring-2 ring-offset-2 ring-offset-transparent',
                   !isCustomColor && selectedColorId === c.id
-                    ? 'border-terracotta scale-110 shadow-md'
-                    : 'border-transparent hover:border-terracotta/50 hover:scale-105',
+                    ? 'ring-terracotta scale-110 shadow-md'
+                    : 'ring-charcoal-200 hover:ring-terracotta/50 hover:scale-105',
                 ].join(' ')}
                 style={{ backgroundColor: c.hexCode ?? '#ccc' }}
               />
