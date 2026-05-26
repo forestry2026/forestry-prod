@@ -613,7 +613,7 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
 
           {/* RAL-only color picker — admin selects from Classic / Effect / Metallic */}
           {showAddColor && (
-            <div ref={colorPanelRef} className="bg-white border border-[#E8E0D5] rounded-2xl p-4 space-y-3">
+            <div ref={colorPanelRef} className="mt-4 bg-white border border-[#E8E0D5] rounded-2xl p-4 space-y-3">
               <RalColorPicker
                 value={newColorRal || null}
                 onChange={(c: RalColor | null) => {
