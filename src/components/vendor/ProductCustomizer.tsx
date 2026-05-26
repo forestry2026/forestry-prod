@@ -907,7 +907,7 @@ export function ProductCustomizer({
               type="button"
               onClick={() => setHolesOption(prev => prev === opt ? null : opt)}
               className={[
-                'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 text-xs font-semibold transition-colors',
+                'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-xs font-semibold transition-colors',
                 holesOption === opt
                   ? 'border-terracotta bg-terracotta/10 text-terracotta'
                   : 'border-charcoal-200 text-charcoal-900 hover:border-terracotta/50 hover:text-terracotta',
