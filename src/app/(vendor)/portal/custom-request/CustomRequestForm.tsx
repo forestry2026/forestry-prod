@@ -181,6 +181,9 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
   const [activeGroup,    setActiveGroup]    = useState<string>(CLASSIC_GROUPS[0])
   const [ralSearch,      setRalSearch]      = useState<string>('')
   const [hoveredRal,     setHoveredRal]     = useState<string | null>(null)
+  // Sticky last-hovered so the chip can fade out smoothly
+  const [lastHovered,    setLastHovered]    = useState<string | null>(null)
+  useEffect(() => { if (hoveredRal) setLastHovered(hoveredRal) }, [hoveredRal])
 
   // Active-category / family filter, then narrowed further by live search.
   // When the search box is non-empty we ignore the family chip and search
@@ -284,11 +287,19 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
           })}
         </div>
 
-        {hoveredRal && (() => {
-          const c = RAL_COLORS.find(x => x.code === hoveredRal)
+        {lastHovered && (() => {
+          const c = RAL_COLORS.find(x => x.code === lastHovered)
           if (!c) return null
+          const visible = !!hoveredRal
           return (
-            <div className="mt-3 flex items-center gap-2.5 px-3 py-2 bg-charcoal-900 text-white rounded-xl text-xs w-fit">
+            <div
+              className="mt-3 flex items-center gap-2.5 px-3 py-2 bg-charcoal-900 text-white rounded-xl text-xs w-fit transition-all duration-200 ease-out"
+              style={{
+                opacity:   visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(-4px)',
+                pointerEvents: visible ? 'auto' : 'none',
+              }}
+            >
               <div className="w-4 h-4 rounded flex-shrink-0 border border-white/20" style={{ background: c.hex }} />
               <span className="font-mono font-semibold">{c.code}</span>
               <span className="text-white/70">–</span>
