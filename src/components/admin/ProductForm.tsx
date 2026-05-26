@@ -544,28 +544,36 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
           title="Colors"
           badge={`${selectedColors.length} of ${liveColors.length} selected`}
         >
-          {/* Swatch board — pure color dots, name on hover via title */}
-          <div className="flex flex-wrap gap-3 pb-1">
+          {/* Swatch board — outline-offset ring (matches vendor + public surfaces) */}
+          <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1 pb-1">
             {liveColors.map(color => {
-              const on = selectedColors.includes(color.id)
+              const on        = selectedColors.includes(color.id)
+              const ringColor = on ? '#C96B4A' : '#B8BEBE'
               return (
-                <button
-                  key={color.id}
-                  type="button"
-                  onClick={() => toggle('colorIds', color.id, selectedColors)}
-                  title={color.name}
-                  aria-label={color.name}
-                  className={`relative flex-shrink-0 w-9 h-9 rounded-xl transition-all duration-150 focus:outline-none ${
-                    on
-                      ? 'ring-2 ring-terracotta ring-offset-[3px] shadow-sm'
-                      : 'hover:ring-2 hover:ring-charcoal/25 hover:ring-offset-[2px]'
-                  }`}
-                  style={{ backgroundColor: color.hexCode || '#d4c5a9' }}
-                >
-                </button>
+                <div key={color.id} className="relative group/swatch">
+                  <button
+                    type="button"
+                    onClick={() => toggle('colorIds', color.id, selectedColors)}
+                    aria-label={color.name}
+                    className={`w-10 h-10 rounded-xl transition-all focus:outline-none ${on ? 'scale-105 shadow-md' : ''}`}
+                    style={{
+                      backgroundColor: color.hexCode || '#d4c5a9',
+                      outline:         `${on ? '1.5px' : '1px'} solid ${ringColor}`,
+                      outlineOffset:   '3px',
+                    }}
+                    onMouseEnter={e => {
+                      if (!on) e.currentTarget.style.outline = `1px solid #C96B4A`
+                    }}
+                    onMouseLeave={e => {
+                      if (!on) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                    }}
+                  />
+                  <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-7 whitespace-nowrap rounded-md bg-charcoal-900 text-white text-[10px] font-semibold px-2 py-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity z-20">
+                    {color.name}
+                  </span>
+                </div>
               )
             })}
-
           </div>
 
           {/* Color selection — open RAL picker to add a new color to the catalogue */}
