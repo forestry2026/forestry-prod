@@ -252,17 +252,27 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
       )}
 
       <div className="relative">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1">
           {groupColors.map(c => {
             const isSelected = ral === c.code
+            const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
             return (
               <button key={c.code} type="button" onClick={() => selectRal(c)}
-                onMouseEnter={() => setHoveredRal(c.code)} onMouseLeave={() => setHoveredRal(null)}
-                title={`${c.code} – ${c.name}`}
-                className={`w-[38px] h-[38px] rounded-md transition-all relative ${
-                  isSelected ? 'ring-2 ring-terracotta ring-offset-1 scale-105 z-10' : 'hover:scale-105 hover:ring-1 hover:ring-charcoal-300'
-                }`}
-                style={{ background: c.hex }}
+                onMouseEnter={e => {
+                  setHoveredRal(c.code)
+                  if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+                }}
+                onMouseLeave={e => {
+                  setHoveredRal(null)
+                  if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                }}
+                aria-label={`${c.code} – ${c.name}`}
+                className={`w-10 h-10 rounded-xl transition-all relative ${isSelected ? 'scale-105 shadow-md z-10' : ''}`}
+                style={{
+                  background:    c.hex,
+                  outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+                  outlineOffset: '3px',
+                }}
               >
                 {isSelected && (
                   <span className="absolute inset-0 flex items-center justify-center">
