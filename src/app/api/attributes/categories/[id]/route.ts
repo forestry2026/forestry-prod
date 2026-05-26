@@ -123,9 +123,10 @@ export async function DELETE(
       );
     }
 
-    // Check if category exists
+    // Check if category exists + how many products use it
     const existingCategory = await prisma.category.findUnique({
-      where: { id: id },
+      where:    { id },
+      include:  { products: { select: { productId: true } } },
     });
 
     if (!existingCategory) {
@@ -135,27 +136,53 @@ export async function DELETE(
       );
     }
 
+    const productCount = existingCategory.products.length;
+    if (productCount > 0) {
+      return NextResponse.json(
+        { error: `Cannot delete — ${productCount} product${productCount === 1 ? ' is' : 's are'} still assigned to this category. Reassign or delete them first.` },
+        { status: 409 }
+      );
+    }
+
     // Delete the category
     const category = await prisma.category.delete({
-      where: { id: id },
+      where: { id },
     });
 
-    // Log action
-    await prisma.auditLog.create({
-      data: {
-        userId: user.id,
-        action: 'DELETE',
-        entityType: 'CATEGORY',
-        entityId: category.id,
-        details: JSON.stringify({ name: category.name }),
-      },
-    });
+    // Log action — wrap separately so a logging failure doesn't surface as
+    // a 500 to the admin (the category has already been deleted at this point).
+    try {
+      await prisma.auditLog.create({
+        data: {
+          userId:     user.id,
+          action:     'DELETE',
+          entityType: 'CATEGORY',
+          entityId:   category.id,
+          details:    JSON.stringify({ name: category.name }),
+        },
+      });
+    } catch (logErr) {
+      console.error('Category deleted but audit log failed:', logErr);
+    }
 
     return NextResponse.json(category);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to delete category:', error);
+    // Surface Prisma error codes for cleaner UX
+    if (error?.code === 'P2003') {
+      return NextResponse.json(
+        { error: 'Cannot delete — this category is still referenced by another record.' },
+        { status: 409 }
+      );
+    }
+    if (error?.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Category not found' },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
-      { error: 'Failed to delete category' },
+      { error: error?.message ?? 'Failed to delete category' },
       { status: 500 }
     );
   }
