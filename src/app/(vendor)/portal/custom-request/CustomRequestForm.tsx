@@ -888,8 +888,28 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                       <div className="w-6 h-6 rounded border border-black/10 overflow-hidden">
                         <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
                       </div>
-                      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1 z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity">
-                        <img src={t.imageUrl} alt="" className="w-[65px] h-[65px] rounded-lg object-cover border-2 border-white shadow-lg" />
+                      {/* Hover popup — 65 × 65, anchored above the swatch.
+                          Inline style avoids Tailwind arbitrary-value JIT gotchas. */}
+                      <div
+                        className="pointer-events-none absolute z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity"
+                        style={{ bottom: 'calc(100% + 4px)', left: '50%', transform: 'translateX(-50%)' }}
+                      >
+                        <img
+                          src={t.imageUrl}
+                          alt=""
+                          width={65}
+                          height={65}
+                          style={{
+                            width:  '65px',
+                            height: '65px',
+                            objectFit: 'cover',
+                            borderRadius: '8px',
+                            border: '2px solid #fff',
+                            boxShadow: '0 6px 18px rgba(0,0,0,0.18)',
+                            display: 'block',
+                            maxWidth: 'none',
+                          }}
+                        />
                       </div>
                     </div>
                   ) : (
