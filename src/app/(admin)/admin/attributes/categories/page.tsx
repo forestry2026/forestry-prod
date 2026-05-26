@@ -9,6 +9,7 @@ interface Category {
   name: string;
   isActive: boolean;
   sortOrder: number;
+  productCount?: number;
 }
 
 interface FormData {
@@ -360,8 +361,24 @@ export default function CategoriesPage() {
                       <span className="text-[9px] font-bold uppercase tracking-wider bg-charcoal-100 text-charcoal-400 px-1.5 py-0.5 rounded">Inactive</span>
                     )}
                   </div>
-                  <p className="text-[11px] text-charcoal-300 mt-0.5">Sort order: {cat.sortOrder}</p>
+                  <p className="text-[11px] text-charcoal-300 mt-0.5">
+                    Sort order: {cat.sortOrder}
+                    {typeof cat.productCount === 'number' && (
+                      <>
+                        <span className="mx-1.5 text-charcoal-200">·</span>
+                        <span className="text-charcoal-500 font-semibold">
+                          {cat.productCount} product{cat.productCount === 1 ? '' : 's'}
+                        </span>
+                      </>
+                    )}
+                  </p>
                 </div>
+                {typeof cat.productCount === 'number' && cat.productCount > 0 && (
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-terracotta/10 text-terracotta text-[10px] font-bold uppercase tracking-wider">
+                    {cat.productCount}
+                    <span className="font-medium normal-case tracking-normal">products</span>
+                  </span>
+                )}
                 <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEdit(cat)}

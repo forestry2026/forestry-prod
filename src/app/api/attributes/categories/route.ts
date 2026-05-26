@@ -14,9 +14,23 @@ export async function GET() {
   try {
     const categories = await prisma.category.findMany({
       orderBy: { sortOrder: 'asc' },
+      include: {
+        _count: { select: { products: true } }, // ProductCategory join rows
+      },
     });
 
-    return NextResponse.json(categories);
+    // Flatten _count into a top-level productCount field for the client.
+    const shaped = categories.map(c => ({
+      id:           c.id,
+      name:         c.name,
+      isActive:     c.isActive,
+      sortOrder:    c.sortOrder,
+      createdAt:    c.createdAt,
+      updatedAt:    c.updatedAt,
+      productCount: c._count.products,
+    }));
+
+    return NextResponse.json(shaped);
   } catch (error) {
     console.error('Failed to fetch categories:', error);
     return NextResponse.json(
