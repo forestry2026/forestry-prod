@@ -587,7 +587,7 @@ export function ProductCustomizer({
                   'w-9 h-9 rounded-xl transition-all overflow-hidden',
                   // Offset ring on every swatch — keeps very light colors
                   // (whites, creams) visually distinct from the page background.
-                  'ring-[3px] ring-offset-[3px] ring-offset-transparent',
+                  'ring-1 ring-offset-[3px] ring-offset-transparent',
                   !isCustomColor && selectedColorId === c.id
                     ? 'ring-terracotta scale-105 shadow-md'
                     : 'ring-charcoal-200 hover:ring-terracotta',
