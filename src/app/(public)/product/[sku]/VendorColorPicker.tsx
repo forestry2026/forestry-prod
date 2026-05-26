@@ -68,7 +68,9 @@ interface VendorColorPickerProps {
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
 export function VendorColorPicker({ onConfirm, onCancel }: VendorColorPickerProps) {
-  const [tab, setTab] = useState<'picker' | 'presets' | 'ral'>('picker')
+  // Vendor flow only exposes the RAL picker (HSV picker and presets are
+  // hidden so vendors choose from the catalogue palette instead).
+  const [tab] = useState<'picker' | 'presets' | 'ral'>('ral')
   const [ralSystem, setRalSystem] = useState<'classic' | 'effect' | 'metallic'>('classic')
   const [ralSearch, setRalSearch] = useState('')
 
@@ -175,23 +177,7 @@ export function VendorColorPicker({ onConfirm, onCancel }: VendorColorPickerProp
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-[#C96B4A]/15 bg-white/40">
-        {(['picker', 'presets', 'ral'] as const).map(t => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={`flex-1 py-2 text-[11px] font-semibold transition-colors ${
-              tab === t
-                ? 'text-[#C96B4A] border-b-2 border-[#C96B4A]'
-                : 'text-[#2D2926]/40 hover:text-[#2D2926]'
-            }`}
-          >
-            {t === 'ral' ? 'RAL' : t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
-        ))}
-      </div>
+      {/* Tabs hidden — vendor picker is RAL-only */}
 
       <div className="p-4 space-y-3">
         {/* ── PICKER ── */}
