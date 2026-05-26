@@ -200,7 +200,7 @@ export default async function ProductDetailPage({
             {product.basePrice != null && variants.length === 0 && (
               <div className="inline-flex items-baseline gap-1.5 bg-terracotta text-white px-4 py-2 rounded-xl mb-5">
                 <span className="text-[11px] font-semibold opacity-80 tracking-wide uppercase">AED</span>
-                <span className="font-heading font-bold text-xl leading-none">
+                <span className="font-bold text-xl leading-none">
                   {Number(product.basePrice).toLocaleString()}
                 </span>
                 <span className="text-[11px] opacity-70">base</span>

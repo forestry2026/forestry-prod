@@ -331,7 +331,7 @@ export default async function EnquiryPage() {
                       {item.variantPrice != null && (
                         <div className="text-right min-w-[88px]">
                           <span className="text-[9px] font-bold uppercase tracking-wider text-charcoal-400 block mb-0.5">Unit AED</span>
-                          <span className="font-heading text-lg font-bold text-terracotta leading-none">
+                          <span className="text-lg font-bold text-terracotta leading-none">
                             {Number(item.variantPrice).toLocaleString()}
                           </span>
                           {item.quantity > 1 && (

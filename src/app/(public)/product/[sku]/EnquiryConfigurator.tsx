@@ -549,7 +549,7 @@ export default function EnquiryConfigurator({
                 {selectedVariant.price != null && (
                   <div className="text-right flex-shrink-0">
                     <p className="text-[9px] font-bold text-[#2D2926]/40 uppercase tracking-wider mb-1">AED</p>
-                    <p className="font-heading text-xl font-bold text-[#C96B4A] leading-none">
+                    <p className="text-xl font-bold text-[#C96B4A] leading-none">
                       {Number(selectedVariant.price).toLocaleString()}
                     </p>
                   </div>

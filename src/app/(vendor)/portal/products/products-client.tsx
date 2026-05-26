@@ -202,7 +202,7 @@ function GridCard({ product }: { product: Product }) {
             </span>
           ) : <span />}
           {product.basePrice ? (
-            <span className="font-heading font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</span>
+            <span className="font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</span>
           ) : (
             <span className="text-[11px] text-charcoal-300 italic">Price on request</span>
           )}
@@ -261,7 +261,7 @@ function ListRow({ product }: { product: Product }) {
         )}
         <div className="text-right">
           {product.basePrice ? (
-            <p className="font-heading font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</p>
+            <p className="font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</p>
           ) : (
             <p className="text-[11px] text-charcoal-300 italic">Price on request</p>
           )}

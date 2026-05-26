@@ -546,7 +546,7 @@ export function ProductCustomizer({
                   {selectedVariant.price != null && (
                     <div className="text-right flex-shrink-0">
                       <p className="text-[9px] font-bold text-charcoal-400 uppercase tracking-wider mb-1">AED</p>
-                      <p className="font-heading text-xl font-bold text-terracotta leading-none">
+                      <p className="text-xl font-bold text-terracotta leading-none">
                         {Number(selectedVariant.price).toLocaleString()}
                       </p>
                     </div>
