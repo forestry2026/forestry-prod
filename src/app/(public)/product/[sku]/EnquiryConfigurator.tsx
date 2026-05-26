@@ -693,7 +693,7 @@ export default function EnquiryConfigurator({
                     // outline + outline-offset → 1 px ring with a TRUE
                     // transparent gap (page bg shows through). box-shadow
                     // paints; outline does not.
-                    outline:       `1px solid ${ringColor}`,
+                    outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
                     outlineOffset: '3px',
                   }}
                   onMouseEnter={e => {

@@ -595,7 +595,7 @@ export function ProductCustomizer({
                       // CSS outline + outline-offset gives a TRUE transparent
                       // gap (unlike box-shadow which always paints). 1 px ring
                       // sits 3 px outside the swatch.
-                      outline:       `1px solid ${ringColor}`,
+                      outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
                       outlineOffset: '3px',
                     }}
                     onMouseEnter={e => {
