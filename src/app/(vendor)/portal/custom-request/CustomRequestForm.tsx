@@ -874,34 +874,30 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
           {textureMode === 'catalog' ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
               {textures.map(t => (
-                <div key={t.id} className="relative group/tex">
-                  <button
-                    type="button"
-                    onClick={() => { setSelectedTexture(selectedTexture === t.id ? '' : t.id); if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' })) }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
-                      selectedTexture === t.id ? 'border-terracotta bg-terracotta/5' : 'border-[#EDE7DE] hover:border-[#D4C4B0]'
-                    }`}
-                  >
-                    {t.imageUrl ? (
-                      <div className="w-6 h-6 rounded border border-black/10 flex-shrink-0 overflow-hidden">
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => { setSelectedTexture(selectedTexture === t.id ? '' : t.id); if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' })) }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
+                    selectedTexture === t.id ? 'border-terracotta bg-terracotta/5' : 'border-[#EDE7DE] hover:border-[#D4C4B0]'
+                  }`}
+                >
+                  {/* Texture swatch — hover here to see a 65 × 65 popup */}
+                  {t.imageUrl ? (
+                    <div className="relative group/tex w-6 h-6 flex-shrink-0">
+                      <div className="w-6 h-6 rounded border border-black/10 overflow-hidden">
                         <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
                       </div>
-                    ) : (
-                      <div className="w-6 h-6 rounded border border-[#EDE7DE] bg-cream flex-shrink-0" />
-                    )}
-                    <span className="text-xs font-medium text-charcoal-700 truncate">{t.name}</span>
-                    {selectedTexture === t.id && <CheckCircle2 className="w-3.5 h-3.5 text-terracotta flex-shrink-0 ml-auto" />}
-                  </button>
-                  {/* Hover popup — 50 × 50 texture preview */}
-                  {t.imageUrl && (
-                    <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-2 -translate-y-full z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity">
-                      <div className="bg-charcoal-900 text-white rounded-lg shadow-lg p-1.5 flex items-center gap-2 whitespace-nowrap">
-                        <img src={t.imageUrl} alt="" className="w-[50px] h-[50px] rounded object-cover border border-white/15" />
-                        <span className="text-[10px] font-semibold pr-1">{t.name}</span>
+                      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1 z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity">
+                        <img src={t.imageUrl} alt="" className="w-[65px] h-[65px] rounded-lg object-cover border-2 border-white shadow-lg" />
                       </div>
                     </div>
+                  ) : (
+                    <div className="w-6 h-6 rounded border border-[#EDE7DE] bg-cream flex-shrink-0" />
                   )}
-                </div>
+                  <span className="text-xs font-medium text-charcoal-700 truncate">{t.name}</span>
+                  {selectedTexture === t.id && <CheckCircle2 className="w-3.5 h-3.5 text-terracotta flex-shrink-0 ml-auto" />}
+                </button>
               ))}
             </div>
           ) : (
