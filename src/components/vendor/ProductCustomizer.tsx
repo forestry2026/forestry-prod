@@ -7,7 +7,8 @@ import {
   Upload, X, PlusCircle, Loader2, Check, ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
-import { VendorColorPicker, type CustomColorValue } from '@/app/(public)/product/[sku]/VendorColorPicker'
+import type { CustomColorValue } from '@/app/(public)/product/[sku]/VendorColorPicker'
+import { CustomRalColorPicker } from '@/components/shared/CustomRalColorPicker'
 import { UnitSelect } from '@/components/ui/UnitSelect'
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -657,12 +658,30 @@ export function ProductCustomizer({
             </button>
           </div>
 
-          {/* Inline colour picker */}
+          {/* Inline colour picker — same Custom Colour setup as the vendor
+              Custom Design Request: Classic / Effect / Metallic tabs, live
+              search, family chips and the catalogue-style swatch grid. */}
           {isCustomColor && (
-            <div ref={colorPickerRef}>
-              <VendorColorPicker
-                onConfirm={color => { setCustomColor(color); setIsCustomColor(true) }}
-                onCancel={() => { setIsCustomColor(false); setCustomColor(null); setSelectedColorId(colors[0]?.id ?? '') }}
+            <div ref={colorPickerRef} className="bg-cream border border-terracotta/20 rounded-xl p-4">
+              <CustomRalColorPicker
+                hex={customColor?.hex     ?? '#C96B4A'}
+                name={customColor?.name    ?? ''}
+                ral={customColor?.ralCode ?? ''}
+                onHex={v => setCustomColor(prev => ({
+                  hex:     v,
+                  name:    prev?.name    ?? '',
+                  ralCode: prev?.ralCode ?? '',
+                }))}
+                onName={v => setCustomColor(prev => ({
+                  hex:     prev?.hex     ?? '#C96B4A',
+                  name:    v,
+                  ralCode: prev?.ralCode ?? '',
+                }))}
+                onRal={v => setCustomColor(prev => ({
+                  hex:     prev?.hex     ?? '#C96B4A',
+                  name:    prev?.name    ?? '',
+                  ralCode: v,
+                }))}
               />
             </div>
           )}
