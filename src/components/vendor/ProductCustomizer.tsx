@@ -579,32 +579,33 @@ export function ProductCustomizer({
           <div className="flex flex-wrap gap-2.5 items-center">
             {colors.map(c => {
               const isSelected = !isCustomColor && selectedColorId === c.id
-              const ringColor  = isSelected ? '#C96B4A' /* terracotta */ : '#636E6F' /* charcoal-400 */
+              const ringColor  = isSelected ? '#C96B4A' : '#636E6F'
               return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
-                  title={c.name}
-                  className={[
-                    'w-9 h-9 rounded-xl transition-all overflow-hidden',
-                    'swatch-ring',
-                    isSelected ? 'swatch-ring--selected scale-105 shadow-md' : 'hover:swatch-ring--hover',
-                  ].join(' ')}
-                  style={{
-                    backgroundColor: c.hexCode ?? '#ccc',
-                    // 1 px ring with a 3 px transparent gap from the swatch.
-                    // Implemented directly with box-shadow so it doesn't depend on
-                    // Tailwind's ring + ring-offset compilation chain.
-                    boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
-                  }}
-                  onMouseEnter={e => {
-                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
-                  }}
-                  onMouseLeave={e => {
-                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
-                  }}
-                />
+                <div key={c.id} className="relative group/swatch">
+                  <button
+                    type="button"
+                    onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
+                    aria-label={c.name}
+                    className={[
+                      'w-11 h-11 rounded-xl transition-all',
+                      isSelected ? 'scale-105 shadow-md' : '',
+                    ].join(' ')}
+                    style={{
+                      backgroundColor: c.hexCode ?? '#ccc',
+                      boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
+                    }}
+                    onMouseEnter={e => {
+                      if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
+                    }}
+                    onMouseLeave={e => {
+                      if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
+                    }}
+                  />
+                  {/* Hover label tooltip */}
+                  <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-7 whitespace-nowrap rounded-md bg-charcoal-900 text-white text-[10px] font-semibold px-2 py-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity z-20">
+                    {c.name}
+                  </span>
+                </div>
               )
             })}
 
