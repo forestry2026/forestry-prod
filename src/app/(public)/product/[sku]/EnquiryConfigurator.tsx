@@ -685,7 +685,7 @@ export default function EnquiryConfigurator({
                   onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
                   aria-label={c.name}
                   className={[
-                    'w-11 h-11 rounded-xl transition-all',
+                    'w-10 h-10 rounded-xl transition-all',
                     isSelected ? 'scale-105 shadow-md' : '',
                   ].join(' ')}
                   style={{
