@@ -196,15 +196,15 @@ function GridCard({ product }: { product: Product }) {
           </div>
         )}
         <div className="flex items-center justify-between pt-2 border-t border-[#F0EBE1] mt-auto">
+          {product.dimensions.length > 0 ? (
+            <span className="text-[10px] text-charcoal-400 font-medium bg-charcoal-50 px-1.5 py-0.5 rounded-lg">
+              {product.dimensions.length} size{product.dimensions.length !== 1 ? 's' : ''}
+            </span>
+          ) : <span />}
           {product.basePrice ? (
             <span className="font-heading font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</span>
           ) : (
             <span className="text-[11px] text-charcoal-300 italic">Price on request</span>
-          )}
-          {product.dimensions.length > 0 && (
-            <span className="text-[10px] text-charcoal-400 font-medium bg-charcoal-50 px-1.5 py-0.5 rounded-lg">
-              {product.dimensions.length} size{product.dimensions.length !== 1 ? 's' : ''}
-            </span>
           )}
         </div>
       </div>
@@ -253,15 +253,19 @@ function ListRow({ product }: { product: Product }) {
           )}
         </div>
       </div>
-      <div className="flex-shrink-0 text-right">
-        {product.basePrice ? (
-          <p className="font-heading font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</p>
-        ) : (
-          <p className="text-[11px] text-charcoal-300 italic">Price on request</p>
-        )}
+      <div className="flex-shrink-0 flex items-center gap-4 text-right">
         {product.dimensions.length > 0 && (
-          <p className="text-[10px] text-charcoal-400 mt-0.5">{product.dimensions.length} sizes</p>
+          <div className="text-right">
+            <p className="text-[10px] text-charcoal-400">{product.dimensions.length} size{product.dimensions.length !== 1 ? 's' : ''}</p>
+          </div>
         )}
+        <div className="text-right">
+          {product.basePrice ? (
+            <p className="font-heading font-bold text-terracotta text-sm">AED {product.basePrice.toLocaleString()}</p>
+          ) : (
+            <p className="text-[11px] text-charcoal-300 italic">Price on request</p>
+          )}
+        </div>
       </div>
       <ChevronRight className="w-4 h-4 text-charcoal-200 group-hover:text-terracotta flex-shrink-0 transition-colors" />
     </Link>
