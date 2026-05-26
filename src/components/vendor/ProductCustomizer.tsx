@@ -635,7 +635,7 @@ export function ProductCustomizer({
                   : 'border-terracotta/50 text-terracotta hover:bg-terracotta/5',
               ].join(' ')}
             >
-              {customColor && isCustomColor ? (
+              {customColor?.ralCode && isCustomColor ? (
                 <>
                   <span
                     className="w-3.5 h-3.5 rounded-full border border-black/10 flex-shrink-0"
@@ -686,8 +686,12 @@ export function ProductCustomizer({
             </div>
           )}
 
-          {/* Confirmed colour preview */}
-          {isCustomColor && customColor && (
+          {/* Confirmed colour preview — only show when the user has actually
+              picked a RAL colour (or supplied a custom RAL code). Without this
+              guard the bottom row was rendering the default terracotta hex
+              (#C96B4A) any time the picker opened, which made it look as if a
+              random non-catalogue colour had been selected. */}
+          {isCustomColor && customColor && customColor.ralCode && (
             <div className="flex items-center gap-3 bg-cream border border-terracotta/20 rounded-xl px-4 py-2.5">
               <div className="w-8 h-8 rounded-lg border border-terracotta/20 flex-shrink-0" style={{ backgroundColor: customColor.hex }} />
               <div className="flex-1 min-w-0">
