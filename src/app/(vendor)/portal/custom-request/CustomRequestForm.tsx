@@ -873,27 +873,43 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
           </div>
 
           {textureMode === 'catalog' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-              {textures.map(t => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => { setSelectedTexture(selectedTexture === t.id ? '' : t.id); if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' })) }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
-                    selectedTexture === t.id ? 'border-terracotta bg-terracotta/5' : 'border-[#EDE7DE] hover:border-[#D4C4B0]'
-                  }`}
-                >
-                  {/* Texture swatch — hover here to see a 65 × 65 popup */}
-                  {t.imageUrl ? (
-                    <div className="relative group/tex w-6 h-6 flex-shrink-0">
-                      <div className="w-6 h-6 rounded border border-black/10 overflow-hidden">
+            <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1 pb-1">
+              {textures.map(t => {
+                const isSelected = selectedTexture === t.id
+                const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
+                return (
+                  <div key={t.id} className="relative group/tex">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedTexture(isSelected ? '' : t.id)
+                        if (fieldErrors.texture) setFieldErrors(p => ({ ...p, texture: '' }))
+                      }}
+                      aria-label={t.name}
+                      className={`w-10 h-10 rounded-xl overflow-hidden transition-all flex items-center justify-center ${isSelected ? 'scale-105 shadow-md' : ''}`}
+                      style={{
+                        outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+                        outlineOffset: '3px',
+                      }}
+                      onMouseEnter={e => {
+                        if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+                      }}
+                      onMouseLeave={e => {
+                        if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                      }}
+                    >
+                      {t.imageUrl ? (
                         <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
-                      </div>
-                      {/* Hover popup — 65 × 65, anchored above the swatch.
-                          Inline style avoids Tailwind arbitrary-value JIT gotchas. */}
+                      ) : (
+                        <span className="text-[9px] font-bold text-charcoal-400 uppercase leading-tight text-center px-0.5">
+                          {t.name.slice(0, 3)}
+                        </span>
+                      )}
+                    </button>
+                    {t.imageUrl && (
                       <div
                         className="pointer-events-none absolute z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity"
-                        style={{ bottom: 'calc(100% + 4px)', left: '50%', transform: 'translateX(-50%)' }}
+                        style={{ bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }}
                       >
                         <img
                           src={t.imageUrl}
@@ -912,14 +928,10 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
                           }}
                         />
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-6 h-6 rounded border border-[#EDE7DE] bg-cream flex-shrink-0" />
-                  )}
-                  <span className="text-xs font-medium text-charcoal-700 truncate">{t.name}</span>
-                  {selectedTexture === t.id && <CheckCircle2 className="w-3.5 h-3.5 text-terracotta flex-shrink-0 ml-auto" />}
-                </button>
-              ))}
+                    )}
+                  </div>
+                )
+              })}
             </div>
           ) : (
             <div className="space-y-4">
