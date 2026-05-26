@@ -310,18 +310,8 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
         })()}
       </div>
 
-      {ral && (
-        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-terracotta/5 border border-terracotta/20 rounded-lg">
-          <div className="w-5 h-5 rounded flex-shrink-0 border border-black/10" style={{ background: hex }} />
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold text-charcoal-800 leading-tight">{name}</p>
-            <p className="text-[10px] font-mono text-charcoal-500 leading-tight">{ral} · {hex.toUpperCase()}</p>
-          </div>
-          <button type="button" onClick={() => { onHex('#C96B4A'); onRal(''); onName('') }} className="text-charcoal-300 hover:text-charcoal-600 transition-colors">
-            <X size={12} />
-          </button>
-        </div>
-      )}
+      {/* In-picker selected summary removed — duplicates the confirmed
+          colour preview that the parent form renders below the picker. */}
     </div>
   )
 }
