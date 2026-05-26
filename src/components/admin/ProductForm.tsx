@@ -663,42 +663,62 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
             <p className="text-xs text-charcoal/40 italic">No textures configured yet</p>
           ) : (
             <>
-              {/* Compact sample tiles */}
-              <div className="flex flex-wrap gap-3 pb-1">
+              {/* Texture swatches — same outline-ring style and 100 × 100
+                  hover popup as the vendor + public product pages. */}
+              <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1 pb-1">
                 {liveTextures.map(t => {
                   const isSelected = selectedTextures.includes(t.id)
+                  const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
                   return (
-                    <button
-                      key={t.id}
-                      type="button"
-                      title={t.name}
-                      aria-label={t.name}
-                      onClick={() => toggle('textureIds', t.id, selectedTextures)}
-                      className={`group relative flex-shrink-0 w-9 h-9 rounded-xl overflow-hidden transition-all duration-150 focus:outline-none ${
-                        isSelected
-                          ? 'ring-2 ring-terracotta ring-offset-[2px] shadow-sm'
-                          : 'ring-1 ring-[#e8dcc4] hover:ring-charcoal/30'
-                      }`}
-                    >
-                      {/* Image or placeholder */}
-                      {t.imageUrl ? (
-                        <img
-                          src={t.imageUrl}
-                          alt={t.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-cream to-[#e8dcc4] flex items-center justify-center">
-                          <Layers className="w-5 h-5 text-charcoal/20" />
+                    <div key={t.id} className="relative group/tex">
+                      <button
+                        type="button"
+                        aria-label={t.name}
+                        onClick={() => toggle('textureIds', t.id, selectedTextures)}
+                        className={`w-10 h-10 rounded-xl overflow-hidden transition-all flex items-center justify-center focus:outline-none ${isSelected ? 'scale-105 shadow-md' : ''}`}
+                        style={{
+                          outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+                          outlineOffset: '3px',
+                        }}
+                        onMouseEnter={e => {
+                          if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+                        }}
+                        onMouseLeave={e => {
+                          if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                        }}
+                      >
+                        {t.imageUrl ? (
+                          <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-cream to-[#e8dcc4] flex items-center justify-center">
+                            <Layers className="w-5 h-5 text-charcoal/20" />
+                          </div>
+                        )}
+                      </button>
+                      {t.imageUrl && (
+                        <div
+                          className="pointer-events-none absolute z-30 opacity-0 group-hover/tex:opacity-100 transition-opacity"
+                          style={{ bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }}
+                        >
+                          <img
+                            src={t.imageUrl}
+                            alt=""
+                            width={100}
+                            height={100}
+                            style={{
+                              width:  '100px',
+                              height: '100px',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                              border: '2px solid #fff',
+                              boxShadow: '0 6px 18px rgba(0,0,0,0.18)',
+                              display: 'block',
+                              maxWidth: 'none',
+                            }}
+                          />
                         </div>
                       )}
-
-                      {/* Name overlay on hover */}
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent py-1 px-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
-                        <p className="text-[8px] font-semibold text-white truncate leading-tight">{t.name}</p>
-                      </div>
-
-                    </button>
+                    </div>
                   )
                 })}
               </div>
