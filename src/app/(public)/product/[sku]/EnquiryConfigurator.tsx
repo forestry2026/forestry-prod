@@ -662,7 +662,7 @@ export default function EnquiryConfigurator({
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-[10px] font-semibold text-[#2D2926]/40 uppercase tracking-wider">AED</p>
-                  <p className="font-heading text-2xl font-bold text-[#C96B4A] leading-none">
+                  <p className="text-2xl font-bold text-[#C96B4A] leading-none">
                     {customPriceCalc.unitPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </p>
                   <p className="text-[10px] text-[#2D2926]/40 mt-0.5">per unit</p>

@@ -654,7 +654,7 @@ export function ProductCustomizer({
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-[10px] font-semibold text-charcoal-400 uppercase tracking-wider">AED</p>
-                      <p className="font-heading text-2xl font-bold text-terracotta leading-none">
+                      <p className="text-2xl font-bold text-terracotta leading-none">
                         {customPriceCalc.unitPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </p>
                       <p className="text-[10px] text-charcoal-400 mt-0.5">per unit</p>
