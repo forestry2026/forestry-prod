@@ -573,10 +573,20 @@ export default function VendorsClient({ vendors, statusCounts, accessRequests, a
     setIsDeleting(true); setDeleteError(null)
     try {
       const res = await fetch(`/api/vendors/${deleteVendor.id}`, { method: 'DELETE' })
-      const j   = await res.json()
-      if (!res.ok) { setDeleteError(j.error ?? 'Failed to delete vendor.'); setIsDeleting(false) }
-      else { setDeleteVendor(null); router.refresh() }
-    } catch { setDeleteError('Network error.'); setIsDeleting(false) }
+      // Parse defensively — server may return HTML on a hard 500
+      const j   = await res.json().catch(() => ({} as { error?: string }))
+      if (!res.ok) {
+        setDeleteError(j.error ?? `Failed to delete vendor (HTTP ${res.status}).`)
+        setIsDeleting(false)
+      } else {
+        setDeleteVendor(null)
+        setIsDeleting(false)
+        router.refresh()
+      }
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Network error.')
+      setIsDeleting(false)
+    }
   }
 
   /* ═══════════════════════════════════════════════════════════════
