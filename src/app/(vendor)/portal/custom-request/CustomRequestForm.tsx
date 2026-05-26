@@ -252,15 +252,15 @@ function CustomColorPicker({ hex, name, ral, onHex, onName, onRal }: {
       )}
 
       <div className="relative">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-[2px]">
           {groupColors.map(c => {
             const isSelected = ral === c.code
             return (
               <button key={c.code} type="button" onClick={() => selectRal(c)}
                 onMouseEnter={() => setHoveredRal(c.code)} onMouseLeave={() => setHoveredRal(null)}
                 title={`${c.code} – ${c.name}`}
-                className={`w-[55px] h-[55px] rounded-lg transition-all relative ${
-                  isSelected ? 'ring-2 ring-terracotta ring-offset-1 scale-105' : 'hover:scale-105 hover:ring-1 hover:ring-charcoal-300'
+                className={`w-9 h-9 rounded-md transition-all relative ${
+                  isSelected ? 'ring-2 ring-terracotta ring-offset-1 scale-105 z-10' : 'hover:scale-105 hover:ring-1 hover:ring-charcoal-300'
                 }`}
                 style={{ background: c.hex }}
               >
