@@ -690,13 +690,17 @@ export default function EnquiryConfigurator({
                   ].join(' ')}
                   style={{
                     backgroundColor: c.hexCode ?? '#ccc',
-                    boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
+                    // outline + outline-offset → 1 px ring with a TRUE
+                    // transparent gap (page bg shows through). box-shadow
+                    // paints; outline does not.
+                    outline:       `1px solid ${ringColor}`,
+                    outlineOffset: '3px',
                   }}
                   onMouseEnter={e => {
-                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
+                    if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
                   }}
                   onMouseLeave={e => {
-                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
+                    if (!isSelected) e.currentTarget.style.outline = `1px solid #636E6F`
                   }}
                 />
                 <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-7 whitespace-nowrap rounded-md bg-charcoal-900 text-white text-[10px] font-semibold px-2 py-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity z-20">

@@ -592,13 +592,17 @@ export function ProductCustomizer({
                     ].join(' ')}
                     style={{
                       backgroundColor: c.hexCode ?? '#ccc',
-                      boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
+                      // CSS outline + outline-offset gives a TRUE transparent
+                      // gap (unlike box-shadow which always paints). 1 px ring
+                      // sits 3 px outside the swatch.
+                      outline:       `1px solid ${ringColor}`,
+                      outlineOffset: '3px',
                     }}
                     onMouseEnter={e => {
-                      if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
+                      if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
                     }}
                     onMouseLeave={e => {
-                      if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
+                      if (!isSelected) e.currentTarget.style.outline = `1px solid #636E6F`
                     }}
                   />
                   {/* Hover label tooltip */}
