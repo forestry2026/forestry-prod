@@ -783,18 +783,38 @@ export function CustomRequestForm({ colors, textures, finishes }: Props) {
           </div>
 
           {colorMode === 'catalog' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-              {colors.map(c => (
-                <button key={c.id} type="button" onClick={() => { setSelectedColor(selectedColor === c.id ? '' : c.id); if (fieldErrors.color) setFieldErrors(p => ({ ...p, color: '' })) }}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
-                    selectedColor === c.id ? 'border-terracotta bg-terracotta/5' : 'border-[#EDE7DE] hover:border-[#D4C4B0]'
-                  }`}
-                >
-                  <div className="w-5 h-5 rounded-full flex-shrink-0 border border-black/10" style={{ background: c.hexCode ?? '#ccc' }} />
-                  <span className="text-xs font-medium text-charcoal-700 truncate">{c.name}</span>
-                  {selectedColor === c.id && <CheckCircle2 className="w-3.5 h-3.5 text-terracotta flex-shrink-0 ml-auto" />}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center pt-1 pb-4">
+              {colors.map(c => {
+                const isSelected = selectedColor === c.id
+                const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
+                return (
+                  <div key={c.id} className="relative group/swatch">
+                    <button
+                      type="button"
+                      onClick={() => { setSelectedColor(isSelected ? '' : c.id); if (fieldErrors.color) setFieldErrors(p => ({ ...p, color: '' })) }}
+                      aria-label={c.name}
+                      className={[
+                        'w-10 h-10 rounded-xl transition-all',
+                        isSelected ? 'scale-105 shadow-md' : '',
+                      ].join(' ')}
+                      style={{
+                        background:    c.hexCode ?? '#ccc',
+                        outline:       `${isSelected ? '1.5px' : '1px'} solid ${ringColor}`,
+                        outlineOffset: '3px',
+                      }}
+                      onMouseEnter={e => {
+                        if (!isSelected) e.currentTarget.style.outline = `1px solid #C96B4A`
+                      }}
+                      onMouseLeave={e => {
+                        if (!isSelected) e.currentTarget.style.outline = `1px solid #B8BEBE`
+                      }}
+                    />
+                    <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-7 whitespace-nowrap rounded-md bg-charcoal-900 text-white text-[10px] font-semibold px-2 py-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity z-20">
+                      {c.name}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
           ) : (
             <CustomColorPicker hex={customColorHex} name={customColorName} ral={customColorRal}
