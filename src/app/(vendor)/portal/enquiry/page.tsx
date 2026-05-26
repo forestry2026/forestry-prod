@@ -7,7 +7,8 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FileText, ArrowLeft, ShoppingBag } from 'lucide-react'
-import { RemoveItemButton } from './RemoveItemButton'
+import { RemoveItemButton }    from './RemoveItemButton'
+import { SubmitRfpNowButton }  from './SubmitRfpNowButton'
 import { TexturePopover }   from '@/components/shared/TexturePopover'
 
 export const metadata: Metadata = {
@@ -364,10 +365,7 @@ export default async function EnquiryPage() {
           <ArrowLeft className="w-4 h-4" />
           Continue Shopping
         </Link>
-        <Link href="/portal/rfp/new" className="btn-primary inline-flex items-center gap-2">
-          <FileText className="w-4 h-4" />
-          Submit RFP Now
-        </Link>
+        <SubmitRfpNowButton />
       </div>
 
     </div>
