@@ -676,23 +676,33 @@ export default function EnquiryConfigurator({
           </span>
         </div>
         <div className="flex flex-wrap gap-2.5 items-center">
-          {colors.map(c => (
-            <button
-              key={c.id}
-              onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
-              title={c.name}
-              className={[
-                'w-9 h-9 rounded-xl transition-all overflow-hidden',
-                // Offset ring on every swatch — keeps very light colors
-                // (whites, creams) visible against the cream page background.
-                'ring-1 ring-offset-[3px] ring-offset-transparent',
-                !isCustomColor && selectedColorId === c.id
-                  ? 'ring-[#C96B4A] scale-105 shadow-md'
-                  : 'ring-charcoal-400 hover:ring-[#C96B4A]',
-              ].join(' ')}
-              style={{ backgroundColor: c.hexCode ?? '#ccc' }}
-            />
-          ))}
+          {colors.map(c => {
+            const isSelected = !isCustomColor && selectedColorId === c.id
+            const ringColor  = isSelected ? '#C96B4A' : '#636E6F'
+            return (
+              <button
+                key={c.id}
+                onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
+                title={c.name}
+                className={[
+                  'w-9 h-9 rounded-xl transition-all overflow-hidden',
+                  isSelected ? 'scale-105 shadow-md' : '',
+                ].join(' ')}
+                style={{
+                  backgroundColor: c.hexCode ?? '#ccc',
+                  // 1 px ring with 3 px transparent gap — inline so it's
+                  // not subject to Tailwind ring-offset compilation.
+                  boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
+                }}
+                onMouseEnter={e => {
+                  if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
+                }}
+                onMouseLeave={e => {
+                  if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
+                }}
+              />
+            )
+          })}
 
           {/* Custom colour chip */}
           <button

@@ -577,24 +577,36 @@ export function ProductCustomizer({
           </div>
 
           <div className="flex flex-wrap gap-2.5 items-center">
-            {colors.map(c => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
-                title={c.name}
-                className={[
-                  'w-9 h-9 rounded-xl transition-all overflow-hidden',
-                  // Offset ring on every swatch — keeps very light colors
-                  // (whites, creams) visually distinct from the page background.
-                  'ring-1 ring-offset-[3px] ring-offset-transparent',
-                  !isCustomColor && selectedColorId === c.id
-                    ? 'ring-terracotta scale-105 shadow-md'
-                    : 'ring-charcoal-400 hover:ring-terracotta',
-                ].join(' ')}
-                style={{ backgroundColor: c.hexCode ?? '#ccc' }}
-              />
-            ))}
+            {colors.map(c => {
+              const isSelected = !isCustomColor && selectedColorId === c.id
+              const ringColor  = isSelected ? '#C96B4A' /* terracotta */ : '#636E6F' /* charcoal-400 */
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => { setSelectedColorId(c.id); setIsCustomColor(false); setCustomColor(null) }}
+                  title={c.name}
+                  className={[
+                    'w-9 h-9 rounded-xl transition-all overflow-hidden',
+                    'swatch-ring',
+                    isSelected ? 'swatch-ring--selected scale-105 shadow-md' : 'hover:swatch-ring--hover',
+                  ].join(' ')}
+                  style={{
+                    backgroundColor: c.hexCode ?? '#ccc',
+                    // 1 px ring with a 3 px transparent gap from the swatch.
+                    // Implemented directly with box-shadow so it doesn't depend on
+                    // Tailwind's ring + ring-offset compilation chain.
+                    boxShadow: `0 0 0 3px transparent, 0 0 0 4px ${ringColor}`,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #C96B4A`
+                  }}
+                  onMouseLeave={e => {
+                    if (!isSelected) e.currentTarget.style.boxShadow = `0 0 0 3px transparent, 0 0 0 4px #636E6F`
+                  }}
+                />
+              )
+            })}
 
             {/* Custom colour chip */}
             <button
