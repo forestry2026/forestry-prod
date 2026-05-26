@@ -576,7 +576,7 @@ export function ProductCustomizer({
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-x-[18px] gap-y-4 items-center">
+          <div className="flex flex-wrap gap-x-[15px] gap-y-4 items-center">
             {colors.map(c => {
               const isSelected = !isCustomColor && selectedColorId === c.id
               const ringColor  = isSelected ? '#C96B4A' : '#B8BEBE'
