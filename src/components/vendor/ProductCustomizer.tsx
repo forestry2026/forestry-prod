@@ -629,7 +629,7 @@ export function ProductCustomizer({
                 setTimeout(() => colorPickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
               }}
               className={[
-                'flex items-center gap-1.5 border-2 border-dashed font-semibold text-xs px-3 h-9 rounded-xl transition-colors',
+                'flex items-center gap-1.5 border-2 border-dashed font-semibold text-xs px-3 h-10 rounded-xl transition-colors',
                 isCustomColor
                   ? 'border-terracotta bg-terracotta/10 text-terracotta'
                   : 'border-terracotta/50 text-terracotta hover:bg-terracotta/5',
