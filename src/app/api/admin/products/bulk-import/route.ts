@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession }           from 'next-auth'
 import { authOptions }                from '@/lib/auth'
 import { prisma }                     from '@/lib/prisma'
+import { deleteFromCloudinary }       from '@/lib/cloudinary'
 import { RAL_COLORS }                 from '@/lib/ral-colors'
 import * as XLSX                      from 'xlsx'
 
@@ -400,6 +401,9 @@ export async function POST(req: NextRequest) {
 
   /* ── Commit transaction ───────────────────────────────────────── */
   let imported = 0
+  // Collected during the transaction; the actual Cloudinary cleanup runs
+  // afterwards so a slow HTTP delete can't time out the DB transaction.
+  const orphanCloudinaryUrls: string[] = []
   await prisma.$transaction(async (tx) => {
     for (const p of writable) {
       // Compose the variants JSON identical to what DimensionSpecifications writes.
@@ -440,6 +444,16 @@ export async function POST(req: NextRequest) {
       if (p.finishIds.length)   await tx.productFinish.createMany({   data: p.finishIds.map(finishId => ({ productId, finishId })) })
 
       if (p.imageUrls.length) {
+        // Capture the URLs of the about-to-be-deleted ProductImage rows so we
+        // can purge them from Cloudinary after the transaction commits.
+        const oldImages = await tx.productImage.findMany({
+          where:  { productId },
+          select: { url: true },
+        })
+        for (const img of oldImages) {
+          // Only orphan it if the new image set doesn't include this URL.
+          if (!p.imageUrls.includes(img.url)) orphanCloudinaryUrls.push(img.url)
+        }
         await tx.productImage.deleteMany({ where: { productId } })
         await tx.productImage.createMany({
           data: p.imageUrls.map((url, idx) => ({
@@ -451,6 +465,19 @@ export async function POST(req: NextRequest) {
       imported++
     }
   })
+
+  // Cleanup orphaned Cloudinary assets — runs after the DB transaction so a
+  // slow Cloudinary HTTP call doesn't hold the transaction open. Errors are
+  // logged but don't fail the import.
+  if (orphanCloudinaryUrls.length > 0) {
+    const results = await Promise.allSettled(
+      orphanCloudinaryUrls.map(u => deleteFromCloudinary(u))
+    )
+    const failed = results.filter(r => r.status === 'rejected').length
+    if (failed > 0) {
+      console.warn(`[bulk-import] cloudinary cleanup: ${failed}/${orphanCloudinaryUrls.length} failed`)
+    }
+  }
 
   return NextResponse.json({ ok: true, dryRun: false, summary, imported, skipped: rowsError, rows: previewRows })
 }

@@ -2,7 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { deleteFromCloudinary } from '@/lib/cloudinary'
 import { z } from 'zod'
+
+/**
+ * Fire-and-forget Cloudinary delete for a batch of URLs.
+ * Wrapped in Promise.allSettled so a single failure doesn't block the
+ * caller, and any errors are logged but never thrown.
+ */
+async function cleanupCloudinary(urls: string[]) {
+  if (urls.length === 0) return
+  const results = await Promise.allSettled(
+    urls.map(u => deleteFromCloudinary(u))
+  )
+  const failed = results.filter(r => r.status === 'rejected').length
+  if (failed > 0) {
+    console.warn(`[products] cloudinary cleanup: ${failed}/${urls.length} failed`)
+  }
+}
 
 const updateSchema = z.object({
   sku: z.string().min(1).optional().or(z.literal('')),
@@ -73,14 +90,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // Handle image updates
     let imageOperations = {}
+    let removedImageUrls: string[] = []
     if (images) {
       const existingImageUrls = existingProduct.images.map(img => img.url)
       const newImageUrls = images.map(img => img.url)
 
       // Find images to delete (exist in DB but not in new array)
-      const imagesToDelete = existingProduct.images
+      const imagesToDeleteEntries = existingProduct.images
         .filter(img => !newImageUrls.includes(img.url))
-        .map(img => img.id)
+      const imagesToDelete = imagesToDeleteEntries.map(img => img.id)
+      removedImageUrls     = imagesToDeleteEntries.map(img => img.url)
 
       // Find new images to create (exist in new array but not in DB)
       const imagesToCreate = images.filter(img => !existingImageUrls.includes(img.url))
@@ -192,6 +211,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     })
 
+    // DB update succeeded — now wipe any orphaned Cloudinary assets
+    // from images that were removed during this edit.
+    await cleanupCloudinary(removedImageUrls)
+
     // Parse specifications JSON if it exists
     const productWithSpecs = {
       ...product,
@@ -220,9 +243,20 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     // RfpItem has no onDelete: Cascade — delete them first to avoid FK constraint
     await prisma.rfpItem.deleteMany({ where: { productId: id } })
 
+    // Capture the Cloudinary URLs BEFORE deleting the product (otherwise the
+    // ProductImage rows cascade away and we lose the asset references).
+    const orphanImages = await prisma.productImage.findMany({
+      where:  { productId: id },
+      select: { url: true },
+    })
+
     const product = await prisma.product.delete({
       where: { id },
     })
+
+    // Fire-and-forget: remove each image asset from Cloudinary so we
+    // don't accumulate orphans against the free-tier quota.
+    await cleanupCloudinary(orphanImages.map(i => i.url))
 
     await prisma.auditLog.create({
       data: {
