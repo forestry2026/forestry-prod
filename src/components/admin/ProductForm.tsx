@@ -284,6 +284,31 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
   const selectedFinishes = watch('finishIds') || []
   const selectedCategories = watch('categoryIds') || []
   const productName = watch('name')
+  const skuValue   = watch('sku')
+
+  /* ── Live SKU duplicate check ──────────────────────────────────────
+     400 ms debounced call to /api/products/check-sku. When editing,
+     the product's own id is excluded so it doesn't flag itself.   */
+  const [skuStatus, setSkuStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+  useEffect(() => {
+    const trimmed = (skuValue ?? '').trim()
+    if (!trimmed) { setSkuStatus('idle'); return }
+    setSkuStatus('checking')
+    const ctrl = new AbortController()
+    const t = setTimeout(async () => {
+      try {
+        const qs = new URLSearchParams({ sku: trimmed })
+        if (initialData?.id) qs.set('excludeId', initialData.id)
+        const res = await fetch(`/api/products/check-sku?${qs}`, { signal: ctrl.signal })
+        if (!res.ok) { setSkuStatus('idle'); return }
+        const data = await res.json() as { available: boolean }
+        setSkuStatus(data.available ? 'available' : 'taken')
+      } catch {
+        if (!ctrl.signal.aborted) setSkuStatus('idle')
+      }
+    }, 400)
+    return () => { clearTimeout(t); ctrl.abort() }
+  }, [skuValue, initialData?.id])
 
   const toggle = (field: 'colorIds' | 'textureIds' | 'finishIds', id: string, current: string[]) => {
     setValue(field, current.includes(id) ? current.filter(x => x !== id) : [...current, id], { shouldDirty: true })
@@ -410,9 +435,21 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
                 className={inputCls}
                 placeholder="Auto-generated (DD + seq + YY)"
               />
-              <p className="text-[11px] text-charcoal/45 mt-1">
-                Leave blank to auto-generate. You can override it.
-              </p>
+              {/* Live duplicate check */}
+              {skuStatus === 'checking' && (
+                <p className="text-[11px] text-charcoal/45 mt-1">Checking availability…</p>
+              )}
+              {skuStatus === 'available' && (skuValue ?? '').trim() && (
+                <p className="text-[11px] text-emerald-600 mt-1 font-medium">✓ SKU available</p>
+              )}
+              {skuStatus === 'taken' && (
+                <p className="text-[11px] text-red-600 mt-1 font-semibold">✕ This SKU is already in use</p>
+              )}
+              {skuStatus === 'idle' && (
+                <p className="text-[11px] text-charcoal/45 mt-1">
+                  Leave blank to auto-generate. You can override it.
+                </p>
+              )}
               {errors.sku && <p className="text-xs text-red-500 mt-1">{errors.sku.message}</p>}
             </div>
             <div>

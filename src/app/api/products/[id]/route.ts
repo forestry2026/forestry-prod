@@ -222,7 +222,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     return NextResponse.json({ success: true, data: productWithSpecs })
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === 'P2002') {
+      const target = Array.isArray(error.meta?.target) ? error.meta.target.join(', ') : 'value'
+      return NextResponse.json(
+        { error: `A product with this ${target} already exists.`, field: target },
+        { status: 409 },
+      )
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to update product' },
       { status: 500 }

@@ -186,8 +186,17 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data: productWithSpecs }, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Product creation error:', error)
+    // Prisma unique constraint — map to a friendly 409 with the field
+    // that collided (most often `sku`).
+    if (error?.code === 'P2002') {
+      const target = Array.isArray(error.meta?.target) ? error.meta.target.join(', ') : 'value'
+      return NextResponse.json({
+        error: `A product with this ${target} already exists.`,
+        field: target,
+      }, { status: 409 })
+    }
     return NextResponse.json({
       error: 'Failed to create product',
       details: error instanceof Error ? error.message : String(error),
