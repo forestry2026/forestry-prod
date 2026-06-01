@@ -17,7 +17,23 @@ export interface UploadOpts {
   resourceType?: 'image' | 'raw' | 'auto' | 'video'
   /** Optional transformation chain applied at upload time. */
   eager?:        Array<Record<string, any>>
+  /**
+   * Incoming transformation — modifies the STORED asset (saves disk/quota).
+   * Default in `uploadFileToCloudinary` for images: cap dims at 2000 px and
+   * recompress with q_auto:good + auto format. Pass [] or null to disable.
+   */
+  transformation?: Array<Record<string, any>>
 }
+
+/**
+ * Sensible default for product / vendor image uploads. Stored asset is
+ * resized to ≤ 2000 px and recompressed with `quality:auto:good` +
+ * `fetch_format:auto`. Typical 6–10 MB phone JPEG → ~ 400–900 KB.
+ */
+export const DEFAULT_IMAGE_INCOMING_TX: Array<Record<string, any>> = [
+  { width: 2000, height: 2000, crop: 'limit' },
+  { quality: 'auto:good', fetch_format: 'auto' },
+]
 
 /**
  * Upload a Buffer (typically from `file.arrayBuffer()`) to Cloudinary.
@@ -30,11 +46,12 @@ export async function uploadToCloudinary(
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        opts.folder,
-        public_id:     opts.publicId,
-        resource_type: opts.resourceType ?? 'image',
-        eager:         opts.eager,
-        overwrite:     true,
+        folder:         opts.folder,
+        public_id:      opts.publicId,
+        resource_type:  opts.resourceType ?? 'image',
+        eager:          opts.eager,
+        transformation: opts.transformation,
+        overwrite:      true,
       },
       (err, result) => {
         if (err)     return reject(err)
@@ -103,6 +120,9 @@ export async function uploadFileToCloudinary(
     folder,
     publicId,
     resourceType: isImage ? 'image' : 'raw',
+    // For images, recompress + cap dimensions at upload time so the stored
+    // file is small. Skips non-images (PDFs / DWG / docs).
+    transformation: isImage ? DEFAULT_IMAGE_INCOMING_TX : undefined,
   })
   return result.secure_url
 }
