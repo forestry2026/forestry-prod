@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Plus, Ruler, Package, ChevronDown } from 'lucide-react'
 
 interface DimensionSpec {
@@ -23,13 +24,14 @@ interface DimensionSpecificationsProps {
 }
 
 const PRESET_DIMENSIONS = [
-  { label: 'Top Diameter', value: 'topDia', icon: '⌀' },
-  { label: 'Bottom Diameter', value: 'bottomDia', icon: '⌀' },
-  { label: 'Height', value: 'height', icon: '↕' },
-  { label: 'Width', value: 'width', icon: '↔' },
-  { label: 'Length', value: 'length', icon: '→' },
-  { label: 'Depth', value: 'depth', icon: '↶' },
-  { label: 'Circumference', value: 'circumference', icon: '◯' },
+  { label: 'Top Dia',        value: 'topDia',        icon: '⌀' },
+  { label: 'Center Dia',     value: 'centerDia',     icon: '⌀' },
+  { label: 'Bottom Dia',     value: 'bottomDia',     icon: '⌀' },
+  { label: 'Height',         value: 'height',        icon: '↕' },
+  { label: 'Width',          value: 'width',         icon: '↔' },
+  { label: 'Length',         value: 'length',        icon: '→' },
+  { label: 'Depth',          value: 'depth',         icon: '↶' },
+  { label: 'Circumference',  value: 'circumference', icon: '◯' },
   { label: 'Wall Thickness', value: 'wallThickness', icon: '⬚' },
 ]
 
@@ -47,6 +49,27 @@ export function DimensionSpecifications({
   )
   const [expandedGroupId, setExpandedGroupId] = useState<string | null>(null)
   const [showPresets, setShowPresets] = useState<string | null>(null)
+  // Anchor coords for the portal-rendered preset dropdown — needed so the
+  // dropdown escapes parent `overflow-hidden` containers.
+  const [presetPos, setPresetPos] = useState<{ top: number; left: number; width: number } | null>(null)
+
+  // Reposition the dropdown on scroll / resize while it's open.
+  useEffect(() => {
+    if (!showPresets) return
+    function reposition() {
+      const btn = document.getElementById(`add-spec-btn-${showPresets}`)
+      if (!btn) return
+      const r = btn.getBoundingClientRect()
+      setPresetPos({ top: r.bottom + 4, left: r.left, width: r.width })
+    }
+    reposition()
+    window.addEventListener('scroll',  reposition, true)
+    window.addEventListener('resize',  reposition)
+    return () => {
+      window.removeEventListener('scroll',  reposition, true)
+      window.removeEventListener('resize',  reposition)
+    }
+  }, [showPresets])
   const [selectedUnit, setSelectedUnit] = useState('cm')
   const [showCustomModal, setShowCustomModal] = useState<string | null>(null)
   const [customInput, setCustomInput] = useState('')
@@ -263,8 +286,9 @@ export function DimensionSpecifications({
                   </div>
 
                   {/* Add Specification to Group */}
-                  <div className="relative">
+                  <div>
                     <button
+                      id={`add-spec-btn-${group.id}`}
                       type="button"
                       onClick={() => setShowPresets(showPresets === group.id ? null : group.id)}
                       className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-terracotta/10 hover:bg-terracotta/20 text-terracotta font-semibold text-sm rounded-lg border border-terracotta/30 transition"
@@ -273,10 +297,20 @@ export function DimensionSpecifications({
                       Add Specification to Group
                     </button>
 
-                    {/* Preset Dropdown */}
-                    {showPresets === group.id && (
+                    {/* Preset Dropdown — rendered into document.body so it can
+                        escape parent overflow-hidden containers. */}
+                    {showPresets === group.id && presetPos && typeof window !== 'undefined' && createPortal(
                       <>
-                        <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-white border border-cream-darker rounded-lg shadow-lg overflow-hidden max-h-48 overflow-y-auto">
+                        <div
+                          style={{
+                            position: 'fixed',
+                            top:      presetPos.top,
+                            left:     presetPos.left,
+                            width:    presetPos.width,
+                            zIndex:   9999,
+                          }}
+                          className="bg-white border border-cream-darker rounded-lg shadow-lg overflow-hidden max-h-48 overflow-y-auto"
+                        >
                           {getAvailablePresets(group.id).length === 0 ? (
                             <div className="p-3 text-center text-charcoal/60 text-sm">
                               All preset specifications added
@@ -300,10 +334,11 @@ export function DimensionSpecifications({
                         </div>
 
                         <div
-                          className="fixed inset-0 z-40"
+                          className="fixed inset-0 z-[9998]"
                           onClick={() => setShowPresets(null)}
                         />
-                      </>
+                      </>,
+                      document.body,
                     )}
                   </div>
 
