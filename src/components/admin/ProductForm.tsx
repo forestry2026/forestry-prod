@@ -57,7 +57,9 @@ function getContrastColor(hex: string): string {
 /* ─── Schema ──────────────────────────────────────────────────────────── */
 
 const productSchema = z.object({
-  sku: z.string().min(1, 'SKU is required'),
+  // Optional in the form — leaving it blank auto-generates one
+  // (DD + seq + YY) on the server.
+  sku: z.string().optional().default(''),
   name: z.string().min(1, 'Product name is required'),
   description: z.string().optional(),
   category: z.string().optional(),
@@ -401,8 +403,16 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
         <div className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <FieldLabel htmlFor="sku" required>SKU</FieldLabel>
-              <input {...register('sku')} id="sku" className={inputCls} placeholder="e.g. POT-001" />
+              <FieldLabel htmlFor="sku">SKU</FieldLabel>
+              <input
+                {...register('sku')}
+                id="sku"
+                className={inputCls}
+                placeholder="Auto-generated (DD + seq + YY)"
+              />
+              <p className="text-[11px] text-charcoal/45 mt-1">
+                Leave blank to auto-generate. You can override it.
+              </p>
               {errors.sku && <p className="text-xs text-red-500 mt-1">{errors.sku.message}</p>}
             </div>
             <div>

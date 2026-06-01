@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession }          from 'next-auth'
 import { authOptions }               from '@/lib/auth'
 import { prisma }                    from '@/lib/prisma'
+import { generateProductSku }        from '@/lib/product-sku'
 import { z }                         from 'zod'
 
 const PRODUCT_INCLUDE = {
@@ -48,7 +49,9 @@ export async function GET(req: NextRequest) {
 }
 
 const createSchema = z.object({
-  sku:          z.string().min(1),
+  // SKU is optional — if missing/blank we auto-generate one in the POST
+  // handler using the DD + seq + YY format.
+  sku:          z.string().optional(),
   name:         z.string().min(1),
   description:  z.string().optional(),
   category:     z.string().optional(),
@@ -106,6 +109,11 @@ export async function POST(req: NextRequest) {
   }
 
   const { dimensionIds, colorIds, textureIds, finishIds, categoryIds, dimensionSpecs, images, ...productData } = parsed.data
+
+  // Auto-generate SKU when the admin leaves the field blank.
+  if (!productData.sku || !productData.sku.trim()) {
+    productData.sku = await generateProductSku()
+  }
 
   console.log('=== PRODUCT CREATION DEBUG ===')
   console.log('Images received from client:', {
