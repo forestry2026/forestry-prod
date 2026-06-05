@@ -190,6 +190,9 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [categoryQuery, setCategoryQuery] = useState('')
   const [formImages, setFormImages] = useState(initialData?.images || [])
+  // Tracks an in-flight product-image upload so we can show a spinner
+  // on the dropzone instead of leaving the user wondering.
+  const [imageUploading, setImageUploading] = useState<{ done: number; total: number } | null>(null)
   const [savedProductName, setSavedProductName] = useState<string | null>(null)
   const [bannerVisible, setBannerVisible] = useState(false)
 
@@ -922,36 +925,73 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
 
           {/* Upload zone */}
           {imageCount < 6 && (
-            <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-terracotta hover:bg-terracotta/5 transition-all group">
-              <Upload className="w-7 h-7 text-charcoal/30 group-hover:text-terracotta transition-colors" />
-              <div>
-                <p className="text-sm font-semibold text-charcoal/70 group-hover:text-charcoal transition-colors">
-                  Click to upload
-                </p>
-                <p className="text-xs text-charcoal/40 mt-0.5">PNG, JPG, WebP — max 5 MB per file</p>
-              </div>
+            <label
+              className={`relative flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl p-8 text-center transition-all group ${
+                imageUploading
+                  ? 'border-terracotta bg-terracotta/5 cursor-wait pointer-events-none'
+                  : 'border-gray-200 cursor-pointer hover:border-terracotta hover:bg-terracotta/5'
+              }`}
+            >
+              {imageUploading ? (
+                <>
+                  <Loader2 className="w-7 h-7 text-terracotta animate-spin" />
+                  <div>
+                    <p className="text-sm font-semibold text-terracotta">
+                      Uploading… {imageUploading.done} / {imageUploading.total}
+                    </p>
+                    <p className="text-xs text-charcoal/50 mt-0.5">Please wait, the image is being uploaded</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Upload className="w-7 h-7 text-charcoal/30 group-hover:text-terracotta transition-colors" />
+                  <div>
+                    <p className="text-sm font-semibold text-charcoal/70 group-hover:text-charcoal transition-colors">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-charcoal/40 mt-0.5">PNG, JPG, WebP — max 5 MB per file</p>
+                  </div>
+                </>
+              )}
               <input
                 type="file"
                 multiple
                 accept="image/*"
+                disabled={!!imageUploading}
                 className="hidden"
                 onChange={async e => {
                   const files = Array.from(e.target.files || [])
+                  // Filter early — capacity + size checks
+                  const queue = files.filter(file => {
+                    if (formImages.length >= 6) return false
+                    if (file.size > 5 * 1024 * 1024) { alert(`${file.name} exceeds 5 MB`); return false }
+                    return true
+                  })
+                  if (queue.length === 0) { e.target.value = ''; return }
+                  setImageUploading({ done: 0, total: queue.length })
+
                   const newImgs: typeof formImages = []
-                  for (const file of files) {
+                  for (let i = 0; i < queue.length; i++) {
+                    const file = queue[i]
                     if (formImages.length + newImgs.length >= 6) break
-                    if (file.size > 5 * 1024 * 1024) { alert(`${file.name} exceeds 5 MB`); continue }
                     try {
                       const fd = new FormData(); fd.append('file', file)
                       const r = await fetch('/api/products/upload', { method: 'POST', body: fd })
                       if (!r.ok) throw new Error((await r.json()).error || 'Upload failed')
                       const { imageUrl } = await r.json()
-                      newImgs.push({ url: imageUrl, alt: file.name.replace(/\.[^/.]+$/, ''), isPrimary: formImages.length + newImgs.length === 0, sortOrder: formImages.length + newImgs.length })
+                      newImgs.push({
+                        url: imageUrl,
+                        alt: file.name.replace(/\.[^/.]+$/, ''),
+                        isPrimary: formImages.length + newImgs.length === 0,
+                        sortOrder: formImages.length + newImgs.length,
+                      })
                     } catch (err) {
                       alert(`Failed to upload ${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`)
                     }
+                    setImageUploading({ done: i + 1, total: queue.length })
                   }
                   if (newImgs.length) setFormImages([...formImages, ...newImgs])
+                  setImageUploading(null)
                   e.target.value = ''
                 }}
               />
