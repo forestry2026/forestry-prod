@@ -715,11 +715,14 @@ export default function EnquiryConfigurator({
             </button>
           ) : (
             <Link
-              href={`/login?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`}
-              className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-2.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+              href="/request-access"
+              className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-2.5 rounded-xl text-sm tracking-wide transition-colors flex flex-col items-center justify-center gap-0.5 text-center px-4"
             >
-              <ShoppingBag className="w-4 h-4" />
-              Sign in to add to enquiry
+              <span className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" />
+                Request Access to View the Entire Collection
+              </span>
+              <span className="text-[11px] font-medium text-white/85">or place an RFP</span>
             </Link>
           )}
         </div>
@@ -1197,11 +1200,14 @@ export default function EnquiryConfigurator({
           </button>
         ) : (
           <Link
-            href={`/login?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`}
-            className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+            href="/request-access"
+            className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-3 rounded-xl text-sm tracking-wide transition-colors flex flex-col items-center justify-center gap-0.5 text-center px-4"
           >
-            <ShoppingBag className="w-4 h-4" />
-            Sign in to add to enquiry
+            <span className="flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4" />
+              Request Access to View the Entire Collection
+            </span>
+            <span className="text-[11px] font-medium text-white/85">or place an RFP</span>
           </Link>
         )
       )}
