@@ -140,37 +140,60 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         </div>
                       ))}
                     </div>
-                  ) : (
+                  ) : (() => {
+                    /* Build a stable column set from the UNION of every
+                       variant's specs so a variant with extra dimensions
+                       (e.g. Variant 4 having a Center Dia) doesn't push
+                       the Price column off the end of the header row. */
+                    const colMap = new Map<string, { name: string; unit?: string }>()
+                    for (const v of variants) {
+                      for (const s of v.specifications) {
+                        if (s.value == null) continue
+                        if (!colMap.has(s.name)) colMap.set(s.name, { name: s.name, unit: s.unit })
+                      }
+                    }
+                    const columns = Array.from(colMap.values())
+
+                    return (
                     /* Variant-format: show all variants as spec table */
                     <div className="overflow-hidden rounded-lg border border-charcoal-100">
                       <table className="w-full text-sm">
                         <thead className="bg-cream border-b border-charcoal-100">
                           <tr>
                             <th className="px-4 py-2.5 text-left text-xs font-semibold text-charcoal-600 uppercase tracking-wide">Variant</th>
-                            {variants[0]?.specifications.filter(s => s.value != null).map((s, i) => (
+                            {columns.map((c, i) => (
                               <th key={i} className="px-4 py-2.5 text-left text-xs font-semibold text-charcoal-600 uppercase tracking-wide">
-                                {s.name}{s.unit ? ` (${s.unit})` : ''}
+                                {c.name}{c.unit ? ` (${c.unit})` : ''}
                               </th>
                             ))}
                             <th className="px-4 py-2.5 text-right text-xs font-semibold text-charcoal-600 uppercase tracking-wide">Price</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-charcoal-100">
-                          {variants.map((v, i) => (
-                            <tr key={v.id} className={i % 2 === 0 ? 'bg-white' : 'bg-cream/30'}>
-                              <td className="px-4 py-3 font-semibold text-charcoal-900">{v.name}</td>
-                              {v.specifications.filter(s => s.value != null).map((s, j) => (
-                                <td key={j} className="px-4 py-3 text-charcoal-700">{s.value}</td>
-                              ))}
-                              <td className="px-4 py-3 text-right font-semibold text-terra-600">
-                                {v.price != null ? `AED ${Number(v.price).toLocaleString()}` : '—'}
-                              </td>
-                            </tr>
-                          ))}
+                          {variants.map((v, i) => {
+                            const specByName = new Map(v.specifications.map(s => [s.name, s]))
+                            return (
+                              <tr key={v.id} className={i % 2 === 0 ? 'bg-white' : 'bg-cream/30'}>
+                                <td className="px-4 py-3 font-semibold text-charcoal-900">{v.name}</td>
+                                {columns.map((c, j) => {
+                                  const s = specByName.get(c.name)
+                                  return (
+                                    <td key={j} className="px-4 py-3 text-charcoal-700">
+                                      {s?.value != null ? s.value : <span className="text-charcoal-300">—</span>}
+                                    </td>
+                                  )
+                                })}
+                                <td className="px-4 py-3 text-right font-semibold text-terra-600">
+                                  {v.price != null ? `AED ${Number(v.price).toLocaleString()}` : '—'}
+                                </td>
+                              </tr>
+                            )
+                          })}
                         </tbody>
                       </table>
                     </div>
-                  )}
+                    )
+                  })()}
                 </div>
                 <div className="h-px bg-charcoal-200" />
               </>
