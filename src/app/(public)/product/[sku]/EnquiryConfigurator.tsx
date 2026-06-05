@@ -531,16 +531,16 @@ export default function EnquiryConfigurator({
             {selectedVariant && (
               <div className="rounded-xl border border-[#E8DDD0] bg-[#FAF6F0] px-4 py-3 flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] font-bold text-[#2D2926]/40 uppercase tracking-wider mb-2">
+                  <p className="text-[9px] font-bold text-[#2D2926]/70 uppercase tracking-wider mb-2">
                     {selectedVariant.name} · Dimensions
                   </p>
                   <div className="flex flex-wrap gap-x-5 gap-y-2">
                     {selectedVariant.specifications.filter(s => s.value != null).map((s, i) => (
                       <div key={i} className="flex flex-col">
-                        <span className="text-[9px] font-medium text-[#2D2926]/45 uppercase tracking-wide leading-none">{s.name}</span>
+                        <span className="text-[9px] font-semibold text-[#2D2926]/70 uppercase tracking-wide leading-none">{s.name}</span>
                         <span className="text-sm font-bold text-[#2D2926] font-mono mt-0.5 leading-none">
                           {s.value}
-                          {s.unit && <span className="text-[11px] font-normal text-[#2D2926]/50 ml-0.5">{s.unit}</span>}
+                          {s.unit && <span className="text-[11px] font-medium text-[#2D2926]/70 ml-0.5">{s.unit}</span>}
                         </span>
                       </div>
                     ))}
@@ -548,7 +548,7 @@ export default function EnquiryConfigurator({
                 </div>
                 {selectedVariant.price != null && (
                   <div className="text-right flex-shrink-0">
-                    <p className="text-[9px] font-bold text-[#2D2926]/40 uppercase tracking-wider mb-1">AED</p>
+                    <p className="text-[9px] font-bold text-[#2D2926]/70 uppercase tracking-wider mb-1">AED</p>
                     <p className="text-xl font-bold text-[#C96B4A] leading-none">
                       {Number(selectedVariant.price).toLocaleString()}
                     </p>

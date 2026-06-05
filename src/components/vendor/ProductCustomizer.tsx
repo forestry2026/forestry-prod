@@ -527,16 +527,16 @@ export function ProductCustomizer({
               {selectedVariant && (
                 <div className="rounded-xl border border-charcoal-100 bg-cream px-4 py-3 flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[9px] font-bold text-charcoal-400 uppercase tracking-wider mb-2">
+                    <p className="text-[9px] font-bold text-charcoal-600 uppercase tracking-wider mb-2">
                       {selectedVariant.name} · Dimensions
                     </p>
                     <div className="flex flex-wrap gap-x-5 gap-y-2">
                       {(selectedVariant.specifications ?? []).filter(s => s.value != null).map((s, i) => (
                         <div key={i} className="flex flex-col">
-                          <span className="text-[9px] font-medium text-charcoal-400 uppercase tracking-wide leading-none">{s.name}</span>
+                          <span className="text-[9px] font-semibold text-charcoal-600 uppercase tracking-wide leading-none">{s.name}</span>
                           <span className="text-sm font-bold text-charcoal-900 font-mono mt-0.5 leading-none">
                             {s.value}
-                            {s.unit && <span className="text-[11px] font-normal text-charcoal-400 ml-0.5">{s.unit}</span>}
+                            {s.unit && <span className="text-[11px] font-medium text-charcoal-600 ml-0.5">{s.unit}</span>}
                           </span>
                         </div>
                       ))}
@@ -545,7 +545,7 @@ export function ProductCustomizer({
                   {/* Right-side variant price */}
                   {selectedVariant.price != null && (
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[9px] font-bold text-charcoal-400 uppercase tracking-wider mb-1">AED</p>
+                      <p className="text-[9px] font-bold text-charcoal-600 uppercase tracking-wider mb-1">AED</p>
                       <p className="text-xl font-bold text-terracotta leading-none">
                         {Number(selectedVariant.price).toLocaleString()}
                       </p>
