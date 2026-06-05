@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Plus, Ruler, Package, ChevronDown } from 'lucide-react'
+import { X, Plus, Ruler, Package, ChevronDown, GripVertical } from 'lucide-react'
 
 interface DimensionSpec {
   id: string
@@ -52,6 +52,22 @@ export function DimensionSpecifications({
   // Anchor coords for the portal-rendered preset dropdown — needed so the
   // dropdown escapes parent `overflow-hidden` containers.
   const [presetPos, setPresetPos] = useState<{ top: number; left: number; width: number } | null>(null)
+
+  /* ── Drag-to-reorder variant cards ───────────────────────────────────── */
+  const [dragId,    setDragId]    = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
+
+  function reorderGroups(fromId: string, toId: string) {
+    if (fromId === toId) return
+    const fromIdx = localGroups.findIndex(g => g.id === fromId)
+    const toIdx   = localGroups.findIndex(g => g.id === toId)
+    if (fromIdx === -1 || toIdx === -1) return
+    const next = [...localGroups]
+    const [moved] = next.splice(fromIdx, 1)
+    next.splice(toIdx, 0, moved)
+    setLocalGroups(next)
+    onSpecificationsChange(next)
+  }
 
   // Reposition the dropdown on scroll / resize while it's open.
   useEffect(() => {
@@ -179,7 +195,33 @@ export function DimensionSpecifications({
           {localGroups.map((group) => (
             <div
               key={group.id}
-              className="border border-cream-darker rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+              draggable
+              onDragStart={(e) => {
+                setDragId(group.id)
+                e.dataTransfer.effectAllowed = 'move'
+                e.dataTransfer.setData('text/plain', group.id)
+              }}
+              onDragOver={(e) => {
+                e.preventDefault()
+                e.dataTransfer.dropEffect = 'move'
+                if (dragId && dragId !== group.id) setDragOverId(group.id)
+              }}
+              onDragLeave={() => {
+                if (dragOverId === group.id) setDragOverId(null)
+              }}
+              onDrop={(e) => {
+                e.preventDefault()
+                const fromId = dragId ?? e.dataTransfer.getData('text/plain')
+                if (fromId) reorderGroups(fromId, group.id)
+                setDragId(null)
+                setDragOverId(null)
+              }}
+              onDragEnd={() => { setDragId(null); setDragOverId(null) }}
+              className={`border border-cream-darker rounded-lg overflow-hidden shadow-sm hover:shadow-md transition ${
+                dragId === group.id     ? 'opacity-50' : ''
+              } ${
+                dragOverId === group.id ? 'ring-2 ring-terracotta/60' : ''
+              }`}
             >
               {/* Group Header - Clickable to Expand */}
               <button
@@ -188,6 +230,15 @@ export function DimensionSpecifications({
                 className="w-full bg-gradient-to-r from-cream/40 to-cream/20 hover:from-cream/60 hover:to-cream/40 transition px-4 py-3 flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3 flex-1 text-left">
+                  {/* Drag handle — purely visual; the whole card is draggable. */}
+                  <span
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-charcoal/35 hover:text-charcoal/70 cursor-grab active:cursor-grabbing flex-shrink-0"
+                    title="Drag to reorder"
+                    aria-label="Drag to reorder"
+                  >
+                    <GripVertical className="w-4 h-4" />
+                  </span>
                   <div className="w-8 h-8 bg-terracotta/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Package className="w-4 h-4 text-terracotta" />
                   </div>
