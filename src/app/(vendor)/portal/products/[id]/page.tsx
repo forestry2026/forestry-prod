@@ -276,7 +276,20 @@ export default async function ProductDetailPage({
                       </div>
                     ))}
                   </div>
-                ) : (
+                ) : (() => {
+                  /* Build a stable column set from the UNION of every
+                     variant's specs (variant 1 may have fewer columns
+                     than variant 4, which used to break the row width). */
+                  const colMap = new Map<string, { name: string; unit?: string }>()
+                  for (const v of variants) {
+                    for (const s of v.specifications) {
+                      if (s.value == null) continue
+                      if (!colMap.has(s.name)) colMap.set(s.name, { name: s.name, unit: s.unit })
+                    }
+                  }
+                  const columns = Array.from(colMap.values())
+
+                  return (
                   /* Variant table: clean bordered */
                   <div className="bg-white border border-[#EDE7DE] rounded-2xl overflow-hidden shadow-card">
                     <div className="overflow-x-auto">
@@ -286,52 +299,55 @@ export default async function ProductDetailPage({
                             <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal-400">
                               Variant
                             </th>
-                            {variants[0]?.specifications
-                              .filter(s => s.value != null)
-                              .map((s, i) => (
-                                <th key={i} className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal-400 whitespace-nowrap">
-                                  {s.name}{s.unit ? ` (${s.unit})` : ''}
-                                </th>
-                              ))}
+                            {columns.map((c, i) => (
+                              <th key={i} className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal-400 whitespace-nowrap">
+                                {c.name}{c.unit ? ` (${c.unit})` : ''}
+                              </th>
+                            ))}
                             <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.15em] text-charcoal-400">
                               Price
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {variants.map((v, i) => (
-                            <tr
-                              key={v.id}
-                              className={`border-b border-[#EDE7DE] last:border-0 transition-colors hover:bg-terracotta/4 ${
-                                i % 2 === 1 ? 'bg-cream/30' : 'bg-white'
-                              }`}
-                            >
-                              <td className="px-5 py-3.5 font-semibold text-charcoal-900">
-                                {v.name}
-                              </td>
-                              {v.specifications
-                                .filter(s => s.value != null)
-                                .map((s, j) => (
-                                  <td key={j} className="px-5 py-3.5 text-charcoal-600 font-mono">
-                                    {s.value}
-                                  </td>
-                                ))}
-                              <td className="px-5 py-3.5 text-right">
-                                {v.price != null ? (
-                                  <span className="font-bold text-terracotta">
-                                    AED {Number(v.price).toLocaleString()}
-                                  </span>
-                                ) : (
-                                  <span className="text-charcoal-300 text-[12px]">On request</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
+                          {variants.map((v, i) => {
+                            const specByName = new Map(v.specifications.map(s => [s.name, s]))
+                            return (
+                              <tr
+                                key={v.id}
+                                className={`border-b border-[#EDE7DE] last:border-0 transition-colors hover:bg-terracotta/4 ${
+                                  i % 2 === 1 ? 'bg-cream/30' : 'bg-white'
+                                }`}
+                              >
+                                <td className="px-5 py-3.5 font-semibold text-charcoal-900">
+                                  {v.name}
+                                </td>
+                                {columns.map((c, j) => {
+                                  const s = specByName.get(c.name)
+                                  return (
+                                    <td key={j} className="px-5 py-3.5 text-charcoal-600 font-mono">
+                                      {s?.value != null ? s.value : <span className="text-charcoal-300">—</span>}
+                                    </td>
+                                  )
+                                })}
+                                <td className="px-5 py-3.5 text-right">
+                                  {v.price != null ? (
+                                    <span className="font-bold text-terracotta">
+                                      AED {Number(v.price).toLocaleString()}
+                                    </span>
+                                  ) : (
+                                    <span className="text-charcoal-300 text-[12px]">On request</span>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })}
                         </tbody>
                       </table>
                     </div>
                   </div>
-                )}
+                  )
+                })()}
               </div>
             </>
           )}
