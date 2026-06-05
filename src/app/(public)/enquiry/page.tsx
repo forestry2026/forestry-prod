@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession, signIn } from 'next-auth/react'
@@ -376,8 +376,22 @@ function ItemRow({ item, onQtyChange, onRemoveRequest }: {
 // ── Main Page ─────────────────────────────────────────────────────
 export default function EnquiryPage() {
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const { items, count, updateQty, remove, clear } = useBasket()
+
+  /* ── Visitor lock ─────────────────────────────────────────────────
+     Strict B2B gating: visitors must be a registered vendor (or sign
+     up for access) before they can submit an enquiry. We redirect
+     unauthenticated users to /login with a callback back to /enquiry
+     so the basket they may have already built in localStorage is
+     still here after they log in. */
+  useEffect(() => {
+    if (status === 'loading')   return // wait for NextAuth to resolve
+    if (status === 'unauthenticated') {
+      const cb = encodeURIComponent('/enquiry')
+      router.replace(`/login?callbackUrl=${cb}`)
+    }
+  }, [status, router])
 
   // Form state
   const [projectName, setProjectName]         = useState('')
