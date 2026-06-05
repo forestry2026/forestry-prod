@@ -694,11 +694,12 @@ export default function EnquiryConfigurator({
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              const filledDims = customDimensions.filter(d => d.label.trim() && d.value.trim())
-              const doAdd = () => {
+          {/* Add Custom Size — hard-gated for visitors */}
+          {session ? (
+            <button
+              type="button"
+              onClick={() => {
+                const filledDims = customDimensions.filter(d => d.label.trim() && d.value.trim())
                 doAddCustomItem()
                 setAddedCustomSizes(prev => [...prev, { id: uid(), dims: filledDims, notes }])
                 showDrawer({ variantName: null, colorHex: isCustomColor ? (customColor?.hex ?? null) : (selectedColor?.hexCode ?? null), colorName: resolvedColorName, quantity })
@@ -706,18 +707,21 @@ export default function EnquiryConfigurator({
                 setSelectedVariantId(variants[0]?.id ?? null)
                 setCustomDimensions([{ id: uid(), label: '', value: '', unit: 'cm' }])
                 setNotes('')
-              }
-              if (!session) {
-                window.location.href = `/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`
-                return
-              }
-              doAdd()
-            }}
-            className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-2.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            Add Custom Size
-          </button>
+              }}
+              className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-2.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Add Custom Size
+            </button>
+          ) : (
+            <Link
+              href={`/login?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`}
+              className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-2.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Sign in to add to enquiry
+            </Link>
+          )}
         </div>
       )}
 
@@ -1178,15 +1182,28 @@ export default function EnquiryConfigurator({
         </div>
       </div>
 
-      {/* Section 7: Add to Basket */}
+      {/* Section 7: Add to Basket — hard-gated for visitors.
+          When unauthenticated the button becomes a Link to /login so
+          the click can never reach handleAddToBasket / showDrawer at
+          all (defence against any stale handler). */}
       {!isCustom && (
-        <button
-          onClick={handleAddToBasket}
-          className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
-        >
-          <ShoppingBag className="w-4 h-4" />
-          Add to Enquiry Basket
-        </button>
+        session ? (
+          <button
+            onClick={handleAddToBasket}
+            className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Add to Enquiry Basket
+          </button>
+        ) : (
+          <Link
+            href={`/login?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`}
+            className="w-full bg-[#C96B4A] hover:bg-[#B85C3B] text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors flex items-center justify-center gap-2"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Sign in to add to enquiry
+          </Link>
+        )
       )}
     </div>
   )
