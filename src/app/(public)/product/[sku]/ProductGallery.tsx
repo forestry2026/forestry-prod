@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface GalleryImage {
@@ -18,6 +18,23 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   const primaryIdx = images.findIndex(i => i.isPrimary)
   const [currentImageIndex, setCurrentImageIndex] = useState(primaryIdx >= 0 ? primaryIdx : 0)
 
+  // Hover-pan zoom state for the main image.
+  const zoomBoxRef = useRef<HTMLDivElement>(null)
+  const [zoomed, setZoomed] = useState(false)
+  const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 })
+
+  function handleZoomMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = zoomBoxRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width)  * 100
+    const y = ((e.clientY - rect.top)  / rect.height) * 100
+    setOrigin({
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    })
+  }
+
   if (!images.length) {
     return (
       <div className="aspect-[3/4] bg-gradient-to-br from-[#F0E6DA] to-[#DEC4AA] rounded-xl flex items-center justify-center">
@@ -32,11 +49,22 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative w-full">
-        <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-cream group">
+        <div
+          ref={zoomBoxRef}
+          className="relative aspect-[3/4] rounded-xl overflow-hidden bg-cream group cursor-zoom-in"
+          onMouseEnter={() => setZoomed(true)}
+          onMouseLeave={() => setZoomed(false)}
+          onMouseMove={handleZoomMove}
+        >
           <img
             src={current.url}
             alt={current.alt || productName}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-150 ease-out"
+            style={{
+              transform: zoomed ? 'scale(2)' : 'scale(1)',
+              transformOrigin: `${origin.x}% ${origin.y}%`,
+            }}
+            draggable={false}
           />
 
           {images.length > 1 && (
