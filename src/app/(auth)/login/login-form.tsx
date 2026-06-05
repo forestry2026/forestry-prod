@@ -277,12 +277,6 @@ export default function LoginForm({ slide }: Props) {
                 Request vendor access
               </Link>
             </p>
-            <p className="text-xs">
-              Admin staff?{' '}
-              <Link href="/login" className="text-charcoal font-medium hover:underline">
-                Use the same login →
-              </Link>
-            </p>
           </div>
         </div>
       </div>
