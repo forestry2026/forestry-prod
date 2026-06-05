@@ -359,6 +359,13 @@ export default function EnquiryConfigurator({
     : selectedFinish?.name
 
   function doAddToBasket() {
+    // Defence in depth: visitors must be signed in before anything lands
+    // in the basket. Any code path that reaches doAddToBasket while
+    // unauthenticated bounces straight to /login.
+    if (!session) {
+      window.location.href = `/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`
+      return
+    }
     add({
       productId,
       productSku,
@@ -400,6 +407,10 @@ export default function EnquiryConfigurator({
   }
 
   function doAddCustomItem() {
+    if (!session) {
+      window.location.href = `/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`
+      return
+    }
     const filledDims = customDimensions.filter(d => d.label.trim() && d.value.trim())
     add({
       productId,
