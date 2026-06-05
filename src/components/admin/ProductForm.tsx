@@ -273,9 +273,24 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
     go()
   }, [])
 
+  // For a NEW product, pre-select every catalogue colour, texture and finish
+  // so the admin starts with the full attribute set and prunes down rather
+  // than having to manually tick each one. Existing products keep their
+  // saved selections.
+  const isNewProduct = !initialData?.id
+  const allColorIds   = (attributes?.colors   ?? []).map(c => c.id)
+  const allTextureIds = (attributes?.textures ?? []).map(t => t.id)
+  const allFinishIds  = (attributes?.finishes ?? []).map(f => f.id)
+
   const { register, watch, handleSubmit, formState: { errors, isDirty }, setValue } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: { ...initialData, dimensionSpecs: initialData?.dimensionSpecs || [] },
+    defaultValues: {
+      ...initialData,
+      colorIds:       initialData?.colorIds   ?? (isNewProduct ? allColorIds   : []),
+      textureIds:     initialData?.textureIds ?? (isNewProduct ? allTextureIds : []),
+      finishIds:      initialData?.finishIds  ?? (isNewProduct ? allFinishIds  : []),
+      dimensionSpecs: initialData?.dimensionSpecs || [],
+    },
   })
 
   const dimensionSpecs = watch('dimensionSpecs') || []
