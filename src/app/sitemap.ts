@@ -15,12 +15,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   return [
-    { url: 'https://theforestry.me',                              lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
-    { url: 'https://theforestry.me/request-access',               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: 'https://theforestry.me',                               lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
+    { url: 'https://theforestry.me/products',                      lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: 'https://theforestry.me/about',                         lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: 'https://theforestry.me/request-access',                lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: 'https://theforestry.me/materials/fiberglass-planters', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: 'https://theforestry.me/materials/grc-planters',        lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: 'https://theforestry.me/faq',                          lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: 'https://theforestry.me/enquiry',                      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: 'https://theforestry.me/faq',                           lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: 'https://theforestry.me/enquiry',                       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     ...productUrls,
   ]
 }
