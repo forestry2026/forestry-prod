@@ -75,10 +75,10 @@ export const metadata: Metadata = {
     description: "UAE's premium custom planter manufacturer. Fiberglass, GRC, polystone. Any size, any quantity. 48-hour B2B quotes.",
     images: [
       {
-        url:    '/og-image.jpg',
+        url:    '/opengraph-image',
         width:  1200,
         height: 630,
-        alt:    'Custom planters manufactured by Forestry in the UAE',
+        alt:    'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
       },
     ],
   },
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     card:        'summary_large_image',
     title:       'Forestry — Custom Planters UAE',
     description: "UAE's premium custom planter manufacturer. B2B trade accounts. 48-hour quotes.",
-    images:      ['/og-image.jpg'],
+    images:      ['/opengraph-image'],
   },
   alternates: {
     canonical: 'https://forestry.ae',
