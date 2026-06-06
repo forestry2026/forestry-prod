@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type:        'website',
     siteName:    'Forestry',
     locale:      'en_AE',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'Custom fiberglass and GRC planters by Forestry UAE' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Custom fiberglass and GRC planters by Forestry UAE' }],
   },
 }
 
