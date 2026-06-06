@@ -190,6 +190,10 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [categoryQuery, setCategoryQuery] = useState('')
   const [formImages, setFormImages] = useState(initialData?.images || [])
+  // Track URLs explicitly deleted by the user — these are the ONLY ones
+  // that should be removed from Cloudinary on save. This prevents accidental
+  // deletion caused by formImages losing state before submit.
+  const [removedImageUrls, setRemovedImageUrls] = useState<string[]>([])
   // Tracks an in-flight product-image upload so we can show a spinner
   // on the dropzone instead of leaving the user wondering.
   const [imageUploading, setImageUploading] = useState<{ done: number; total: number } | null>(null)
@@ -341,7 +345,7 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, images: formImages }),
+        body: JSON.stringify({ ...data, images: formImages, removedImageUrls }),
       })
       if (!res.ok) {
         const e = await res.json()
@@ -884,7 +888,11 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
                     <button
                       type="button"
                       title="Remove"
-                      onClick={() => setFormImages(formImages.filter((_, i) => i !== idx))}
+                      onClick={() => {
+                        const removed = formImages[idx]
+                        if (removed?.url) setRemovedImageUrls(prev => [...prev, removed.url])
+                        setFormImages(formImages.filter((_, i) => i !== idx))
+                      }}
                       className="w-7 h-7 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition"
                     >
                       <X className="w-3.5 h-3.5 text-white" />

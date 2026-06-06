@@ -51,6 +51,9 @@ const updateSchema = z.object({
     isPrimary: z.boolean().default(false),
     sortOrder: z.number().default(0),
   })).default([]).optional(),
+  // Explicit list of Cloudinary URLs the user deleted — ONLY these get purged
+  // from Cloudinary. Prevents accidental deletion when formImages loses state.
+  removedImageUrls: z.array(z.string()).optional(),
 })
 
 // PATCH /api/products/[id]
@@ -68,7 +71,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 
   try {
-    const { dimensionIds, colorIds, textureIds, finishIds, categoryIds, dimensionSpecs, images, ...rawProductData } = parsed.data
+    const { dimensionIds, colorIds, textureIds, finishIds, categoryIds, dimensionSpecs, images, removedImageUrls: explicitRemovedUrls, ...rawProductData } = parsed.data
 
     // Clean up empty strings - convert them to undefined so Prisma doesn't update those fields
     const productData = Object.fromEntries(
@@ -90,16 +93,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // Handle image updates
     let imageOperations = {}
-    let removedImageUrls: string[] = []
+    // Only delete from Cloudinary URLs that the user explicitly removed via the
+    // delete button (sent as removedImageUrls). Never infer deletions from
+    // array diff — this prevents accidental Cloudinary purges when formImages
+    // loses state before submit.
+    const removedImageUrls: string[] = explicitRemovedUrls ?? []
     if (images) {
       const existingImageUrls = existingProduct.images.map(img => img.url)
       const newImageUrls = images.map(img => img.url)
 
-      // Find images to delete (exist in DB but not in new array)
+      // Sync DB: remove rows for images no longer in the new array
       const imagesToDeleteEntries = existingProduct.images
         .filter(img => !newImageUrls.includes(img.url))
       const imagesToDelete = imagesToDeleteEntries.map(img => img.id)
-      removedImageUrls     = imagesToDeleteEntries.map(img => img.url)
 
       // Find new images to create (exist in new array but not in DB)
       const imagesToCreate = images.filter(img => !existingImageUrls.includes(img.url))
