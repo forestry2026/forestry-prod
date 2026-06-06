@@ -105,7 +105,7 @@ interface Props {
 
 /* ── Constants ──────────────────────────────────────── */
 const DIM_UNITS        = ['mm', 'cm', 'm', 'in'] as const
-const PRESET_DIM_LABELS = ['Top Dia', 'Bottom Dia', 'Height', 'Width', 'Depth', 'Neck Dia', 'Length', 'Diameter']
+const PRESET_DIM_LABELS = ['Top Dia', 'Center Dia', 'Bottom Dia', 'Height', 'Width', 'Depth', 'Thickness', 'Neck Dia', 'Length', 'Diameter']
 
 /* ── Helpers ────────────────────────────────────────── */
 function parseVariants(specsJson: string | null): Variant[] | null {
