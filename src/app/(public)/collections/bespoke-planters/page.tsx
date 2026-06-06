@@ -8,7 +8,7 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Bespoke Planters UAE — Custom Made to Any Specification | Forestry',
   description:
-    'Forestry manufactures bespoke planters to exact client specification for the UAE market. Any dimension, any material, any colour (RAL/Pantone matched), any finish. No minimum order. 48-hour quotes.',
+    'Forestry manufactures bespoke planters to exact client specification for the UAE market. Any dimension, any material, any colour (RAL matched), any finish. No minimum order. 48-hour quotes.',
   alternates: { canonical: 'https://theforestry.me/collections/bespoke-planters' },
   openGraph: {
     title:       'Bespoke Planters UAE — Made to Your Brief | Forestry',
@@ -27,17 +27,17 @@ const faqSchema = {
     {
       '@type': 'Question',
       name:    'What is a bespoke planter?',
-      acceptedAnswer: { '@type': 'Answer', text: 'A bespoke planter is a decorative container for plants manufactured entirely to a client\'s specific requirements — custom dimensions, custom material, custom colour (including Pantone and RAL reference matching), and custom surface finish. Bespoke planters are the opposite of off-the-shelf stock planters: every piece is made to your exact brief. Forestry manufactures bespoke planters from a single prototype to 10,000+ unit production runs.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'A bespoke planter is a decorative container for plants manufactured entirely to a client\'s specific requirements — custom dimensions, custom material, custom colour (including RAL reference matching), and custom surface finish. Bespoke planters are the opposite of off-the-shelf stock planters: every piece is made to your exact brief. Forestry manufactures bespoke planters from a single prototype to 10,000+ unit production runs.' },
     },
     {
       '@type': 'Question',
       name:    'How do I order bespoke planters in UAE?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Apply for a Forestry B2B trade account at theforestry.me/request-access (UAE trade licence required, approval in 24–48 hours). Once approved, submit an RFP via the vendor portal specifying your dimensions, material preference, colour reference (Pantone or RAL), surface finish, quantity, and delivery requirements. A formal line-itemised quotation is delivered within 48 business hours.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Apply for a Forestry B2B trade account at theforestry.me/request-access (UAE trade licence required, approval in 24–48 hours). Once approved, submit an RFP via the vendor portal specifying your dimensions, material preference, colour reference (RAL), surface finish, quantity, and delivery requirements. A formal line-itemised quotation is delivered within 48 business hours.' },
     },
     {
       '@type': 'Question',
       name:    'Can bespoke planters be colour-matched to an interior design scheme?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry accepts Pantone and RAL colour references for precise matching on all orders. Clients may also supply a physical colour swatch, material sample, or paint chip for colour matching. Custom colour samples for client approval can be produced before full production commitment.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry accepts RAL colour references for precise matching on all orders. Clients may also supply a physical colour swatch, material sample, or paint chip for colour matching. Custom colour samples for client approval can be produced before full production commitment.' },
     },
     {
       '@type': 'Question',
@@ -54,9 +54,9 @@ const faqSchema = {
 
 const capabilities = [
   { title: 'Any Dimension',    desc: 'No size catalogue. Submit a dimension and it will be manufactured to ±1mm. From a 15cm desk piece to a 4m architectural trough.' },
-  { title: 'Any Colour',       desc: 'Pantone and RAL colour references accepted. Physical swatches matched. Custom colour samples produced for approval before production.' },
+  { title: 'Any Colour',       desc: 'RAL colour references accepted. Physical swatches matched. Custom colour samples produced for approval before production.' },
   { title: 'Any Finish',       desc: 'Matte, gloss, satin, textured, stone-effect, exposed aggregate, brushed, metallic. Bespoke surface treatments matched from sample.' },
-  { title: 'Any Material',     desc: 'GRP fiberglass for indoor and outdoor applications. Polystone for decorative and detail-rich forms.' },
+  { title: 'Any Material',     desc: 'GRP fiberglass for indoor and outdoor applications.' },
   { title: 'Any Quantity',     desc: 'Single prototype or 10,000+ unit production run. No MOQ. Same quality standards and tolerances at every scale.' },
   { title: 'Any Form',         desc: 'Cylindrical, rectangular, square, conical, tapered, irregular, or fully custom architectural geometry. Technical drawings accepted.' },
 ]
@@ -107,7 +107,7 @@ export default async function BespokePlantersPage() {
                 A bespoke planter is manufactured entirely to a client's specification — custom dimensions, custom material, custom colour, and custom finish. There are no standard options to select from, no fixed sizes, no pre-defined colours.
               </p>
               <p className="text-charcoal-600 leading-relaxed mb-4">
-                Forestry operates exclusively in the bespoke model. Every product in our catalogue is a reference point, not a fixed stock item. Dimensions can be adjusted, proportions changed, materials switched, colours specified to any Pantone or RAL reference, and surface finishes selected or matched from a sample.
+                Forestry operates exclusively in the bespoke model. Every product in our catalogue is a reference point, not a fixed stock item. Dimensions can be adjusted, proportions changed, materials switched, colours specified to any RAL reference, and surface finishes selected or matched from a sample.
               </p>
               <p className="text-charcoal-600 leading-relaxed">
                 This model serves interior designers, landscape architects, and specifiers who need planters that integrate precisely with a project brief rather than compromise around what's available in a stock catalogue.

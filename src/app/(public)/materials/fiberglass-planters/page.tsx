@@ -5,11 +5,11 @@ import { ArrowRight } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Fiberglass Planters UAE — Custom GRP Pots Manufacturer | Forestry',
   description:
-    'Forestry manufactures custom fiberglass (GRP) planters to specification for commercial and hospitality projects across the UAE. Any size, any colour (RAL/Pantone matched), any finish. B2B trade. 48-hour quotes.',
+    'Forestry manufactures custom fiberglass (GRP) planters to specification for commercial and hospitality projects across the UAE. Any size, any colour (RAL matched), any finish. B2B trade. 48-hour quotes.',
   alternates: { canonical: 'https://theforestry.me/materials/fiberglass-planters' },
   openGraph: {
     title:       'Fiberglass Planters UAE — Custom GRP Pots | Forestry',
-    description: 'Custom fiberglass planters manufactured to your specification. Any size, RAL/Pantone colour matching, matte or gloss finish. B2B trade. 48-hour quotes.',
+    description: 'Custom fiberglass planters manufactured to your specification. Any size, RAL colour matching, matte or gloss finish. B2B trade. 48-hour quotes.',
     url:         'https://theforestry.me/materials/fiberglass-planters',
     type:        'website',
     siteName:    'Forestry',
@@ -34,7 +34,7 @@ const faqSchema = {
       name:    'Why choose fiberglass planters for UAE interior projects?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:    'Fiberglass planters are the preferred material for UAE interior commercial and hospitality installations because they are lightweight (important in high-rise towers and podium floors), accept precise Pantone and RAL colour matching, and can achieve a wide range of finishes from high-gloss lacquer to stone-effect textures. They are also resistant to humidity and UV exposure when specified for sheltered outdoor use.',
+        text:    'Fiberglass planters are the preferred material for UAE interior commercial and hospitality installations because they are lightweight (important in high-rise towers and podium floors), accept precise RAL colour matching, and can achieve a wide range of finishes from high-gloss lacquer to stone-effect textures. They are also resistant to humidity and UV exposure when specified for sheltered outdoor use.',
       },
     },
     {
@@ -50,7 +50,7 @@ const faqSchema = {
       name:    'What finishes are available on fiberglass planters?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:    'Forestry offers matte, satin, gloss, textured, stone-effect, and metallic finishes on fiberglass planters. Any RAL or Pantone colour reference is accepted for colour matching. Custom texture samples can also be matched on request.',
+        text:    'Forestry offers matte, satin, gloss, textured, stone-effect, and metallic finishes on fiberglass planters. Any RAL colour reference is accepted for colour matching. Custom texture samples can also be matched on request.',
       },
     },
     {
@@ -124,7 +124,7 @@ export default function FiberglassPlantersPage() {
             <div className="space-y-4">
               {[
                 { label: 'Weight advantage', value: 'Lightweight — enables large-format high-rise installs' },
-                { label: 'Colour accuracy',  value: 'Pantone & RAL reference matching' },
+                { label: 'Colour accuracy',  value: 'RAL reference matching' },
                 { label: 'Dimensional tolerance', value: '±1mm across all production runs' },
                 { label: 'Minimum order',    value: 'None — 1 to 10,000+ units' },
                 { label: 'Lead time (quote)', value: '48 business hours from complete RFP' },
@@ -157,7 +157,7 @@ export default function FiberglassPlantersPage() {
               },
               {
                 title: 'Colour Precision',
-                body:  'Interior designers and specifiers routinely match planters to project colour palettes. Fiberglass accepts Pantone and RAL references with high accuracy, ensuring the finished planter matches FF&E boards and material specifications.',
+                body:  'Interior designers and specifiers routinely match planters to project colour palettes. Fiberglass accepts RAL references with high accuracy, ensuring the finished planter matches FF&E boards and material specifications.',
               },
               {
                 title: 'Finish Versatility',

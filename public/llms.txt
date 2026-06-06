@@ -8,7 +8,7 @@
 
 Forestry manufactures custom planters and decorative pots for commercial and residential
 projects across the UAE and GCC. Products are made to order — any size, any colour
-(RAL/Pantone matched), any texture, any finish. Manufacturing tolerances of ±1mm are
+(RAL matched), any texture, any finish. Manufacturing tolerances of ±1mm are
 maintained across production runs from 1 to 10,000+ units.
 
 Based in the UAE. B2B trade supplier only.
@@ -25,10 +25,10 @@ Categories:
 Materials:
 - GRP (glass-reinforced plastic): preferred for large outdoor and public realm installations
 - Fiberglass / GRP: preferred for interior commercial and hospitality applications
-- Polystone: selected for decorative and detail-rich forms
+- 
 
 Finishes: matte, gloss, textured, stone-effect, brushed, metallic.
-Colour matching: Pantone and RAL references accepted on all orders.
+Colour matching: RAL references accepted on all orders.
 Sizes: any dimension manufactured to specification. No standard size catalogue.
 
 ## Who We Serve
@@ -62,7 +62,7 @@ Sizes: any dimension manufactured to specification. No standard size catalogue.
 
 Q: What materials are used for custom planters?
 A: GRP (glass-reinforced plastic) for large outdoor installations; fiberglass/GRP for
-interior and hospitality; polystone for decorative forms.
+interior and hospitality; 
 
 Q: What is GRP?
 A: Glass-reinforced concrete — a lightweight composite of cement and glass fibres that
@@ -78,7 +78,7 @@ A: 48 business hours from receipt of a complete RFP with specifications, quantit
 and delivery requirements.
 
 Q: Can planters be colour matched?
-A: Yes. Pantone and RAL references accepted on all orders across all materials.
+A: Yes. RAL references accepted on all orders across all materials.
 
 ## Contact
 

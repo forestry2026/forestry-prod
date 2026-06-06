@@ -8,11 +8,11 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'Custom Planters — Full Collection | Forestry UAE',
   description:
-    'Browse the full Forestry catalogue of custom planters and bespoke pots for B2B trade clients in the UAE. Fiberglass, GRP, and polystone. Any size, colour, and finish. Apply for trade access to request a quote.',
+    'Browse the full Forestry catalogue of custom planters and bespoke pots for B2B trade clients in the UAE. Fiberglass, GRP,. Any size, colour, and finish. Apply for trade access to request a quote.',
   alternates: { canonical: 'https://theforestry.me/products' },
   openGraph: {
     title:       'Custom Planters — Full Collection | Forestry UAE',
-    description: 'Full catalogue of custom planters. Fiberglass, GRP, polystone. Any size, colour, finish. B2B trade. 48-hour quotes.',
+    description: 'Full catalogue of custom planters. Fiberglass, GRP. Any size, colour, finish. B2B trade. 48-hour quotes.',
     url:         'https://theforestry.me/products',
     type:        'website',
     siteName:    'Forestry',

@@ -5,11 +5,11 @@ import { ArrowRight } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'About Forestry — Custom Planter Manufacturer UAE',
   description:
-    'Forestry is a UAE-based custom planter manufacturer serving interior designers, landscapers, and commercial contractors. B2B trade only. GRP, fiberglass, and polystone. Any size, any finish. 48-hour quotes.',
+    'Forestry is a UAE-based custom planter manufacturer serving interior designers, landscapers, and commercial contractors. B2B trade only. GRP, fiberglass,. Any size, any finish. 48-hour quotes.',
   alternates: { canonical: 'https://theforestry.me/about' },
   openGraph: {
     title:       'About Forestry — Custom Planter Manufacturer UAE',
-    description: 'UAE-based custom planter manufacturer for B2B trade. GRP, fiberglass, polystone. Any size, colour, finish. 48-hour quotes.',
+    description: 'UAE-based custom planter manufacturer for B2B trade. GRP fiberglass. Any size, colour, finish. 48-hour quotes.',
     url:         'https://theforestry.me/about',
     type:        'website',
     siteName:    'Forestry',
@@ -36,11 +36,11 @@ const materials = [
     name: 'Fiberglass',
     full: 'GRP — Glass-Reinforced Plastic',
     href: '/materials/fiberglass-planters',
-    desc: 'The standard for interior commercial and hospitality installations where weight is a constraint. Fiberglass planters accept any RAL or Pantone colour reference and any surface texture from gloss lacquer to stone-effect. Production tolerances are maintained at ±1mm.',
+    desc: 'The standard for interior commercial and hospitality installations where weight is a constraint. Fiberglass planters accept any RAL colour reference and any surface texture from gloss lacquer to stone-effect. Production tolerances are maintained at ±1mm.',
     use:  'Interior · Hospitality · High-rise',
   },
   {
-    name: 'Polystone',
+    name: '
     full: 'Polymer composite',
     href: '/products',
     desc: 'Selected for detail-rich decorative forms and textured finishes. Suited to both interior and sheltered exterior installations where surface character and fine detailing are priorities.',
@@ -101,7 +101,7 @@ export default function AboutPage() {
               About Forestry
             </h2>
             <p className="text-charcoal-600 leading-relaxed mb-4">
-              Forestry manufactures custom planters and decorative pots for commercial and residential projects across the UAE and GCC. Every product is made to order — any size, any colour (RAL or Pantone matched), any texture, any finish. There is no standard size catalogue and no minimum order quantity.
+              Forestry manufactures custom planters and decorative pots for commercial and residential projects across the UAE and GCC. Every product is made to order — any size, any colour (RAL matched), any texture, any finish. There is no standard size catalogue and no minimum order quantity.
             </p>
             <p className="text-charcoal-600 leading-relaxed mb-4">
               We supply a network of 500+ approved B2B trade vendors including interior designers, landscape architects, landscaping contractors, hotel groups, property developers, and commercial project managers. Trade licence verification is required for account approval.

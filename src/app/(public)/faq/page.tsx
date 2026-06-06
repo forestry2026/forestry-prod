@@ -61,7 +61,7 @@ const faqs = [
     items: [
       {
         q: 'What materials are Forestry planters made from?',
-        a: 'Forestry manufactures planters in fiberglass (GRP — glass-reinforced plastic) and polystone. Fiberglass/GRP is used for both indoor and outdoor applications and accepts any colour (RAL/Pantone), texture, and finish. Polystone is selected for decorative, detail-rich forms.',
+        a: 'Forestry manufactures planters in fiberglass (GRP — glass-reinforced plastic). GRP is used for both indoor and outdoor applications and accepts any colour (RAL), texture, and finish.',
       },
       {
         q: 'What is a fiberglass planter?',
@@ -85,8 +85,8 @@ const faqs = [
         a: 'Yes. Forestry manufactures planters to any dimension specified by the client. There is no standard size catalogue — every piece is manufactured to your brief. Technical drawings in DWG and PDF format are accepted. All production is held to ±1mm dimensional tolerance.',
       },
       {
-        q: 'Can custom planters be colour-matched to a Pantone or RAL code?',
-        a: 'Yes. Forestry accepts Pantone and RAL colour references for precise matching on all orders across all materials. Clients may also supply a physical colour swatch or sample for matching. Custom colour samples can be produced for approval before full production.',
+        q: 'Can custom planters be colour-matched to a RAL code?',
+        a: 'Yes. Forestry accepts RAL colour references for precise matching on all orders across all materials. Clients may also supply a physical colour swatch or sample for matching. Custom colour samples can be produced for approval before full production.',
       },
       {
         q: 'What surface finishes are available?',

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://theforestry.me/collections/commercial-planters' },
   openGraph: {
     title:       'Commercial Planters UAE — Hotels, Malls & Developers | Forestry',
-    description: 'Custom commercial planters for UAE projects. GRP, fiberglass, polystone. Any size. B2B trade. 48-hour quotes.',
+    description: 'Custom commercial planters for UAE projects. GRP fiberglass. Any size. B2B trade. 48-hour quotes.',
     url:         'https://theforestry.me/collections/commercial-planters',
     type:        'website',
     siteName:    'Forestry',
@@ -103,7 +103,7 @@ export default async function CommercialPlantersPage() {
                 Commercial planters are decorative plant containers specified for professional environments — hotels, malls, offices, public spaces, and hospitality venues. They are designed for scale, durability, and alignment with interior design or landscape architecture schemes.
               </p>
               <p className="text-charcoal-600 leading-relaxed mb-4">
-                Unlike retail stock planters, commercial planters from Forestry are manufactured to exact client specification — any dimension, any colour (RAL/Pantone matched), any texture, any finish. Technical drawings accepted. No standard size catalogue.
+                Unlike retail stock planters, commercial planters from Forestry are manufactured to exact client specification — any dimension, any colour (RAL matched), any texture, any finish. Technical drawings accepted. No standard size catalogue.
               </p>
               <p className="text-charcoal-600 leading-relaxed">
                 Orders range from a single prototype for client approval to 10,000+ unit production runs for large-scale UAE developments — all on the same ±1mm tolerance and quality standards.
@@ -112,8 +112,8 @@ export default async function CommercialPlantersPage() {
             <div className="space-y-4">
               {[
                 { label: 'No minimum order',       value: '1 unit to 10,000+ — same standards' },
-                { label: 'Materials',              value: 'GRP fiberglass (indoor & outdoor), Polystone' },
-                { label: 'Colour matching',        value: 'Pantone & RAL references accepted' },
+                { label: 'Materials',              value: 'GRP fiberglass (indoor & outdoor)' },
+                { label: 'Colour matching',        value: 'RAL references accepted' },
                 { label: 'Dimensional tolerance',  value: '±1mm across all production runs' },
                 { label: 'Quote turnaround',       value: '48 business hours from complete RFP' },
                 { label: 'Technical drawings',     value: 'DWG, DXF, PDF accepted' },

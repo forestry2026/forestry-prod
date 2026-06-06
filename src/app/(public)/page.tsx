@@ -41,12 +41,12 @@ const faqSchema = {
     {
       '@type': 'Question',
       name:    'What materials are Forestry planters made from?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Forestry manufactures planters in GRP (glass-reinforced plastic), fiberglass composite (GRP), and polystone. GRP is preferred for large outdoor installations; fiberglass for lightweight interior and hospitality applications.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry manufactures planters in GRP (glass-reinforced plastic), fiberglass composite (GRP),. GRP is preferred for large outdoor installations; fiberglass for lightweight interior and hospitality applications.' },
     },
     {
       '@type': 'Question',
-      name:    'Can custom planters be colour-matched to a specific Pantone or RAL code?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry accepts Pantone and RAL colour references for precise matching on all orders across all materials.' },
+      name:    'Can custom planters be colour-matched to a specific RAL code?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry accepts RAL colour references for precise matching on all orders across all materials.' },
     },
     {
       '@type': 'Question',
@@ -82,7 +82,7 @@ const STEPS = [
 const CAPABILITIES = [
   { n: '01', title: '1 to 10,000 units',          desc: 'Single prototype or production run. Same line.'      },
   { n: '02', title: '±1mm tolerance',             desc: 'Manufactured to the millimetre. No rounding.'         },
-  { n: '03', title: 'Colour · Texture · Finish', desc: 'Pick from the catalogue. Or send a Pantone or RAL reference code.' },
+  { n: '03', title: 'Colour · Texture · Finish', desc: 'Pick from the catalogue. Or send a RAL reference code.' },
 ]
 
 /* ── Page ───────────────────────────────────────────────────────── */

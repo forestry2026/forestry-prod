@@ -25,7 +25,7 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
               }
             </div>
             <p className="text-sm leading-relaxed text-cream/50 max-w-xs">
-              UAE custom planter manufacturer for interior designers, landscapers and commercial contractors. GRP, fiberglass and polystone. Any size, any finish.
+              UAE custom planter manufacturer for interior designers, landscapers and commercial contractors. GRP, fiberglass. Any size, any finish.
             </p>
           </div>
 
