@@ -115,7 +115,7 @@ export default function FiberglassPlantersPage() {
                 Fiberglass planters — also known as GRP (glass-reinforced plastic) planters — are manufactured from a composite of woven glass fibres embedded in resin. The result is a material that is strong, lightweight, and capable of accepting virtually any surface finish or colour.
               </p>
               <p className="text-charcoal-600 leading-relaxed mb-4">
-                Fiberglass can be formed into complex geometries without significantly increasing weight. A large cylindrical fiberglass planter that would weigh 80kg in a heavier composite may weigh only 12kg in fiberglass — a critical consideration for upper-floor interior installations across Dubai and Abu Dhabi.
+                Fiberglass can be formed into complex geometries without significantly increasing weight — a critical advantage for upper-floor interior installations across Dubai and Abu Dhabi where strict floor-loading limits apply.
               </p>
               <p className="text-charcoal-600 leading-relaxed">
                 Forestry manufactures fiberglass planters from a single prototype to 10,000+ unit production runs, maintaining ±1mm dimensional tolerance across the entire order.

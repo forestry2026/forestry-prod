@@ -82,9 +82,12 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/35">
           <span>&copy; {new Date().getFullYear()} Forestry Manufacturing LLC. All rights reserved.</span>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
             <Link href="/privacy-policy" className="hover:text-terracotta-light transition-colors duration-200">Privacy Policy</Link>
             <Link href="/terms-of-service" className="hover:text-terracotta-light transition-colors duration-200">Terms of Service</Link>
+            <a href="https://www.blindspill.com" target="_blank" rel="noopener noreferrer" className="hover:text-terracotta-light transition-colors duration-200">
+              Powered by Blindspill
+            </a>
           </div>
         </div>
       </div>
