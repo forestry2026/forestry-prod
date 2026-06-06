@@ -25,7 +25,7 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
               }
             </div>
             <p className="text-sm leading-relaxed text-cream/50 max-w-xs">
-              UAE custom planter manufacturer for interior designers, landscapers and commercial contractors. GRC, fiberglass and polystone. Any size, any finish.
+              UAE custom planter manufacturer for interior designers, landscapers and commercial contractors. GRP, fiberglass and polystone. Any size, any finish.
             </p>
           </div>
 
@@ -36,7 +36,7 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
               {[
                 { label: 'All Products',            href: '/products' },
                 { label: 'Fiberglass Planters',     href: '/materials/fiberglass-planters' },
-                { label: 'GRC Planters',            href: '/materials/grc-planters' },
+                { label: 'GRP Planters',            href: '/materials/fiberglass-planters' },
                 { label: 'Commercial Planters',     href: '/collections/commercial-planters' },
                 { label: 'Bespoke Planters',        href: '/collections/bespoke-planters' },
                 { label: 'About Forestry',          href: '/about' },

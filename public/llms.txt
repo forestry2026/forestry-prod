@@ -23,7 +23,7 @@ Categories:
 - Custom bespoke architectural forms
 
 Materials:
-- GRC (glass-reinforced concrete): preferred for large outdoor and public realm installations
+- GRP (glass-reinforced plastic): preferred for large outdoor and public realm installations
 - Fiberglass / GRP: preferred for interior commercial and hospitality applications
 - Polystone: selected for decorative and detail-rich forms
 
@@ -61,10 +61,10 @@ Sizes: any dimension manufactured to specification. No standard size catalogue.
 ## FAQ
 
 Q: What materials are used for custom planters?
-A: GRC (glass-reinforced concrete) for large outdoor installations; fiberglass/GRP for
+A: GRP (glass-reinforced plastic) for large outdoor installations; fiberglass/GRP for
 interior and hospitality; polystone for decorative forms.
 
-Q: What is GRC?
+Q: What is GRP?
 A: Glass-reinforced concrete — a lightweight composite of cement and glass fibres that
 provides the aesthetic of concrete with greater structural strength. UV-stable and suited
 to UAE outdoor climate.

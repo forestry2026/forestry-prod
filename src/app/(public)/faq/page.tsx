@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://theforestry.me/faq' },
   openGraph: {
     title:       'Custom Planters FAQ | Forestry UAE',
-    description: 'Common questions about custom planter orders — lead times, MOQ, GRC vs fiberglass, colour matching, and how to become an approved vendor.',
+    description: 'Common questions about custom planter orders — lead times, MOQ, GRP vs fiberglass, colour matching, and how to become an approved vendor.',
     url:         'https://theforestry.me/faq',
     type:        'website',
     siteName:    'Forestry',
@@ -61,19 +61,19 @@ const faqs = [
     items: [
       {
         q: 'What materials are Forestry planters made from?',
-        a: 'Forestry manufactures planters in three primary materials: GRC (glass-reinforced concrete), preferred for large outdoor, public realm, and architectural installations; fiberglass (GRP), preferred for interior commercial and hospitality applications; and polystone, selected for decorative and detail-rich forms.',
-      },
-      {
-        q: 'What is a GRC planter?',
-        a: 'GRC stands for glass-reinforced concrete — a composite of Portland cement and alkali-resistant glass fibres. GRC planters are UV-stable, heat-resistant, and structurally sound in full UAE outdoor conditions including summer temperatures above 45°C. They are lighter than solid concrete while retaining comparable structural performance.',
+        a: 'Forestry manufactures planters in fiberglass (GRP — glass-reinforced plastic) and polystone. Fiberglass/GRP is used for both indoor and outdoor applications and accepts any colour (RAL/Pantone), texture, and finish. Polystone is selected for decorative, detail-rich forms.',
       },
       {
         q: 'What is a fiberglass planter?',
-        a: 'A fiberglass planter (GRP — glass-reinforced plastic) is made from a composite of glass fibres and resin. Fiberglass planters are significantly lighter than GRC, making them the preferred material for interior, hospitality, and upper-floor applications. They accept a wide range of finishes and precise Pantone/RAL colour matching.',
+        a: 'A fiberglass planter (also called GRP — glass-reinforced plastic) is manufactured from a composite of glass fibres and polyester or vinyl ester resin. The result is a lightweight, strong material that accepts any surface finish or colour. Forestry\'s GRP planters are suitable for both interior and exterior applications in the UAE.',
       },
       {
-        q: 'How do I choose between GRC and fiberglass?',
-        a: 'Choose GRC for outdoor applications, large-scale landscaping, public realm, and any installation exposed to the UAE climate. Choose fiberglass for interior commercial, hospitality, and high-rise applications where weight is a constraint. Both materials are manufactured by Forestry to identical dimensional tolerances and colour matching standards.',
+        q: 'What is the difference between fiberglass and GRP?',
+        a: 'Fiberglass and GRP (glass-reinforced plastic) refer to the same material. GRP is the technical term; fiberglass is the common name. All Forestry planters described as fiberglass or GRP are the same product.',
+      },
+      {
+        q: 'Are Forestry planters suitable for outdoor use in the UAE?',
+        a: 'Yes. Forestry\'s GRP planters are manufactured with UV-stable resins and coatings suitable for UAE outdoor conditions. Colour and finish stability in direct sunlight is confirmed at the specification stage. For very large architectural outdoor installations, ask our team to advise on the appropriate specification.',
       },
     ],
   },
@@ -90,7 +90,7 @@ const faqs = [
       },
       {
         q: 'What surface finishes are available?',
-        a: 'Available finishes include matte, satin, gloss, textured, stone-effect, exposed aggregate, brushed, and metallic. GRC and fiberglass support different finish options based on material properties. Bespoke surface treatments can be matched from a client-supplied sample on request.',
+        a: 'Available finishes include matte, satin, gloss, textured, stone-effect, exposed aggregate, brushed, and metallic. GRP and fiberglass support different finish options based on material properties. Bespoke surface treatments can be matched from a client-supplied sample on request.',
       },
       {
         q: 'What manufacturing tolerance does Forestry maintain?',
@@ -190,7 +190,7 @@ export default function FaqPage() {
                 href="/materials/grc-planters"
                 className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group"
               >
-                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRC Planters →</p>
+                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRP Planters →</p>
                 <p className="text-sm text-charcoal/60">Outdoor, architectural, public realm</p>
               </Link>
             </div>

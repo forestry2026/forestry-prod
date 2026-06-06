@@ -41,12 +41,12 @@ export const metadata: Metadata = {
     template: '%s | Forestry',
   },
   description:
-    "UAE's premium custom planter manufacturer for interior designers, landscapers and commercial contractors. Fiberglass, GRC and polystone. Any size, any quantity. 48-hour quotes.",
+    "UAE's premium custom planter manufacturer for interior designers, landscapers and commercial contractors. Fiberglass, GRP and polystone. Any size, any quantity. 48-hour quotes.",
   keywords: [
     'custom planters UAE',
     'bespoke planters Dubai',
     'fiberglass planters UAE',
-    'GRC planters Dubai',
+    'GRP planters Dubai',
     'commercial planters UAE',
     'custom pots manufacturer UAE',
     'architectural planters',
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     url:         'https://theforestry.me',
     siteName:    'Forestry',
     title:       'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
-    description: "UAE's premium custom planter manufacturer. Fiberglass, GRC, polystone. Any size, any quantity. 48-hour B2B quotes.",
+    description: "UAE's premium custom planter manufacturer. Fiberglass, GRP, polystone. Any size, any quantity. 48-hour B2B quotes.",
     images: [
       {
         url:    '/og-image.jpg',

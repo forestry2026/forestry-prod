@@ -10,7 +10,7 @@ import { useSiteLogo } from '@/hooks/useSiteLogo'
 
 const navLinks = [
   { label: 'Products',   href: '/products'               },
-  { label: 'Materials',  href: '/materials/grc-planters' },
+  { label: 'Materials',  href: '/materials/fiberglass-planters' },
   { label: 'About',      href: '/about'                  },
   { label: 'FAQ',        href: '/faq'                    },
   { label: 'Contact',    href: '/#contact'               },

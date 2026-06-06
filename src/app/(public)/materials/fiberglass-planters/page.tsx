@@ -26,7 +26,7 @@ const faqSchema = {
       name:    'What is a fiberglass planter?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:    'A fiberglass planter (also called GRP — glass-reinforced plastic) is a decorative container for plants made from a composite of glass fibres and resin. Fiberglass planters are significantly lighter than concrete or GRC alternatives, making them ideal for interior installations, high-rise buildings, and any application where weight is a constraint.',
+        text:    'A fiberglass planter (also called GRP — glass-reinforced plastic) is a decorative container for plants made from a composite of glass fibres and resin. Fiberglass planters are significantly lighter than concrete or GRP alternatives, making them ideal for interior installations, high-rise buildings, and any application where weight is a constraint.',
       },
     },
     {
@@ -55,23 +55,15 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name:    'What is the difference between fiberglass and GRC planters?',
+      name:    'What is the difference between fiberglass and GRP planters?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:    'Fiberglass (GRP) planters are lighter and better suited to interior, hospitality, and sheltered applications. GRC (glass-reinforced concrete) planters are heavier, structurally stronger, and preferred for large outdoor installations, public realm, and architectural applications in the UAE. Both are manufactured by Forestry to any specification.',
+        text:    'Fiberglass and GRP (glass-reinforced plastic) are the same material — GRP is the technical term, fiberglass is the common name. All Forestry planters described as fiberglass or GRP are manufactured from a composite of glass fibres and resin.',
       },
     },
   ],
 }
 
-const comparisonRows = [
-  { prop: 'Weight',        fiber: 'Lightweight',        grc: 'Heavy' },
-  { prop: 'Best for',      fiber: 'Interior, hospitality, high-rise', grc: 'Outdoor, public realm, large-scale' },
-  { prop: 'Colour match',  fiber: 'RAL / Pantone',       grc: 'RAL / Pantone' },
-  { prop: 'Finishes',      fiber: 'Gloss, matte, stone, metallic', grc: 'Matte, textured, exposed aggregate' },
-  { prop: 'UV resistance', fiber: 'Good (sheltered outdoor)', grc: 'Excellent (full outdoor)' },
-  { prop: 'Custom size',   fiber: '±1mm tolerance',      grc: '±1mm tolerance' },
-]
 
 export default function FiberglassPlantersPage() {
   return (
@@ -87,7 +79,7 @@ export default function FiberglassPlantersPage() {
         <section className="pt-36 pb-20 px-6 max-w-5xl mx-auto">
           <div className="mb-4">
             <Link
-              href="/materials/grc-planters"
+              href="/products"
               className="text-xs font-mono text-charcoal/50 uppercase tracking-widest hover:text-terracotta transition-colors"
             >
               Materials
@@ -123,7 +115,7 @@ export default function FiberglassPlantersPage() {
                 Fiberglass planters — also known as GRP (glass-reinforced plastic) planters — are manufactured from a composite of woven glass fibres embedded in resin. The result is a material that is strong, lightweight, and capable of accepting virtually any surface finish or colour.
               </p>
               <p className="text-charcoal-600 leading-relaxed mb-4">
-                Unlike concrete or GRC, fiberglass can be formed into complex geometries without significantly increasing weight. A large cylindrical fiberglass planter that would weigh 80kg in GRC may weigh only 12kg in fiberglass — a critical consideration for upper-floor interior installations across Dubai and Abu Dhabi.
+                Fiberglass can be formed into complex geometries without significantly increasing weight. A large cylindrical fiberglass planter that would weigh 80kg in a heavier composite may weigh only 12kg in fiberglass — a critical consideration for upper-floor interior installations across Dubai and Abu Dhabi.
               </p>
               <p className="text-charcoal-600 leading-relaxed">
                 Forestry manufactures fiberglass planters from a single prototype to 10,000+ unit production runs, maintaining ±1mm dimensional tolerance across the entire order.
@@ -131,7 +123,7 @@ export default function FiberglassPlantersPage() {
             </div>
             <div className="space-y-4">
               {[
-                { label: 'Weight advantage', value: 'Up to 80% lighter than GRC equivalent' },
+                { label: 'Weight advantage', value: 'Lightweight — enables large-format high-rise installs' },
                 { label: 'Colour accuracy',  value: 'Pantone & RAL reference matching' },
                 { label: 'Dimensional tolerance', value: '±1mm across all production runs' },
                 { label: 'Minimum order',    value: 'None — 1 to 10,000+ units' },
@@ -173,7 +165,7 @@ export default function FiberglassPlantersPage() {
               },
               {
                 title: 'Production Speed',
-                body:  'Fiberglass tooling and production is faster than GRC for most form factors, supporting the tight project timelines common across UAE fit-out and FF&E programmes.',
+                body:  'Fiberglass tooling and production is faster than GRP for most form factors, supporting the tight project timelines common across UAE fit-out and FF&E programmes.',
               },
               {
                 title: 'Humidity Resistance',
@@ -181,7 +173,7 @@ export default function FiberglassPlantersPage() {
               },
               {
                 title: 'Complex Geometries',
-                body:  'Fiberglass can be formed into shapes and profiles that would be difficult or cost-prohibitive in GRC — curved forms, tapered profiles, and asymmetric architectural pieces are all achievable.',
+                body:  'Fiberglass can be formed into shapes and profiles that would be difficult or cost-prohibitive in GRP — curved forms, tapered profiles, and asymmetric architectural pieces are all achievable.',
               },
             ].map(c => (
               <div key={c.title} className="p-6 border border-charcoal/10 rounded-2xl">
@@ -218,42 +210,6 @@ export default function FiberglassPlantersPage() {
           </div>
         </section>
 
-        {/* ── COMPARISON TABLE ────────────────────────────────── */}
-        <section className="py-16 px-6 max-w-5xl mx-auto">
-          <h2 className="font-heading text-3xl font-bold text-charcoal-900 mb-2">
-            Fiberglass vs GRC Planters — Which to Choose?
-          </h2>
-          <p className="text-charcoal-600 mb-8 max-w-2xl">
-            Both materials are manufactured by Forestry to identical dimensional tolerances. The choice depends on application, weight constraints, and environment.
-          </p>
-          <div className="overflow-x-auto rounded-2xl border border-charcoal/10">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-charcoal-900 text-white">
-                  <th className="text-left px-5 py-4 font-semibold">Property</th>
-                  <th className="text-left px-5 py-4 font-semibold">Fiberglass (GRP)</th>
-                  <th className="text-left px-5 py-4 font-semibold">GRC (Concrete)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonRows.map((row, i) => (
-                  <tr key={row.prop} className={i % 2 === 0 ? 'bg-white' : 'bg-cream'}>
-                    <td className="px-5 py-4 font-semibold text-charcoal-900">{row.prop}</td>
-                    <td className="px-5 py-4 text-charcoal-700">{row.fiber}</td>
-                    <td className="px-5 py-4 text-charcoal-700">{row.grc}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-4 text-sm text-charcoal/50">
-            Not sure which material to specify?{' '}
-            <Link href="/request-access" className="text-terracotta hover:underline font-medium">
-              Contact our team — we advise on material selection as part of the quoting process.
-            </Link>
-          </p>
-        </section>
-
         {/* ── FAQ ─────────────────────────────────────────────── */}
         <section className="py-16 px-6 bg-white">
           <div className="max-w-3xl mx-auto">
@@ -284,8 +240,8 @@ export default function FiberglassPlantersPage() {
               <Link href="/request-access" className="btn-primary inline-flex items-center gap-2 justify-center">
                 Request Trade Access <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/materials/grc-planters" className="inline-flex items-center gap-2 justify-center px-6 py-3 rounded-xl border border-white/30 text-white hover:bg-white/10 transition-colors font-medium text-sm">
-                View GRC Planters
+              <Link href="/products" className="inline-flex items-center gap-2 justify-center px-6 py-3 rounded-xl border border-white/30 text-white hover:bg-white/10 transition-colors font-medium text-sm">
+                View All Products
               </Link>
             </div>
           </div>

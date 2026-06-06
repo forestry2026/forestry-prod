@@ -5,11 +5,11 @@ import { ArrowRight } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'About Forestry — Custom Planter Manufacturer UAE',
   description:
-    'Forestry is a UAE-based custom planter manufacturer serving interior designers, landscapers, and commercial contractors. B2B trade only. GRC, fiberglass, and polystone. Any size, any finish. 48-hour quotes.',
+    'Forestry is a UAE-based custom planter manufacturer serving interior designers, landscapers, and commercial contractors. B2B trade only. GRP, fiberglass, and polystone. Any size, any finish. 48-hour quotes.',
   alternates: { canonical: 'https://theforestry.me/about' },
   openGraph: {
     title:       'About Forestry — Custom Planter Manufacturer UAE',
-    description: 'UAE-based custom planter manufacturer for B2B trade. GRC, fiberglass, polystone. Any size, colour, finish. 48-hour quotes.',
+    description: 'UAE-based custom planter manufacturer for B2B trade. GRP, fiberglass, polystone. Any size, colour, finish. 48-hour quotes.',
     url:         'https://theforestry.me/about',
     type:        'website',
     siteName:    'Forestry',
@@ -26,10 +26,10 @@ const stats = [
 
 const materials = [
   {
-    name: 'GRC',
-    full: 'Glass-Reinforced Concrete',
+    name: 'GRP',
+    full: 'Glass-Reinforced Plastic',
     href: '/materials/grc-planters',
-    desc: 'The preferred material for large outdoor installations, public realm projects, and commercial landscaping. GRC planters are UV-stable and maintain structural integrity through UAE summer temperatures. Available in any form factor including architectural-scale troughs.',
+    desc: 'The preferred material for large outdoor installations, public realm projects, and commercial landscaping. GRP planters are UV-stable and maintain structural integrity through UAE summer temperatures. Available in any form factor including architectural-scale troughs.',
     use:  'Outdoor · Public realm · Architectural',
   },
   {

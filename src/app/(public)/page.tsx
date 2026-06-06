@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type:        'website',
     siteName:    'Forestry',
     locale:      'en_AE',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Custom fiberglass and GRC planters by Forestry UAE' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Custom fiberglass and GRP planters by Forestry UAE' }],
   },
 }
 
@@ -41,7 +41,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name:    'What materials are Forestry planters made from?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Forestry manufactures planters in GRC (glass-reinforced concrete), fiberglass composite (GRP), and polystone. GRC is preferred for large outdoor installations; fiberglass for lightweight interior and hospitality applications.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry manufactures planters in GRP (glass-reinforced plastic), fiberglass composite (GRP), and polystone. GRP is preferred for large outdoor installations; fiberglass for lightweight interior and hospitality applications.' },
     },
     {
       '@type': 'Question',
@@ -50,8 +50,8 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name:    'What is a GRC planter?',
-      acceptedAnswer: { '@type': 'Answer', text: 'GRC stands for glass-reinforced concrete — a lightweight composite of cement and glass fibres. GRC planters are UV-stable, weather-resistant, and maintain structural integrity through UAE summer temperatures. Preferred for large outdoor and public realm installations.' },
+      name:    'What is a GRP planter?',
+      acceptedAnswer: { '@type': 'Answer', text: 'GRP stands for glass-reinforced plastic — a lightweight composite of glass fibres and resin. GRP planters are UV-stable, weather-resistant, and suitable for both indoor and outdoor UAE installations.' },
     },
     {
       '@type': 'Question',
@@ -145,7 +145,7 @@ export default async function LandingPage() {
         {heroSlide ? (
           <Image
             src={heroSlide.imageUrl}
-            alt="Custom fiberglass and GRC planters manufactured in UAE by Forestry"
+            alt="Custom fiberglass and GRP planters manufactured in UAE by Forestry"
             fill
             priority
             sizes="100vw"

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://theforestry.me/collections/commercial-planters' },
   openGraph: {
     title:       'Commercial Planters UAE — Hotels, Malls & Developers | Forestry',
-    description: 'Custom commercial planters for UAE projects. GRC, fiberglass, polystone. Any size. B2B trade. 48-hour quotes.',
+    description: 'Custom commercial planters for UAE projects. GRP, fiberglass, polystone. Any size. B2B trade. 48-hour quotes.',
     url:         'https://theforestry.me/collections/commercial-planters',
     type:        'website',
     siteName:    'Forestry',
@@ -32,7 +32,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name:    'What materials are best for commercial planters in UAE?',
-      acceptedAnswer: { '@type': 'Answer', text: 'For UAE interior commercial applications (hotels, malls, offices), fiberglass (GRP) is preferred — lightweight, precise colour matching, and wide finish range. For outdoor commercial and public realm installations, GRC (glass-reinforced concrete) is preferred — UV-stable, heat-resistant, and structurally suited to UAE summer conditions. Forestry manufactures both to any specification.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'For UAE interior commercial applications (hotels, malls, offices), fiberglass (GRP) is preferred — lightweight, precise colour matching, and wide finish range. For outdoor commercial and public realm installations, GRP (glass-reinforced plastic) is preferred — UV-stable, heat-resistant, and structurally suited to UAE summer conditions. Forestry manufactures both to any specification.' },
     },
     {
       '@type': 'Question',
@@ -48,12 +48,12 @@ const faqSchema = {
 }
 
 const verticals = [
-  { title: 'Hotels & Resorts',      desc: 'Lobby features, poolside, exterior landscaping, spa and F&B areas. GRC and fiberglass for all environments.' },
+  { title: 'Hotels & Resorts',      desc: 'Lobby features, poolside, exterior landscaping, spa and F&B areas. GRP and fiberglass for all environments.' },
   { title: 'Retail & Malls',        desc: 'Internal mall common areas, anchor store interiors, food court landscaping. Colour-matched to brand guidelines.' },
   { title: 'Offices & Corporate',   desc: 'Reception, atrium, meeting rooms, rooftop terraces. Lightweight fiberglass for floor-loading constraints.' },
   { title: 'Developers',            desc: 'Model apartment staging, podium landscaping, entrance features, show suites. Specification support included.' },
   { title: 'Hospitality & F&B',     desc: 'Restaurant interiors, bar environments, outdoor dining terraces. Any finish from natural stone to gloss lacquer.' },
-  { title: 'Government & Municipal', desc: 'Public realm, boulevard plantings, civic plazas, park infrastructure. GRC for permanence and scale.' },
+  { title: 'Government & Municipal', desc: 'Public realm, boulevard plantings, civic plazas, park infrastructure. GRP for permanence and scale.' },
 ]
 
 export default async function CommercialPlantersPage() {
@@ -112,7 +112,7 @@ export default async function CommercialPlantersPage() {
             <div className="space-y-4">
               {[
                 { label: 'No minimum order',       value: '1 unit to 10,000+ — same standards' },
-                { label: 'Materials',              value: 'GRC (outdoor), Fiberglass (interior), Polystone' },
+                { label: 'Materials',              value: 'GRP fiberglass (indoor & outdoor), Polystone' },
                 { label: 'Colour matching',        value: 'Pantone & RAL references accepted' },
                 { label: 'Dimensional tolerance',  value: '±1mm across all production runs' },
                 { label: 'Quote turnaround',       value: '48 business hours from complete RFP' },

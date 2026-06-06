@@ -8,11 +8,11 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'Custom Planters — Full Collection | Forestry UAE',
   description:
-    'Browse the full Forestry catalogue of custom planters and bespoke pots for B2B trade clients in the UAE. Fiberglass, GRC, and polystone. Any size, colour, and finish. Apply for trade access to request a quote.',
+    'Browse the full Forestry catalogue of custom planters and bespoke pots for B2B trade clients in the UAE. Fiberglass, GRP, and polystone. Any size, colour, and finish. Apply for trade access to request a quote.',
   alternates: { canonical: 'https://theforestry.me/products' },
   openGraph: {
     title:       'Custom Planters — Full Collection | Forestry UAE',
-    description: 'Full catalogue of custom planters. Fiberglass, GRC, polystone. Any size, colour, finish. B2B trade. 48-hour quotes.',
+    description: 'Full catalogue of custom planters. Fiberglass, GRP, polystone. Any size, colour, finish. B2B trade. 48-hour quotes.',
     url:         'https://theforestry.me/products',
     type:        'website',
     siteName:    'Forestry',
@@ -210,7 +210,7 @@ export default async function ProductsPage({
                 <p className="text-sm text-charcoal/60">Interior, hospitality, high-rise</p>
               </Link>
               <Link href="/materials/grc-planters" className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group">
-                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRC Planters →</p>
+                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRP Planters →</p>
                 <p className="text-sm text-charcoal/60">Outdoor, architectural, public realm</p>
               </Link>
               <Link href="/faq" className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group">

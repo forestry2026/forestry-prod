@@ -18,6 +18,12 @@ const nextConfig = {
     imageSizes:       [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
+  async redirects() {
+    return [
+      { source: '/materials/grc-planters', destination: '/materials/fiberglass-planters', permanent: true },
+    ]
+  },
+
   async headers() {
     return [
       {

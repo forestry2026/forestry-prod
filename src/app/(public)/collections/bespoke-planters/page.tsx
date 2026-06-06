@@ -56,7 +56,7 @@ const capabilities = [
   { title: 'Any Dimension',    desc: 'No size catalogue. Submit a dimension and it will be manufactured to ±1mm. From a 15cm desk piece to a 4m architectural trough.' },
   { title: 'Any Colour',       desc: 'Pantone and RAL colour references accepted. Physical swatches matched. Custom colour samples produced for approval before production.' },
   { title: 'Any Finish',       desc: 'Matte, gloss, satin, textured, stone-effect, exposed aggregate, brushed, metallic. Bespoke surface treatments matched from sample.' },
-  { title: 'Any Material',     desc: 'GRC for outdoor structural applications. Fiberglass for interior and weight-sensitive installs. Polystone for decorative forms.' },
+  { title: 'Any Material',     desc: 'GRP fiberglass for indoor and outdoor applications. Polystone for decorative and detail-rich forms.' },
   { title: 'Any Quantity',     desc: 'Single prototype or 10,000+ unit production run. No MOQ. Same quality standards and tolerances at every scale.' },
   { title: 'Any Form',         desc: 'Cylindrical, rectangular, square, conical, tapered, irregular, or fully custom architectural geometry. Technical drawings accepted.' },
 ]
