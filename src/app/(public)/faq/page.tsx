@@ -187,11 +187,11 @@ export default function FaqPage() {
                 <p className="text-sm text-charcoal/60">Interior, hospitality, high-rise applications</p>
               </Link>
               <Link
-                href="/materials/grc-planters"
+                href="/collections/bespoke-planters"
                 className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group"
               >
-                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRP Planters →</p>
-                <p className="text-sm text-charcoal/60">Outdoor, architectural, public realm</p>
+                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">Bespoke Planters →</p>
+                <p className="text-sm text-charcoal/60">Made to any size, colour, and finish</p>
               </Link>
             </div>
           </div>

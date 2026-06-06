@@ -209,9 +209,9 @@ export default async function ProductsPage({
                 <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">Fiberglass Planters →</p>
                 <p className="text-sm text-charcoal/60">Interior, hospitality, high-rise</p>
               </Link>
-              <Link href="/materials/grc-planters" className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group">
-                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">GRP Planters →</p>
-                <p className="text-sm text-charcoal/60">Outdoor, architectural, public realm</p>
+              <Link href="/collections/commercial-planters" className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group">
+                <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">Commercial Planters →</p>
+                <p className="text-sm text-charcoal/60">Hotels, malls, developers, contractors</p>
               </Link>
               <Link href="/faq" className="flex-1 p-5 border border-charcoal/10 rounded-2xl hover:border-terracotta hover:bg-terracotta/5 transition-all group">
                 <p className="font-heading font-bold text-charcoal-900 mb-1 group-hover:text-terracotta">FAQ →</p>
