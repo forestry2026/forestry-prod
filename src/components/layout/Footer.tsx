@@ -35,8 +35,7 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
             <ul className="space-y-3 text-sm">
               {[
                 { label: 'All Products',            href: '/products' },
-                { label: 'Fiberglass Planters',     href: '/materials/fiberglass-planters' },
-                { label: 'GRP Planters',            href: '/materials/fiberglass-planters' },
+                { label: 'GRP / Fiberglass Planters', href: '/materials/fiberglass-planters' },
                 { label: 'Commercial Planters',     href: '/collections/commercial-planters' },
                 { label: 'Bespoke Planters',        href: '/collections/bespoke-planters' },
                 { label: 'About Forestry',          href: '/about' },

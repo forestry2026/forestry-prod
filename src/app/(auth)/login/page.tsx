@@ -1,10 +1,12 @@
 import { Suspense } from 'react'
 import { PrismaClient } from '@prisma/client'
 import LoginForm from './login-form'
+import { getSiteLogo } from '@/lib/getSiteLogo'
 
 export const dynamic = 'force-dynamic'
 
 export default async function LoginPage() {
+  const logoUrl = await getSiteLogo()
   // Fresh client — bypasses stale global singleton
   const db = new PrismaClient()
   let slide = null
@@ -22,7 +24,7 @@ export default async function LoginPage() {
 
   return (
     <Suspense>
-      <LoginForm slide={slide} />
+      <LoginForm slide={slide} initialLogoUrl={logoUrl} />
     </Suspense>
   )
 }

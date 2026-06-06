@@ -19,7 +19,7 @@ interface Slide {
   subtext:  string | null
 }
 
-interface Props { slide: Slide | null }
+interface Props { slide: Slide | null; initialLogoUrl?: string | null }
 
 const schema = z.object({
   email:    z.string().email('Enter a valid email address'),
@@ -116,12 +116,12 @@ function SlideVisual({ slide, logoUrl }: { slide: Slide; logoUrl: string | null 
 }
 
 /* ── Main ────────────────────────────────────────────────────── */
-export default function LoginForm({ slide }: Props) {
+export default function LoginForm({ slide, initialLogoUrl = null }: Props) {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl  = searchParams.get('callbackUrl') || ''
   const errorParam   = searchParams.get('error')
-  const logoUrl      = useSiteLogo()
+  const logoUrl      = useSiteLogo(initialLogoUrl)
 
   const [loading,      setLoading]      = useState(false)
   const [showPw,       setShowPw]       = useState(false)
