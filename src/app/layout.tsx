@@ -56,6 +56,9 @@ export const metadata: Metadata = {
   authors:   [{ name: 'Forestry', url: 'https://theforestry.me' }],
   creator:   'Forestry',
   publisher: 'Forestry',
+  verification: {
+    google: 'a52bb485fd90cc6f',
+  },
   robots: {
     index:  true,
     follow: true,
