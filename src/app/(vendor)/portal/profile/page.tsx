@@ -251,7 +251,7 @@ export default async function ProfilePage() {
           </p>
         </div>
         <a
-          href="mailto:support@forestry.ae"
+          href="mailto:support@theforestry.me"
           className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-terracotta hover:bg-terracotta-dark text-white text-xs font-bold rounded-xl transition-colors shadow-warm-sm"
         >
           <Mail className="w-3.5 h-3.5" />

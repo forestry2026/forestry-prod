@@ -35,7 +35,7 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://forestry.ae'),
+  metadataBase: new URL('https://theforestry.me'),
   title: {
     default:  'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
     template: '%s | Forestry',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     'luxury planters UAE',
     'B2B planters supplier',
   ],
-  authors:   [{ name: 'Forestry', url: 'https://forestry.ae' }],
+  authors:   [{ name: 'Forestry', url: 'https://theforestry.me' }],
   creator:   'Forestry',
   publisher: 'Forestry',
   robots: {
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   openGraph: {
     type:        'website',
     locale:      'en_AE',
-    url:         'https://forestry.ae',
+    url:         'https://theforestry.me',
     siteName:    'Forestry',
     title:       'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
     description: "UAE's premium custom planter manufacturer. Fiberglass, GRC, polystone. Any size, any quantity. 48-hour B2B quotes.",
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     images:      ['/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://forestry.ae',
+    canonical: 'https://theforestry.me',
   },
 }
 
@@ -98,16 +98,16 @@ const organizationSchema = {
   '@graph': [
     {
       '@type':       'Organization',
-      '@id':         'https://forestry.ae/#organization',
+      '@id':         'https://theforestry.me/#organization',
       name:          'Forestry',
-      url:           'https://forestry.ae',
+      url:           'https://theforestry.me',
       description:   "UAE's premium custom planter and pot manufacturer for interior designers, landscapers and commercial contractors. Any size, any quantity, 48-hour quotes.",
       address: {
         '@type':         'PostalAddress',
         addressLocality: 'Dubai',
         addressCountry:  'AE',
       },
-      email:     'vendors@forestry.ae',
+      email:     'vendors@theforestry.me',
       areaServed: [
         { '@type': 'Country', name: 'United Arab Emirates' },
         { '@type': 'Country', name: 'Saudi Arabia' },
@@ -119,10 +119,10 @@ const organizationSchema = {
     },
     {
       '@type':     'WebSite',
-      '@id':       'https://forestry.ae/#website',
-      url:         'https://forestry.ae',
+      '@id':       'https://theforestry.me/#website',
+      url:         'https://theforestry.me',
       name:        'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
-      publisher:   { '@id': 'https://forestry.ae/#organization' },
+      publisher:   { '@id': 'https://theforestry.me/#organization' },
     },
   ],
 }

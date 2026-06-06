@@ -28,8 +28,8 @@ export async function getEmailConfig(): Promise<EmailConfig> {
   const db = Object.fromEntries(rows.map(r => [r.key, r.value]))
 
   const apiKey    = db['email_resend_api_key'] || process.env.RESEND_API_KEY || ''
-  const from      = db['email_from']           || process.env.EMAIL_FROM     || 'Forestry <noreply@forestry.ae>'
-  const adminEmail = db['admin_email']         || process.env.ADMIN_EMAIL    || 'admin@forestry.ae'
+  const from      = db['email_from']           || process.env.EMAIL_FROM     || 'Forestry <noreply@theforestry.me>'
+  const adminEmail = db['admin_email']         || process.env.ADMIN_EMAIL    || 'admin@theforestry.me'
 
   _cache   = { resend: new Resend(apiKey), from, adminEmail }
   _cacheAt = Date.now()

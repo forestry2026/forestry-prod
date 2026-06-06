@@ -572,7 +572,7 @@ function UserFormModal({
               value={email}
               onChange={e => setEmail(e.target.value)}
               className="form-input"
-              placeholder="jane@forestry.ae"
+              placeholder="jane@theforestry.me"
             />
           </div>
           <div>

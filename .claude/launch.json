@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "forestry-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/as23/Desktop/Blindpill/Forestry && npm run dev"],
       "port": 3001
     }
   ]

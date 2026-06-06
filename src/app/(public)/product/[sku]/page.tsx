@@ -27,12 +27,12 @@ export async function generateMetadata(
   return {
     title: `${product.name} | Custom ${categoryName} UAE`,
     description,
-    alternates: { canonical: `https://forestry.ae/product/${product.sku}` },
+    alternates: { canonical: `https://theforestry.me/product/${product.sku}` },
     openGraph: {
       title:       `${product.name} | Forestry UAE`,
       description,
       type:        'website',
-      url:         `https://forestry.ae/product/${product.sku}`,
+      url:         `https://theforestry.me/product/${product.sku}`,
       siteName:    'Forestry',
       images:      product.images[0]
         ? [{ url: product.images[0].url, width: 1200, height: 630, alt: `${product.name} — custom planter by Forestry UAE` }]
@@ -101,21 +101,21 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const productSchema = {
     '@context': 'https://schema.org',
     '@type':    'Product',
-    '@id':      `https://forestry.ae/product/${product.sku}#product`,
+    '@id':      `https://theforestry.me/product/${product.sku}#product`,
     name:        product.name,
     description: product.description ?? `Custom ${categoryName ?? 'planter'} manufactured to order in UAE by Forestry. Any size, colour, finish.`,
     sku:         product.sku,
     mpn:         product.sku,
     brand:       { '@type': 'Brand', name: 'Forestry' },
-    manufacturer: { '@id': 'https://forestry.ae/#organization' },
+    manufacturer: { '@id': 'https://theforestry.me/#organization' },
     category:    categoryName ?? 'Planters & Pots',
     image:       product.images.map(i => i.url),
-    url:         `https://forestry.ae/product/${product.sku}`,
+    url:         `https://theforestry.me/product/${product.sku}`,
     offers: {
       '@type':        'AggregateOffer',
       priceCurrency:  'AED',
       offerCount:     variants.length > 0 ? variants.length : 1,
-      seller:         { '@id': 'https://forestry.ae/#organization' },
+      seller:         { '@id': 'https://theforestry.me/#organization' },
       availability:   'https://schema.org/InStock',
       areaServed:     { '@type': 'Country', name: 'United Arab Emirates' },
     },
@@ -125,9 +125,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     '@context':        'https://schema.org',
     '@type':           'BreadcrumbList',
     itemListElement:   [
-      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://forestry.ae' },
-      { '@type': 'ListItem', position: 2, name: 'Products', item: 'https://forestry.ae/#products' },
-      { '@type': 'ListItem', position: 3, name: product.name, item: `https://forestry.ae/product/${product.sku}` },
+      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://theforestry.me' },
+      { '@type': 'ListItem', position: 2, name: 'Products', item: 'https://theforestry.me/#products' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://theforestry.me/product/${product.sku}` },
     ],
   }
 

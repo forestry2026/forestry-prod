@@ -332,7 +332,7 @@ export async function GET() {
     '• New SKUs → created.',
     '• Rows with errors are skipped; preview shows exactly why before commit.',
     '',
-    'Questions? vendors@forestry.ae',
+    'Questions? vendors@theforestry.me',
   ]
   lines.forEach((t, i) => {
     const r = insWs.addRow([t])

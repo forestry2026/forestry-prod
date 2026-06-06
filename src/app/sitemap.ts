@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
 
   const productUrls: MetadataRoute.Sitemap = products.map((p) => ({
-    url: `https://forestry.ae/product/${p.sku}`,
+    url: `https://theforestry.me/product/${p.sku}`,
     lastModified: p.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.8,
@@ -16,19 +16,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://forestry.ae',
+      url: 'https://theforestry.me',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
     },
     {
-      url: 'https://forestry.ae/request-access',
+      url: 'https://theforestry.me/request-access',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: 'https://forestry.ae/enquiry',
+      url: 'https://theforestry.me/enquiry',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,

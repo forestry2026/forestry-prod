@@ -55,7 +55,7 @@ export function emailLayout(body: string): string {
           <tr>
             <td style="padding:20px 40px 24px;background:${COLORS.footerBg};border-top:1px solid ${COLORS.divider};font-size:11.5px;color:${COLORS.muted};text-align:center;line-height:1.5;">
               <div style="font-weight:700;color:${COLORS.charcoal};letter-spacing:0.06em;margin-bottom:4px;">FORESTRY</div>
-              <div>vendors@forestry.ae</div>
+              <div>vendors@theforestry.me</div>
               <div style="margin-top:8px;font-size:10.5px;color:${COLORS.muted};">You received this email because you have an account or made a request on our portal.</div>
             </td>
           </tr>

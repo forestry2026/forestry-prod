@@ -20,6 +20,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: 'https://forestry.ae/sitemap.xml',
+    sitemap: 'https://theforestry.me/sitemap.xml',
   }
 }

@@ -50,7 +50,7 @@ export const REGISTRY: TemplateMeta[] = [
     recipient: 'Vendor',
     variables: [
       { token: '{{name}}',    example: 'Sarah Chen'           },
-      { token: '{{appUrl}}',  example: 'https://forestry.ae'  },
+      { token: '{{appUrl}}',  example: 'https://theforestry.me'  },
     ],
   },
   {
@@ -62,7 +62,7 @@ export const REGISTRY: TemplateMeta[] = [
       { token: '{{name}}',     example: 'Sarah Chen' },
       { token: '{{email}}',    example: 'sarah@acme.com' },
       { token: '{{password}}', example: 'TempPass123!' },
-      { token: '{{appUrl}}',   example: 'https://forestry.ae' },
+      { token: '{{appUrl}}',   example: 'https://theforestry.me' },
     ],
   },
   {
@@ -94,7 +94,7 @@ export const REGISTRY: TemplateMeta[] = [
       { token: '{{rfpNumber}}',   example: 'RFP-2026-0012' },
       { token: '{{vendorName}}',  example: 'Sarah Chen'    },
       { token: '{{projectName}}', example: 'Marina Project'},
-      { token: '{{appUrl}}',      example: 'https://forestry.ae' },
+      { token: '{{appUrl}}',      example: 'https://theforestry.me' },
     ],
   },
   {
@@ -118,7 +118,7 @@ export const REGISTRY: TemplateMeta[] = [
       { token: '{{rfpNumber}}',  example: 'RFP-2026-0012' },
       { token: '{{total}}',      example: 'AED 12,999.94' },
       { token: '{{validUntil}}', example: '21 May 2026' },
-      { token: '{{rfpUrl}}',     example: 'https://forestry.ae/portal/rfp/abc' },
+      { token: '{{rfpUrl}}',     example: 'https://theforestry.me/portal/rfp/abc' },
     ],
   },
   {
@@ -204,7 +204,7 @@ export const REGISTRY: TemplateMeta[] = [
     variables: [
       { token: '{{name}}',     example: 'Sarah Chen' },
       { token: '{{password}}', example: 'TempPass123!' },
-      { token: '{{appUrl}}',   example: 'https://forestry.ae' },
+      { token: '{{appUrl}}',   example: 'https://theforestry.me' },
     ],
   },
 ]

@@ -12,11 +12,11 @@ export const metadata: Metadata = {
   title: 'Custom Planters & Bespoke Pots Manufacturer — UAE | Forestry',
   description:
     'Forestry manufactures bespoke planters and custom pots to specification for interior designers, landscapers and commercial contractors across the UAE. No minimum order. 48-hour quotes.',
-  alternates: { canonical: 'https://forestry.ae' },
+  alternates: { canonical: 'https://theforestry.me' },
   openGraph: {
     title:       'Custom Planters & Bespoke Pots Manufacturer — UAE | Forestry',
     description: 'Bespoke planters manufactured to your brief. Any size, colour, finish. B2B trade accounts. 48-hour quote turnaround across UAE.',
-    url:         'https://forestry.ae',
+    url:         'https://theforestry.me',
     type:        'website',
     siteName:    'Forestry',
     locale:      'en_AE',
@@ -66,7 +66,7 @@ const faqSchema = {
     {
       '@type': 'Question',
       name:    'How do I become an approved vendor?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Submit your trade licence through the vendor access form at forestry.ae/request-access. Approval decisions are issued within 24–48 hours.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Submit your trade licence through the vendor access form at theforestry.me/request-access. Approval decisions are issued within 24–48 hours.' },
     },
   ],
 }
