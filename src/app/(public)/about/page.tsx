@@ -26,25 +26,11 @@ const stats = [
 
 const materials = [
   {
-    name: 'GRP',
+    name: 'GRP Fiberglass',
     full: 'Glass-Reinforced Plastic',
-    href: '/materials/grc-planters',
-    desc: 'The preferred material for large outdoor installations, public realm projects, and commercial landscaping. GRP planters are UV-stable and maintain structural integrity through UAE summer temperatures. Available in any form factor including architectural-scale troughs.',
-    use:  'Outdoor · Public realm · Architectural',
-  },
-  {
-    name: 'Fiberglass',
-    full: 'GRP — Glass-Reinforced Plastic',
     href: '/materials/fiberglass-planters',
-    desc: 'The standard for interior commercial and hospitality installations where weight is a constraint. Fiberglass planters accept any RAL colour reference and any surface texture from gloss lacquer to stone-effect. Production tolerances are maintained at ±1mm.',
-    use:  'Interior · Hospitality · High-rise',
-  },
-  {
-    name: '
-    full: 'Polymer composite',
-    href: '/products',
-    desc: 'Selected for detail-rich decorative forms and textured finishes. Suited to both interior and sheltered exterior installations where surface character and fine detailing are priorities.',
-    use:  'Decorative · Interior · Sheltered exterior',
+    desc: 'Forestry manufactures in GRP fiberglass — a lightweight, strong composite of glass fibres and resin. Suitable for indoor and outdoor UAE applications. Accepts any RAL colour reference and any surface finish from gloss lacquer to stone-effect. ±1mm tolerance on all production.',
+    use:  'Indoor · Outdoor · Commercial · Hospitality · High-rise',
   },
 ]
 
