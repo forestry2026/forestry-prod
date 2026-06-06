@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { ProductCarousel } from './ProductCarousel'
 import { ScrollResetOnLoad } from '@/components/public/ScrollResetOnLoad'
 
+export const revalidate = 60 // revalidate every 60 seconds
+
 /* ── Editorial content ─────────────────────────────────────────── */
 const STEPS = [
   { n: '01', title: 'Apply',     desc: 'Submit your trade licence. Approval in 24–48 hours.' },
