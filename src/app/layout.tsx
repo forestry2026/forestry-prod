@@ -107,7 +107,7 @@ const organizationSchema = {
         addressLocality: 'Dubai',
         addressCountry:  'AE',
       },
-      email:     'vendors@theforestry.me',
+      email:     'info@theforestry.me',
       areaServed: [
         { '@type': 'Country', name: 'United Arab Emirates' },
         { '@type': 'Country', name: 'Saudi Arabia' },

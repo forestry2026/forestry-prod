@@ -67,8 +67,8 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail size={14} className="text-terracotta shrink-0" aria-hidden="true" />
-                <a href="mailto:vendors@theforestry.me" className="hover:text-terracotta-light transition-colors duration-200">
-                  vendors@theforestry.me
+                <a href="mailto:info@theforestry.me" className="hover:text-terracotta-light transition-colors duration-200">
+                  info@theforestry.me
                 </a>
               </div>
             </address>

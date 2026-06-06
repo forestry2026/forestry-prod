@@ -374,7 +374,7 @@ export default async function RfpDetailPage({ params }: { params: Promise<{ id: 
                   ))}
                 </div>
                 <p className="text-[11px] text-charcoal-400 mt-5 pt-4 border-t border-[#E8E0D5]">
-                  Questions? Email <span className="font-semibold text-terracotta">hello@theforestry.me</span> with your reference number.
+                  Questions? Email <span className="font-semibold text-terracotta">info@theforestry.me</span> with your reference number.
                 </p>
               </div>
             </div>
