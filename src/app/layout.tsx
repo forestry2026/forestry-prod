@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   creator:   'Forestry',
   publisher: 'Forestry',
   verification: {
-    google: 'a52bb485fd90cc6f',
+    google: '8Gf-kY_DlKbClitXr_Lrw7JzLEA7b8RpP_GhnVVxKK4',
   },
   robots: {
     index:  true,
