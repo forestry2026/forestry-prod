@@ -25,7 +25,7 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
               }
             </div>
             <p className="text-sm leading-relaxed text-cream/50 max-w-xs">
-              UAE's premier custom pot manufacturer. Crafting premium planters for commercial and residential projects since 2018.
+              UAE custom planter manufacturer for interior designers, landscapers and commercial contractors. GRC, fiberglass and polystone. Any size, any finish.
             </p>
           </div>
 
@@ -34,10 +34,15 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
             <h3 className="font-heading text-xs font-semibold uppercase tracking-widest text-cream mb-5">Quick Links</h3>
             <ul className="space-y-3 text-sm">
               {[
-                { label: 'Product Collection', href: '/#products' },
-                { label: 'How It Works',       href: '/#how-it-works' },
-                { label: 'Request Access',     href: '/request-access' },
-                { label: 'Vendor Login',       href: '/login' },
+                { label: 'All Products',            href: '/products' },
+                { label: 'Fiberglass Planters',     href: '/materials/fiberglass-planters' },
+                { label: 'GRC Planters',            href: '/materials/grc-planters' },
+                { label: 'Commercial Planters',     href: '/collections/commercial-planters' },
+                { label: 'Bespoke Planters',        href: '/collections/bespoke-planters' },
+                { label: 'About Forestry',          href: '/about' },
+                { label: 'FAQ',                     href: '/faq' },
+                { label: 'Request Trade Access',    href: '/request-access' },
+                { label: 'Vendor Login',            href: '/login' },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
@@ -79,8 +84,8 @@ export function Footer({ initialLogoUrl = null }: { initialLogoUrl?: string | nu
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/35">
           <span>&copy; {new Date().getFullYear()} Forestry Manufacturing LLC. All rights reserved.</span>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-terracotta-light transition-colors duration-200">Privacy Policy</Link>
-            <Link href="#" className="hover:text-terracotta-light transition-colors duration-200">Terms of Service</Link>
+            <Link href="/privacy-policy" className="hover:text-terracotta-light transition-colors duration-200">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-terracotta-light transition-colors duration-200">Terms of Service</Link>
           </div>
         </div>
       </div>

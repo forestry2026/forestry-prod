@@ -9,9 +9,11 @@ import { useSiteLogo } from '@/hooks/useSiteLogo'
 
 
 const navLinks = [
-  { label: 'Products', href: '/#collection'   },
-  { label: 'About',    href: '/#how-it-works' },
-  { label: 'Contact',  href: '/#contact'      },
+  { label: 'Products',   href: '/products'               },
+  { label: 'Materials',  href: '/materials/grc-planters' },
+  { label: 'About',      href: '/about'                  },
+  { label: 'FAQ',        href: '/faq'                    },
+  { label: 'Contact',    href: '/#contact'               },
 ]
 
 export function Navbar({ initialLogoUrl = null }: { initialLogoUrl?: string | null } = {}) {
