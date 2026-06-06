@@ -1,18 +1,24 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    select: { sku: true, updatedAt: true },
-  })
+export const dynamic = 'force-dynamic'
 
-  const productUrls: MetadataRoute.Sitemap = products.map((p) => ({
-    url: `https://theforestry.me/product/${p.sku}`,
-    lastModified: p.updatedAt,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }))
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  let productUrls: MetadataRoute.Sitemap = []
+  try {
+    const products = await prisma.product.findMany({
+      where: { isActive: true },
+      select: { sku: true, updatedAt: true },
+    })
+    productUrls = products.map((p) => ({
+      url: `https://theforestry.me/product/${p.sku}`,
+      lastModified: p.updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }))
+  } catch {
+    // DB unavailable at build time — product URLs omitted, static pages still served
+  }
 
   return [
     { url: 'https://theforestry.me',                               lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
