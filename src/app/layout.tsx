@@ -2,11 +2,22 @@ import type { Metadata } from 'next'
 import { Zilla_Slab, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
-import { getSiteLogo } from '@/lib/getSiteLogo'
+import { unstable_cache } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 
-// Force every route to render at request time. Pages depend on session + DB,
-// so static prerender would either crash or serve stale data.
-export const dynamic = 'force-dynamic'
+// Cache the site logo for 1 hour — avoids force-dynamic on every request
+const getSiteLogoCache = unstable_cache(
+  async () => {
+    try {
+      const setting = await prisma.siteSetting.findUnique({ where: { key: 'logoUrl' } })
+      return setting?.value ?? null
+    } catch {
+      return null
+    }
+  },
+  ['site-logo'],
+  { revalidate: 3600 },
+)
 
 const zillaSlab = Zilla_Slab({
   subsets:  ['latin'],
@@ -24,33 +35,117 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://forestry.ae'),
   title: {
-    default:  'Forestry — Custom Pot Manufacturing UAE',
+    default:  'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
     template: '%s | Forestry',
   },
-  description: 'UAE\'s premium custom pot manufacturer for interior designers, landscapers & commercial projects. Any size. Any quantity.',
-  keywords:    ['custom pots', 'planters', 'UAE manufacturing', 'B2B vendor portal', 'commercial planters'],
-  authors:     [{ name: 'Forestry' }],
+  description:
+    "UAE's premium custom planter manufacturer for interior designers, landscapers and commercial contractors. Fiberglass, GRC and polystone. Any size, any quantity. 48-hour quotes.",
+  keywords: [
+    'custom planters UAE',
+    'bespoke planters Dubai',
+    'fiberglass planters UAE',
+    'GRC planters Dubai',
+    'commercial planters UAE',
+    'custom pots manufacturer UAE',
+    'architectural planters',
+    'luxury planters UAE',
+    'B2B planters supplier',
+  ],
+  authors:   [{ name: 'Forestry', url: 'https://forestry.ae' }],
+  creator:   'Forestry',
+  publisher: 'Forestry',
+  robots: {
+    index:  true,
+    follow: true,
+    googleBot: {
+      index:               true,
+      follow:              true,
+      'max-image-preview': 'large',
+      'max-snippet':       -1,
+    },
+  },
   openGraph: {
-    title:       'Forestry — Custom Pot Manufacturing UAE',
-    description: 'Premium custom pots crafted to order for B2B vendors.',
     type:        'website',
+    locale:      'en_AE',
+    url:         'https://forestry.ae',
+    siteName:    'Forestry',
+    title:       'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
+    description: "UAE's premium custom planter manufacturer. Fiberglass, GRC, polystone. Any size, any quantity. 48-hour B2B quotes.",
+    images: [
+      {
+        url:    '/og-image.jpg',
+        width:  1200,
+        height: 630,
+        alt:    'Custom planters manufactured by Forestry in the UAE',
+      },
+    ],
+  },
+  twitter: {
+    card:        'summary_large_image',
+    title:       'Forestry — Custom Planters UAE',
+    description: "UAE's premium custom planter manufacturer. B2B trade accounts. 48-hour quotes.",
+    images:      ['/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://forestry.ae',
   },
 }
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type':       'Organization',
+      '@id':         'https://forestry.ae/#organization',
+      name:          'Forestry',
+      url:           'https://forestry.ae',
+      description:   "UAE's premium custom planter and pot manufacturer for interior designers, landscapers and commercial contractors. Any size, any quantity, 48-hour quotes.",
+      address: {
+        '@type':         'PostalAddress',
+        addressLocality: 'Dubai',
+        addressCountry:  'AE',
+      },
+      email:     'vendors@forestry.ae',
+      areaServed: [
+        { '@type': 'Country', name: 'United Arab Emirates' },
+        { '@type': 'Country', name: 'Saudi Arabia' },
+        { '@type': 'Country', name: 'Qatar' },
+        { '@type': 'Country', name: 'Kuwait' },
+        { '@type': 'Country', name: 'Bahrain' },
+        { '@type': 'Country', name: 'Oman' },
+      ],
+    },
+    {
+      '@type':     'WebSite',
+      '@id':       'https://forestry.ae/#website',
+      url:         'https://forestry.ae',
+      name:        'Forestry — Custom Planters & Bespoke Pots Manufacturer UAE',
+      publisher:   { '@id': 'https://forestry.ae/#organization' },
+    },
+  ],
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Server-fetch the admin-uploaded brand logo and embed it on <html>.
-  // Client hooks (useSiteLogo) read this on first render to avoid the
-  // text-fallback flash that happens when only a client-side fetch is used.
-  const siteLogoUrl = await getSiteLogo()
+  const siteLogoUrl = await getSiteLogoCache()
 
   return (
     <html
-      lang="en"
+      lang="en-AE"
       className={`${zillaSlab.variable} ${dmSans.variable}`}
       data-site-logo-url={siteLogoUrl ?? ''}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <meta name="geo.region" content="AE-DU" />
+        <meta name="geo.placename" content="Dubai, United Arab Emirates" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body className="font-body antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>

@@ -1,10 +1,75 @@
 import Link from 'next/link'
 import { ArrowRight, ArrowDown } from 'lucide-react'
+import Image from 'next/image'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import { ProductCarousel } from './ProductCarousel'
 import { ScrollResetOnLoad } from '@/components/public/ScrollResetOnLoad'
 
 export const revalidate = 60 // revalidate every 60 seconds
+
+export const metadata: Metadata = {
+  title: 'Custom Planters & Bespoke Pots Manufacturer — UAE | Forestry',
+  description:
+    'Forestry manufactures bespoke planters and custom pots to specification for interior designers, landscapers and commercial contractors across the UAE. No minimum order. 48-hour quotes.',
+  alternates: { canonical: 'https://forestry.ae' },
+  openGraph: {
+    title:       'Custom Planters & Bespoke Pots Manufacturer — UAE | Forestry',
+    description: 'Bespoke planters manufactured to your brief. Any size, colour, finish. B2B trade accounts. 48-hour quote turnaround across UAE.',
+    url:         'https://forestry.ae',
+    type:        'website',
+    siteName:    'Forestry',
+    locale:      'en_AE',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Custom fiberglass and GRC planters by Forestry UAE' }],
+  },
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type':    'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name:    'What is the minimum order quantity for custom planters from Forestry?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry has no minimum order quantity. We manufacture from a single prototype up to 10,000+ units on the same standards and terms.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'How long does it take to receive a quote for custom planters in UAE?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry delivers a formal line-itemised quotation within 48 business hours of receiving a complete RFP with specifications, quantities, and delivery requirements.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'What materials are Forestry planters made from?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry manufactures planters in GRC (glass-reinforced concrete), fiberglass composite (GRP), and polystone. GRC is preferred for large outdoor installations; fiberglass for lightweight interior and hospitality applications.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'Can custom planters be colour-matched to a specific Pantone or RAL code?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry accepts Pantone and RAL colour references for precise matching on all orders across all materials.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'What is a GRC planter?',
+      acceptedAnswer: { '@type': 'Answer', text: 'GRC stands for glass-reinforced concrete — a lightweight composite of cement and glass fibres. GRC planters are UV-stable, weather-resistant, and maintain structural integrity through UAE summer temperatures. Preferred for large outdoor and public realm installations.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'Who can buy from Forestry?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Forestry is a B2B trade supplier. Approved customers include interior designers, landscape architects, landscaping contractors, property developers, hotel groups, and commercial project managers in the UAE and GCC.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'Does Forestry supply planters outside the UAE?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Forestry supplies designers and contractors across the GCC including Saudi Arabia, Qatar, Kuwait, Bahrain, and Oman. International supply to UK, US, and Australia is also available.' },
+    },
+    {
+      '@type': 'Question',
+      name:    'How do I become an approved vendor?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Submit your trade licence through the vendor access form at forestry.ae/request-access. Approval decisions are issued within 24–48 hours.' },
+    },
+  ],
+}
 
 /* ── Editorial content ─────────────────────────────────────────── */
 const STEPS = [
@@ -67,6 +132,10 @@ export default async function LandingPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <ScrollResetOnLoad />
       {/* ════════════════════════════════════════════════════════════════
          HERO — Editorial full-bleed banner
@@ -74,10 +143,13 @@ export default async function LandingPage() {
       <section className="relative h-screen min-h-[720px] w-full overflow-hidden">
         {/* Banner image */}
         {heroSlide ? (
-          <img
+          <Image
             src={heroSlide.imageUrl}
-            alt="Hero banner"
-            className="absolute inset-0 w-full h-full object-cover"
+            alt="Custom fiberglass and GRC planters manufactured in UAE by Forestry"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#C4683A] via-[#8B4520] to-[#3D2418]" />

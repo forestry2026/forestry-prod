@@ -1,9 +1,45 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, FileText, Image as ImageIcon, Layers } from 'lucide-react'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import ProductGallery from './ProductGallery'
 import EnquiryConfigurator from './EnquiryConfigurator'
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ sku: string }> }
+): Promise<Metadata> {
+  const { sku } = await params
+  const product = await prisma.product.findFirst({
+    where: { sku, isActive: true },
+    include: {
+      images:     { take: 1, orderBy: { sortOrder: 'asc' } },
+      categories: { include: { category: true }, take: 1 },
+    },
+  })
+  if (!product) return { title: 'Product Not Found' }
+
+  const categoryName = product.categories[0]?.category?.name ?? 'Custom Planter'
+  const description = product.description
+    ? `${product.description.slice(0, 130)} — manufactured to order in UAE. Any size, any finish. Request a quote from Forestry within 48 hours.`
+    : `${product.name} — bespoke ${categoryName.toLowerCase()} manufactured to your specifications in the UAE. Any size, colour, finish. Request a quote from Forestry within 48 hours.`
+
+  return {
+    title: `${product.name} | Custom ${categoryName} UAE`,
+    description,
+    alternates: { canonical: `https://forestry.ae/product/${product.sku}` },
+    openGraph: {
+      title:       `${product.name} | Forestry UAE`,
+      description,
+      type:        'website',
+      url:         `https://forestry.ae/product/${product.sku}`,
+      siteName:    'Forestry',
+      images:      product.images[0]
+        ? [{ url: product.images[0].url, width: 1200, height: 630, alt: `${product.name} — custom planter by Forestry UAE` }]
+        : [],
+    },
+  }
+}
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ sku: string }> }) {
   const { sku } = await params
@@ -62,7 +98,43 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const finishes = product.finishes.map(f => ({ id: f.finishId, name: f.finish.name }))
   const files    = (product as any).files as Array<{ id: string; type: string; name: string; url: string; size?: number }> ?? []
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type':    'Product',
+    '@id':      `https://forestry.ae/product/${product.sku}#product`,
+    name:        product.name,
+    description: product.description ?? `Custom ${categoryName ?? 'planter'} manufactured to order in UAE by Forestry. Any size, colour, finish.`,
+    sku:         product.sku,
+    mpn:         product.sku,
+    brand:       { '@type': 'Brand', name: 'Forestry' },
+    manufacturer: { '@id': 'https://forestry.ae/#organization' },
+    category:    categoryName ?? 'Planters & Pots',
+    image:       product.images.map(i => i.url),
+    url:         `https://forestry.ae/product/${product.sku}`,
+    offers: {
+      '@type':        'AggregateOffer',
+      priceCurrency:  'AED',
+      offerCount:     variants.length > 0 ? variants.length : 1,
+      seller:         { '@id': 'https://forestry.ae/#organization' },
+      availability:   'https://schema.org/InStock',
+      areaServed:     { '@type': 'Country', name: 'United Arab Emirates' },
+    },
+  }
+
+  const breadcrumbSchema = {
+    '@context':        'https://schema.org',
+    '@type':           'BreadcrumbList',
+    itemListElement:   [
+      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://forestry.ae' },
+      { '@type': 'ListItem', position: 2, name: 'Products', item: 'https://forestry.ae/#products' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://forestry.ae/product/${product.sku}` },
+    ],
+  }
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <div className="min-h-screen bg-cream pb-16 pt-28">
 
       <div className="max-w-7xl mx-auto px-6">
@@ -251,5 +323,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -56,9 +56,11 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
           onMouseLeave={() => setZoomed(false)}
           onMouseMove={handleZoomMove}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={current.url}
             alt={current.alt || productName}
+            fetchPriority="high"
             className="w-full h-full object-cover transition-transform duration-150 ease-out"
             style={{
               transform: zoomed ? 'scale(2)' : 'scale(1)',
