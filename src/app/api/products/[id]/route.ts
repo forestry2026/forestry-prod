@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { deleteFromCloudinary } from '@/lib/cloudinary'
+import { pingSitemapIndexers } from '@/lib/sitemap-ping'
+import { revalidatePath }      from 'next/cache'
 import { z } from 'zod'
 
 /**
@@ -227,6 +229,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       dimensionSpecs: product.specifications ? JSON.parse(product.specifications) : [],
     }
 
+    pingSitemapIndexers()
+    revalidatePath('/')
+    revalidatePath('/products')
     return NextResponse.json({ success: true, data: productWithSpecs })
   } catch (error: any) {
     if (error?.code === 'P2002') {
@@ -281,6 +286,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       },
     })
 
+    pingSitemapIndexers()
+    revalidatePath('/')
+    revalidatePath('/products')
     return NextResponse.json({ success: true, message: 'Product deleted' })
   } catch (error) {
     return NextResponse.json(

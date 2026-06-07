@@ -3,6 +3,8 @@ import { getServerSession }          from 'next-auth'
 import { authOptions }               from '@/lib/auth'
 import { prisma }                    from '@/lib/prisma'
 import { generateProductSku }        from '@/lib/product-sku'
+import { pingSitemapIndexers }       from '@/lib/sitemap-ping'
+import { revalidatePath }            from 'next/cache'
 import { z }                         from 'zod'
 
 const PRODUCT_INCLUDE = {
@@ -185,6 +187,9 @@ export async function POST(req: NextRequest) {
       dimensionSpecs: product.specifications ? JSON.parse(product.specifications) : [],
     }
 
+    pingSitemapIndexers()  // notify Google + Bing
+    revalidatePath('/')    // bust homepage ISR cache
+    revalidatePath('/products')
     return NextResponse.json({ success: true, data: productWithSpecs }, { status: 201 })
   } catch (error: any) {
     console.error('Product creation error:', error)
