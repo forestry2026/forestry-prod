@@ -51,7 +51,14 @@ export default withAuth(
           pathname === '/' ||
           pathname === '/login' ||
           pathname === '/request-access' ||
+          pathname === '/about' ||
+          pathname === '/faq' ||
+          pathname === '/privacy-policy' ||
+          pathname === '/terms-of-service' ||
           pathname.startsWith('/product/') ||
+          pathname.startsWith('/products') ||
+          pathname.startsWith('/materials/') ||
+          pathname.startsWith('/collections/') ||
           pathname.startsWith('/api/auth') ||
           pathname.startsWith('/api/access-requests') ||
           pathname.startsWith('/api/admin/settings/brand') ||
@@ -60,6 +67,11 @@ export default withAuth(
           pathname.startsWith('/api/production') ||
           pathname.startsWith('/_next') ||
           pathname.startsWith('/favicon') ||
+          pathname === '/sitemap.xml' ||
+          pathname === '/robots.txt' ||
+          pathname === '/llms.txt' ||
+          pathname === '/og-image.jpg' ||
+          pathname.startsWith('/googlea') ||
           pathname.startsWith('/uploads/') ||
           pathname.startsWith('/downloads/') ||
           // Admin dashboard routes (demo mode)
@@ -90,5 +102,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.xml$|.*\\.txt$|.*\\.jpg$|.*\\.svg$|.*\\.ico$).*)'],
 }
