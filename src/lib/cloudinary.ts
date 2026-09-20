@@ -116,12 +116,21 @@ export async function uploadFileToCloudinary(
 ): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer())
   const isImage = file.type.startsWith('image/')
+
+  // For non-image uploads (PDFs, docs) derive a publicId that preserves the
+  // original filename + extension so the Cloudinary URL (and any download)
+  // is identifiable. Images don't need this — they get fetch_format:auto.
+  let resolvedPublicId = publicId
+  if (!resolvedPublicId && !isImage) {
+    const ext      = file.name.split('.').pop() ?? ''
+    const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 60)
+    resolvedPublicId = `${baseName}_${Date.now()}${ext ? '.' + ext : ''}`
+  }
+
   const result = await uploadToCloudinary(buffer, {
     folder,
-    publicId,
-    resourceType: isImage ? 'image' : 'raw',
-    // For images, recompress + cap dimensions at upload time so the stored
-    // file is small. Skips non-images (PDFs / DWG / docs).
+    publicId:       resolvedPublicId,
+    resourceType:   isImage ? 'image' : 'raw',
     transformation: isImage ? DEFAULT_IMAGE_INCOMING_TX : undefined,
   })
   return result.secure_url
