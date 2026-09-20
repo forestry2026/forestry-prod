@@ -51,6 +51,8 @@ export async function uploadToCloudinary(
         resource_type:  opts.resourceType ?? 'image',
         eager:          opts.eager,
         transformation: opts.transformation,
+        type:           'upload',
+        access_mode:    'public',
         overwrite:      true,
       },
       (err, result) => {
