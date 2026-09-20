@@ -1061,7 +1061,7 @@ export default function VendorsClient({ vendors, statusCounts, accessRequests, a
                                                   {img ? 'Image' : 'Document'} {i + 1}
                                                 </span>
                                                 <span className="text-xs text-charcoal-400 uppercase tracking-wide">
-                                                  {docPath.split('.').pop()?.toUpperCase()}
+                                                  {(() => { const ext = docPath.split('.').pop(); return ext && ext.length <= 5 ? ext.toUpperCase() : 'FILE' })()}
                                                 </span>
                                               </div>
                                               <ExternalLink className="w-3.5 h-3.5 text-charcoal-300 group-hover:text-terracotta transition-colors flex-shrink-0" />
