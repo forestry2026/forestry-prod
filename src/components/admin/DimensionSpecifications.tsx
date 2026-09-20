@@ -56,6 +56,7 @@ export function DimensionSpecifications({
   /* ── Drag-to-reorder variant cards ───────────────────────────────────── */
   const [dragId,    setDragId]    = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   function reorderGroups(fromId: string, toId: string) {
     if (fromId === toId) return
@@ -299,7 +300,7 @@ export function DimensionSpecifications({
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); removeGroup(group.id) }}
+                    onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(group.id) }}
                     className="p-1.5 rounded-lg text-charcoal/40 hover:text-red-500 hover:bg-red-50 transition"
                     title="Delete variant"
                   >
@@ -469,7 +470,7 @@ export function DimensionSpecifications({
                   {/* Remove Group Button */}
                   <button
                     type="button"
-                    onClick={() => removeGroup(group.id)}
+                    onClick={() => setConfirmDeleteId(group.id)}
                     className="w-full px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm rounded-lg transition flex items-center justify-center gap-2"
                   >
                     <X className="w-4 h-4" />
@@ -489,6 +490,36 @@ export function DimensionSpecifications({
           <p className="text-sm text-charcoal/60 font-medium">No specification variants yet</p>
           <p className="text-xs text-charcoal/40 mt-1">Create groups to define product variants with different dimensions and prices</p>
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {confirmDeleteId && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setConfirmDeleteId(null)} />
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
+            <h3 className="text-base font-bold text-charcoal mb-2">Delete variant?</h3>
+            <p className="text-sm text-charcoal/60 mb-5">
+              &quot;{localGroups.find(g => g.id === confirmDeleteId)?.name}&quot; and all its specifications will be removed. This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmDeleteId(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-charcoal hover:bg-cream/50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => { removeGroup(confirmDeleteId); setConfirmDeleteId(null) }}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body,
       )}
 
       {/* Divider */}
