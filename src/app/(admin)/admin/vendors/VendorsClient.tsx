@@ -74,6 +74,20 @@ function parseDocs(raw: string | null): string[] {
   try { return JSON.parse(raw) } catch { return [] }
 }
 function isImage(path: string) { return /\.(jpg|jpeg|png|webp)$/i.test(path) }
+// Proxy extensionless Cloudinary raw URLs through /api/download so the
+// browser receives Content-Disposition: attachment; filename="document.pdf"
+function docDownloadUrl(url: string): string {
+  if (isImage(url)) return url
+  try {
+    const u = new URL(url)
+    if (!u.hostname.includes('cloudinary.com')) return url
+    // Already has a known extension — serve directly
+    const afterUpload = u.pathname.split('/upload/')[1] ?? ''
+    if (/\.[a-z0-9]{2,5}$/i.test(afterUpload.replace(/^v\d+\//, ''))) return url
+    // Proxy through API route to set Content-Disposition
+    return `/api/download?url=${encodeURIComponent(url)}&name=document.pdf`
+  } catch { return url }
+}
 
 function AppStatusChip({ status }: { status: string }) {
   if (status === 'APPROVED') return (
@@ -1042,7 +1056,7 @@ export default function VendorsClient({ vendors, statusCounts, accessRequests, a
                                         {docs.map((docPath, i) => {
                                           const img = isImage(docPath)
                                           return (
-                                            <a key={i} href={docPath} target="_blank" rel="noopener noreferrer"
+                                            <a key={i} href={docDownloadUrl(docPath)} target="_blank" rel="noopener noreferrer"
                                               className="group flex items-center gap-2.5 bg-white border border-[#E8E0D5] hover:border-terracotta rounded-xl px-3 py-2.5 transition-colors"
                                               onClick={e => e.stopPropagation()}
                                             >
