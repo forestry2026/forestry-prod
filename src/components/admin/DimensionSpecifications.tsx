@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Plus, Ruler, Package, ChevronDown, GripVertical } from 'lucide-react'
+import { X, Plus, Ruler, Package, ChevronDown, GripVertical, Copy } from 'lucide-react'
 
 interface DimensionSpec {
   id: string
@@ -102,6 +102,24 @@ export function DimensionSpecifications({
     setLocalGroups(updated)
     onSpecificationsChange(updated)
     setExpandedGroupId(newGroupId)
+  }
+
+  const duplicateGroup = (groupId: string) => {
+    const src = localGroups.find(g => g.id === groupId)
+    if (!src) return
+    const newId = `group-${Date.now()}`
+    const copy: SpecificationGroup = {
+      ...src,
+      id: newId,
+      name: `${src.name} (copy)`,
+      specifications: src.specifications.map(s => ({ ...s })),
+    }
+    const idx = localGroups.findIndex(g => g.id === groupId)
+    const next = [...localGroups]
+    next.splice(idx + 1, 0, copy)
+    setLocalGroups(next)
+    onSpecificationsChange(next)
+    setExpandedGroupId(newId)
   }
 
   const removeGroup = (groupId: string) => {
@@ -261,8 +279,16 @@ export function DimensionSpecifications({
                     </p>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); duplicateGroup(group.id) }}
+                  className="p-1.5 rounded-lg text-charcoal/40 hover:text-terracotta hover:bg-terracotta/10 transition flex-shrink-0"
+                  title="Duplicate variant"
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
                 <ChevronDown
-                  className={`w-5 h-5 text-charcoal/60 transition-transform flex-shrink-0 ml-2 ${
+                  className={`w-5 h-5 text-charcoal/60 transition-transform flex-shrink-0 ml-1 ${
                     expandedGroupId === group.id ? 'rotate-180' : ''
                   }`}
                 />
