@@ -123,9 +123,17 @@ export function DimensionSpecifications({
   }
 
   const removeGroup = (groupId: string) => {
+    const idx = localGroups.findIndex(g => g.id === groupId)
     const updated = localGroups.filter(g => g.id !== groupId)
     setLocalGroups(updated)
     onSpecificationsChange(updated)
+    // Scroll to next card (or previous if last)
+    const targetId = updated[idx]?.id ?? updated[idx - 1]?.id
+    if (targetId) {
+      requestAnimationFrame(() => {
+        document.querySelector(`[data-group-id="${targetId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
+    }
   }
 
   const updateGroupName = (groupId: string, name: string) => {
@@ -235,6 +243,7 @@ export function DimensionSpecifications({
                 setDragOverId(null)
               }}
               onDragEnd={() => { setDragId(null); setDragOverId(null) }}
+              data-group-id={group.id}
               className={`border border-cream-darker rounded-lg overflow-hidden shadow-sm hover:shadow-md transition ${
                 dragId === group.id     ? 'opacity-50' : ''
               } ${
