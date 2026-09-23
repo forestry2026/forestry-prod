@@ -933,10 +933,10 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
           )}
 
           {/* Upload zone */}
-          {imageCount < 6 && (() => {
+          {imageCount < 20 && (() => {
             const uploadFiles = async (files: File[]) => {
               const queue = files.filter(file => {
-                if (formImages.length >= 6) return false
+                if (formImages.length >= 20) return false
                 if (file.size > 5 * 1024 * 1024) { alert(`${file.name} exceeds 5 MB`); return false }
                 return true
               })
@@ -945,7 +945,7 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
               const newImgs: typeof formImages = []
               for (let i = 0; i < queue.length; i++) {
                 const file = queue[i]
-                if (formImages.length + newImgs.length >= 6) break
+                if (formImages.length + newImgs.length >= 20) break
                 try {
                   const fd = new FormData(); fd.append('file', file)
                   const r = await fetch('/api/products/upload', { method: 'POST', body: fd })
@@ -1038,10 +1038,10 @@ export function ProductForm({ initialData, attributes }: ProductFormProps) {
               />
               <button
                 type="button"
-                disabled={imageCount >= 6}
+                disabled={imageCount >= 20}
                 onClick={() => {
                   const input = document.getElementById('imgUrl') as HTMLInputElement
-                  if (!input.value || imageCount >= 6) return
+                  if (!input.value || imageCount >= 20) return
                   setFormImages([...formImages, { url: input.value, alt: '', isPrimary: formImages.length === 0, sortOrder: formImages.length }])
                   input.value = ''
                 }}
