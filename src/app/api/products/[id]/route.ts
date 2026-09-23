@@ -104,9 +104,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       const existingImageUrls = existingProduct.images.map(img => img.url)
       const newImageUrls = images.map(img => img.url)
 
-      // Sync DB: remove rows for images no longer in the new array
+      // Sync DB: only remove rows for URLs the user explicitly deleted.
+      // Array-diff is unreliable — form state can lose images before submit,
+      // causing accidental DB row deletion even though Cloudinary asset is fine.
       const imagesToDeleteEntries = existingProduct.images
-        .filter(img => !newImageUrls.includes(img.url))
+        .filter(img => removedImageUrls.includes(img.url))
       const imagesToDelete = imagesToDeleteEntries.map(img => img.id)
 
       // Find new images to create (exist in new array but not in DB)
