@@ -223,7 +223,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // DB update succeeded — now wipe any orphaned Cloudinary assets
     // from images that were removed during this edit.
-    await cleanupCloudinary(removedImageUrls)
+    // Only delete from Cloudinary if no OTHER product still references the URL —
+    // duplicate products share Cloudinary URLs, so removing from one must not
+    // destroy another product's images.
+    if (removedImageUrls.length > 0) {
+      const urlsStillUsed = (await prisma.productImage.findMany({
+        where: { url: { in: removedImageUrls }, productId: { not: id } },
+        select: { url: true },
+      })).map(i => i.url)
+      await cleanupCloudinary(removedImageUrls.filter(u => !urlsStillUsed.includes(u)))
+    }
 
     // Parse specifications JSON if it exists
     const productWithSpecs = {
