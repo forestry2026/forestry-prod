@@ -270,13 +270,24 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       select: { url: true },
     })
 
+    // Only delete from Cloudinary URLs that no OTHER product still references.
+    // Duplicate products share Cloudinary URLs — deleting one must not wipe the other's images.
+    const orphanUrls = orphanImages.map(i => i.url)
+    const sharedUrls = orphanUrls.length > 0
+      ? (await prisma.productImage.findMany({
+          where: { url: { in: orphanUrls }, productId: { not: id } },
+          select: { url: true },
+        })).map(i => i.url)
+      : []
+    const safeToDelete = orphanUrls.filter(u => !sharedUrls.includes(u))
+
     const product = await prisma.product.delete({
       where: { id },
     })
 
     // Fire-and-forget: remove each image asset from Cloudinary so we
     // don't accumulate orphans against the free-tier quota.
-    await cleanupCloudinary(orphanImages.map(i => i.url))
+    await cleanupCloudinary(safeToDelete)
 
     await prisma.auditLog.create({
       data: {
